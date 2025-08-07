@@ -1,0 +1,143 @@
+# Database configuration for optimal performance
+# This configuration is optimized for MySQL 8.0+ with HikariCP connection pooling
+
+spring:
+  datasource:
+    # Database connection settings
+    url: jdbc:mysql://localhost:3306/school_sim?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Jakarta&characterEncoding=utf8mb4&useUnicode=true&zeroDateTimeBehavior=convertToNull
+    username: ${DB_USERNAME:school_sim}
+    password: ${DB_PASSWORD:password}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    
+    # HikariCP connection pool settings
+    hikari:
+      pool-name: SchoolSIM-HikariCP
+      maximum-pool-size: 20
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      leak-detection-threshold: 60000
+      
+      # Performance optimizations
+      cache-prep-stmts: true
+      prep-stmt-cache-size: 250
+      prep-stmt-cache-sql-limit: 2048
+      use-server-prep-stmts: true
+      use-local-session-state: true
+      rewrite-batched-statements: true
+      cache-result-set-metadata: true
+      cache-server-configuration: true
+      elide-set-auto-commits: true
+      maintain-time-stats: false
+
+  jpa:
+    # Hibernate settings
+    hibernate:
+      ddl-auto: ${DDL_AUTO:validate}
+      naming:
+        physical-strategy: org.hibernate.boot.model.naming.PhysicalNamingStrategyStandardImpl
+        implicit-strategy: org.hibernate.boot.model.naming.ImplicitNamingStrategyLegacyJpaImpl
+    
+    # JPA properties
+    show-sql: ${SHOW_SQL:false}
+    open-in-view: false
+    
+    properties:
+      hibernate:
+        # Database dialect
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        
+        # SQL formatting and logging
+        format_sql: ${FORMAT_SQL:false}
+        use_sql_comments: ${USE_SQL_COMMENTS:false}
+        
+        # Performance optimizations
+        jdbc:
+          batch_size: 25
+          fetch_size: 50
+          lob:
+            non_contextual_creation: true
+        
+        # Batch processing
+        order_inserts: true
+        order_updates: true
+        batch_versioned_data: true
+        
+        # Connection handling
+        connection:
+          provider_disables_autocommit: true
+        
+        # Second-level cache (Redis integration)
+        cache:
+          use_second_level_cache: true
+          use_query_cache: true
+          region:
+            factory_class: org.hibernate.cache.jcache.JCacheRegionFactory
+        
+        # Statistics and monitoring
+        generate_statistics: true
+        session:
+          events:
+            log:
+              LOG_QUERIES_SLOWER_THAN_MS: 1000
+
+# Flyway migration settings
+flyway:
+  enabled: true
+  locations: classpath:db/migration
+  baseline-on-migrate: true
+  validate-on-migrate: true
+  clean-disabled: true
+  
+# Application specific database settings
+app:
+  migration:
+    batch-size: 1000
+    validation-enabled: true
+  
+  database:
+    # Query timeout settings
+    query-timeout: 30
+    
+    # Connection validation
+    validation-query: SELECT 1
+    test-on-borrow: true
+    test-while-idle: true
+    
+    # Performance monitoring
+    slow-query-threshold-ms: 1000
+    connection-warning-threshold: 80
+
+# Actuator endpoints for monitoring
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,info,flyway
+  endpoint:
+    health:
+      show-details: always
+      show-components: always
+  health:
+    db:
+      enabled: true
+    diskspace:
+      enabled: true
+  metrics:
+    export:
+      simple:
+        enabled: true
+
+# Logging configuration for database operations
+logging:
+  level:
+    org.hibernate.SQL: ${SQL_LOG_LEVEL:WARN}
+    org.hibernate.type.descriptor.sql.BasicBinder: ${SQL_PARAM_LOG_LEVEL:WARN}
+    com.zaxxer.hikari: ${HIKARI_LOG_LEVEL:INFO}
+    com.school.sim.migration: INFO
+    com.school.sim.monitoring: INFO
+    
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
