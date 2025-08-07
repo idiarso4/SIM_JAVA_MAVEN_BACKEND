@@ -24,7 +24,7 @@ public class SessionManagementService {
     private static final String SESSION_PREFIX = "user_session:";
     private static final String ACTIVE_SESSIONS_PREFIX = "active_sessions:";
 
-    @Autowired
+    @Autowired(required = false)
     private RedisTemplate<String, Object> redisTemplate;
 
     @Autowired

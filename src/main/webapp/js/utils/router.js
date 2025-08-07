@@ -3,6 +3,8 @@
  * Handles client-side routing for Single Page Application
  */
 
+import { rbacManager } from './rbac.js';
+
 export class Router {
     constructor() {
         this.routes = new Map();
@@ -41,7 +43,7 @@ export class Router {
             title: 'Students',
             component: () => import('../components/students.js'),
             requiresAuth: true,
-            permissions: ['VIEW_STUDENTS'],
+            permissions: ['VIEW_STUDENTS', 'MANAGE_STUDENTS'],
             breadcrumb: [
                 { text: 'Dashboard', href: '#dashboard' },
                 { text: 'Students', href: '#students' }
@@ -52,7 +54,7 @@ export class Router {
             title: 'Users',
             component: () => import('../components/users.js'),
             requiresAuth: true,
-            permissions: ['VIEW_USERS'],
+            permissions: ['VIEW_USERS', 'MANAGE_USERS'],
             breadcrumb: [
                 { text: 'Dashboard', href: '#dashboard' },
                 { text: 'Users', href: '#users' }
@@ -63,7 +65,7 @@ export class Router {
             title: 'Grades',
             component: () => import('../components/grades.js'),
             requiresAuth: true,
-            permissions: ['VIEW_GRADES'],
+            permissions: ['VIEW_GRADES', 'MANAGE_GRADES'],
             breadcrumb: [
                 { text: 'Dashboard', href: '#dashboard' },
                 { text: 'Grades', href: '#grades' }
@@ -74,7 +76,7 @@ export class Router {
             title: 'Reports',
             component: () => import('../components/reports.js'),
             requiresAuth: true,
-            permissions: ['VIEW_REPORTS'],
+            permissions: ['VIEW_REPORTS', 'VIEW_BASIC_REPORTS'],
             breadcrumb: [
                 { text: 'Dashboard', href: '#dashboard' },
                 { text: 'Reports', href: '#reports' }
@@ -149,17 +151,17 @@ export class Router {
                 return;
             }
 
-            // Check permissions
-            if (route.permissions.length > 0 && !this.hasPermissions(route.permissions)) {
+            // Check permissions using RBAC manager
+            if (route.permissions && route.permissions.length > 0 && !rbacManager.hasAnyPermission(route.permissions)) {
                 console.log('Insufficient permissions for route:', path);
-                this.showAccessDenied();
+                this.showAccessDenied(route.permissions);
                 return;
             }
 
-            // Check roles
-            if (route.roles.length > 0 && !this.hasRoles(route.roles)) {
+            // Check roles using RBAC manager
+            if (route.roles && route.roles.length > 0 && !rbacManager.hasAnyRole(route.roles)) {
                 console.log('Insufficient roles for route:', path);
-                this.showAccessDenied();
+                this.showAccessDenied(route.roles, 'roles');
                 return;
             }
 
@@ -336,19 +338,17 @@ export class Router {
     }
 
     /**
-     * Check if user has required permissions
+     * Check if user has required permissions (deprecated - use rbacManager directly)
      */
     hasPermissions(permissions) {
-        if (!window.SIMApp) return false;
-        return permissions.every(permission => window.SIMApp.hasPermission(permission));
+        return rbacManager.hasAnyPermission(permissions);
     }
 
     /**
-     * Check if user has required roles
+     * Check if user has required roles (deprecated - use rbacManager directly)
      */
     hasRoles(roles) {
-        if (!window.SIMApp) return false;
-        return roles.some(role => window.SIMApp.hasRole(role));
+        return rbacManager.hasAnyRole(roles);
     }
 
     /**
@@ -362,21 +362,44 @@ export class Router {
     /**
      * Show access denied message
      */
-    showAccessDenied() {
+    showAccessDenied(requiredAccess = [], accessType = 'permissions') {
         const mainContent = document.getElementById('main-content');
         if (mainContent) {
+            const user = rbacManager.getCurrentUser();
+            const userRole = rbacManager.getUserRoleDisplayName();
+            
+            let accessDetails = '';
+            if (requiredAccess.length > 0) {
+                const accessList = requiredAccess.join(', ');
+                accessDetails = `<p class="text-muted mb-3">Required ${accessType}: <code>${accessList}</code></p>`;
+            }
+            
             mainContent.innerHTML = `
-                <div class="error-container">
-                    <div class="error-icon">
-                        <i class="fas fa-lock"></i>
+                <div class="error-container text-center py-5">
+                    <div class="error-icon mb-4">
+                        <i class="fas fa-shield-alt text-warning" style="font-size: 4rem;"></i>
                     </div>
-                    <div class="error-message">
-                        Access Denied
+                    <h2 class="error-message text-warning mb-3">Access Restricted</h2>
+                    <p class="text-muted mb-3">You don't have sufficient permissions to access this page.</p>
+                    ${accessDetails}
+                    <div class="alert alert-info d-inline-block mb-4">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Your Role:</strong> ${userRole}
                     </div>
-                    <p class="text-muted">You don't have permission to access this page.</p>
-                    <button class="btn btn-primary" onclick="window.SIMApp.router.navigate('dashboard')">
-                        <i class="fas fa-home me-2"></i>Go to Dashboard
-                    </button>
+                    <div class="d-flex justify-content-center gap-3">
+                        <button class="btn btn-primary" onclick="window.SIMApp.router.navigate('dashboard')">
+                            <i class="fas fa-home me-2"></i>Go to Dashboard
+                        </button>
+                        <button class="btn btn-outline-secondary" onclick="history.back()">
+                            <i class="fas fa-arrow-left me-2"></i>Go Back
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <small class="text-muted">
+                            Need access? Contact your administrator at 
+                            <a href="mailto:admin@school.edu">admin@school.edu</a>
+                        </small>
+                    </div>
                 </div>
             `;
         }

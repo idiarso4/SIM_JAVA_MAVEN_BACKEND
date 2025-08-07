@@ -29,7 +29,7 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Autowired
     private JdbcTemplate springBootJdbcTemplate;
 
-    @Autowired
+    @Autowired(required = false)
     @Qualifier("laravelDataSource")
     private DataSource laravelDataSource;
 

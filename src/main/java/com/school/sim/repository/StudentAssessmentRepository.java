@@ -98,8 +98,8 @@ public interface StudentAssessmentRepository extends JpaRepository<StudentAssess
      * Find top performers for an assessment
      */
     @Query("SELECT sa FROM StudentAssessment sa WHERE sa.assessment = :assessment " +
-           "AND sa.score IS NOT NULL ORDER BY sa.score DESC LIMIT :limit")
-    List<StudentAssessment> findTopPerformersByAssessment(@Param("assessment") Assessment assessment, @Param("limit") int limit);
+           "AND sa.score IS NOT NULL ORDER BY sa.score DESC")
+    List<StudentAssessment> findTopPerformersByAssessment(@Param("assessment") Assessment assessment);
     
     /**
      * Count assessments by grade

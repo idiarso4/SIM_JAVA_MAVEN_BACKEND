@@ -134,11 +134,11 @@ public class DatabaseConfig {
         properties.setProperty("hibernate.order_updates", "true");
         properties.setProperty("hibernate.batch_versioned_data", "true");
         
-        // Second-level cache configuration (if using Redis)
-        properties.setProperty("hibernate.cache.use_second_level_cache", "true");
-        properties.setProperty("hibernate.cache.use_query_cache", "true");
-        properties.setProperty("hibernate.cache.region.factory_class", 
-                              "org.hibernate.cache.jcache.JCacheRegionFactory");
+        // Second-level cache configuration (temporarily disabled)
+        properties.setProperty("hibernate.cache.use_second_level_cache", "false");
+        properties.setProperty("hibernate.cache.use_query_cache", "false");
+        // properties.setProperty("hibernate.cache.region.factory_class", 
+        //                       "org.hibernate.cache.jcache.JCacheRegionFactory");
         
         // Connection handling
         properties.setProperty("hibernate.connection.provider_disables_autocommit", "true");

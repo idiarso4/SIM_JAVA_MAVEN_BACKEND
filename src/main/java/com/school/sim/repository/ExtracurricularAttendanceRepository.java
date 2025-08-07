@@ -118,24 +118,24 @@ public interface ExtracurricularAttendanceRepository extends JpaRepository<Extra
     /**
      * Calculate attendance rate by activity
      */
-    @Query("SELECT CAST(COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) AS DOUBLE) / " +
-           "CAST(COUNT(ea) AS DOUBLE) * 100 FROM ExtracurricularAttendance ea " +
+    @Query("SELECT (COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) * 100.0) / " +
+           "COUNT(ea) FROM ExtracurricularAttendance ea " +
            "WHERE ea.activity = :activity AND ea.isActive = true")
     Double calculateAttendanceRateByActivity(@Param("activity") ExtracurricularActivity activity);
 
     /**
      * Calculate attendance rate by student
      */
-    @Query("SELECT CAST(COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) AS DOUBLE) / " +
-           "CAST(COUNT(ea) AS DOUBLE) * 100 FROM ExtracurricularAttendance ea " +
+    @Query("SELECT (COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) * 100.0) / " +
+           "COUNT(ea) FROM ExtracurricularAttendance ea " +
            "WHERE ea.student = :student AND ea.isActive = true")
     Double calculateAttendanceRateByStudent(@Param("student") Student student);
 
     /**
      * Calculate attendance rate by student and activity
      */
-    @Query("SELECT CAST(COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) AS DOUBLE) / " +
-           "CAST(COUNT(ea) AS DOUBLE) * 100 FROM ExtracurricularAttendance ea " +
+    @Query("SELECT (COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) * 100.0) / " +
+           "COUNT(ea) FROM ExtracurricularAttendance ea " +
            "WHERE ea.student = :student AND ea.activity = :activity AND ea.isActive = true")
     Double calculateAttendanceRateByStudentAndActivity(
             @Param("student") Student student, @Param("activity") ExtracurricularActivity activity);
@@ -153,8 +153,8 @@ public interface ExtracurricularAttendanceRepository extends JpaRepository<Extra
      */
     @Query("SELECT ea.student FROM ExtracurricularAttendance ea WHERE ea.activity = :activity " +
            "AND ea.isActive = true GROUP BY ea.student " +
-           "HAVING (CAST(COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) AS DOUBLE) / " +
-           "CAST(COUNT(ea) AS DOUBLE) * 100) < :threshold")
+           "HAVING ((COUNT(CASE WHEN ea.status IN ('PRESENT', 'LATE', 'PARTIAL') THEN 1 END) * 100.0) / " +
+           "COUNT(ea)) < :threshold")
     List<Student> findStudentsWithPoorAttendance(
             @Param("activity") ExtracurricularActivity activity, @Param("threshold") Double threshold);
 

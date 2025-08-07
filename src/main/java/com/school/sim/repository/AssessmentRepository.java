@@ -75,7 +75,7 @@ public interface AssessmentRepository extends JpaRepository<Assessment, Long> {
      * Find upcoming assessments for a class room
      */
     @Query("SELECT a FROM Assessment a WHERE a.classRoom = :classRoom AND a.dueDate >= :currentDate " +
-           "AND a.isActive = true ORDER BY a.dueDate LIMIT 10")
+           "AND a.isActive = true ORDER BY a.dueDate")
     List<Assessment> findUpcomingAssessmentsByClassRoom(@Param("classRoom") ClassRoom classRoom, @Param("currentDate") LocalDate currentDate);
     
     /**

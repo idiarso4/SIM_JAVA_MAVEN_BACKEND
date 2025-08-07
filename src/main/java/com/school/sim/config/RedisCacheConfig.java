@@ -33,8 +33,8 @@ import java.util.Map;
  * Redis caching configuration for the School Information Management System
  * Provides comprehensive caching strategy with different TTL policies for various data types
  */
-@Configuration
-@EnableCaching
+// @Configuration
+// @EnableCaching
 public class RedisCacheConfig extends CachingConfigurerSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisCacheConfig.class);

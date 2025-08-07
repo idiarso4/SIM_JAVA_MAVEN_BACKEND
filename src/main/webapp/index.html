@@ -1,103 +1,273 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-bs-theme="light">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    
+    <!-- SEO and Meta Tags -->
     <title>School Information Management System</title>
-    <meta name="description" content="Modern web application for managing school operations">
+    <meta name="description" content="Modern web application for managing school operations, student records, and academic administration">
+    <meta name="keywords" content="school management, student information system, education, academic records">
+    <meta name="author" content="SIM Development Team">
+    <meta name="robots" content="noindex, nofollow">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="School Information Management System">
+    <meta property="og:description" content="Modern web application for managing school operations">
+    <meta property="og:image" content="/assets/images/og-image.png">
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:title" content="School Information Management System">
+    <meta property="twitter:description" content="Modern web application for managing school operations">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/favicon-16x16.png">
+    <link rel="manifest" href="/assets/site.webmanifest">
+    
+    <!-- Preconnect to external domains -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com">
     
     <!-- Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" 
+          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    
     <!-- Font Awesome Icons -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet"
+          integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous">
+    
     <!-- Custom CSS -->
     <link href="css/main.css" rel="stylesheet">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0d6efd">
+    <meta name="msapplication-TileColor" content="#0d6efd">
+    
+    <!-- Preload critical resources -->
+    <link rel="preload" href="js/main.js" as="script">
+    <link rel="preload" href="css/main.css" as="style">
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
+    <!-- Skip to main content link for accessibility -->
+    <a class="visually-hidden-focusable btn btn-primary position-absolute top-0 start-0 m-2" 
+       href="#main-content" style="z-index: 10000;">
+        Skip to main content
+    </a>
+
     <!-- Loading Spinner -->
-    <div id="loading-spinner" class="d-flex justify-content-center align-items-center position-fixed w-100 h-100" style="top: 0; left: 0; background: rgba(255,255,255,0.9); z-index: 9999;">
-        <div class="spinner-border text-primary" role="status">
-            <span class="visually-hidden">Loading...</span>
+    <div id="loading-spinner" class="d-flex justify-content-center align-items-center position-fixed w-100 h-100" 
+         style="top: 0; left: 0; background: rgba(255,255,255,0.9); z-index: 9999;" role="status" aria-live="polite">
+        <div class="text-center">
+            <div class="spinner-border text-primary mb-3" role="status">
+                <span class="visually-hidden">Loading application...</span>
+            </div>
+            <div class="text-muted">
+                <small>Initializing School Information Management System...</small>
+            </div>
         </div>
     </div>
 
     <!-- Main Application Container -->
-    <div id="app" class="d-none">
+    <div id="app" class="d-none d-flex flex-column min-vh-100">
         <!-- Navigation Header -->
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="#dashboard">
-                    <i class="fas fa-graduation-cap me-2"></i>
-                    SIM
-                </a>
-                
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item">
-                            <a class="nav-link" href="#dashboard" data-route="dashboard">
-                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#students" data-route="students">
-                                <i class="fas fa-user-graduate me-1"></i>Students
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#users" data-route="users">
-                                <i class="fas fa-users me-1"></i>Users
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#grades" data-route="grades">
-                                <i class="fas fa-chart-line me-1"></i>Grades
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="#reports" data-route="reports">
-                                <i class="fas fa-file-alt me-1"></i>Reports
-                            </a>
-                        </li>
-                    </ul>
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-dark bg-primary shadow-sm" role="navigation" aria-label="Main navigation">
+                <div class="container-fluid">
+                    <!-- Brand -->
+                    <a class="navbar-brand d-flex align-items-center" href="#dashboard" data-route="dashboard">
+                        <i class="fas fa-graduation-cap me-2" aria-hidden="true"></i>
+                        <span class="fw-bold">SIM</span>
+                        <small class="ms-2 d-none d-md-inline text-light opacity-75">v1.0</small>
+                    </a>
                     
-                    <ul class="navbar-nav">
-                        <li class="nav-item dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                                <i class="fas fa-user-circle me-1"></i>
-                                <span id="current-user-name">User</span>
+                    <!-- Mobile menu button -->
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" 
+                            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    
+                    <!-- Navigation Menu -->
+                    <div class="collapse navbar-collapse" id="navbarNav">
+                        <!-- Main Navigation -->
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item" v-if-authenticated>
+                                <a class="nav-link" href="#dashboard" data-route="dashboard" role="menuitem">
+                                    <i class="fas fa-tachometer-alt me-1" aria-hidden="true"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" v-if-permission="VIEW_STUDENTS,MANAGE_STUDENTS">
+                                <a class="nav-link" href="#students" data-route="students" role="menuitem">
+                                    <i class="fas fa-user-graduate me-1" aria-hidden="true"></i>
+                                    <span>Students</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" v-if-permission="VIEW_USERS,MANAGE_USERS">
+                                <a class="nav-link" href="#users" data-route="users" role="menuitem">
+                                    <i class="fas fa-users me-1" aria-hidden="true"></i>
+                                    <span>Users</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" v-if-permission="VIEW_GRADES,MANAGE_GRADES">
+                                <a class="nav-link" href="#grades" data-route="grades" role="menuitem">
+                                    <i class="fas fa-chart-line me-1" aria-hidden="true"></i>
+                                    <span>Grades</span>
+                                </a>
+                            </li>
+                            <li class="nav-item" v-if-permission="VIEW_REPORTS,VIEW_BASIC_REPORTS">
+                                <a class="nav-link" href="#reports" data-route="reports" role="menuitem">
+                                    <i class="fas fa-file-alt me-1" aria-hidden="true"></i>
+                                    <span>Reports</span>
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <!-- Right side navigation -->
+                        <ul class="navbar-nav">
+                            <!-- Theme Toggle -->
+                            <li class="nav-item">
+                                <button class="nav-link btn btn-link" id="theme-toggle" type="button" 
+                                        aria-label="Toggle dark mode" title="Toggle theme">
+                                    <i class="fas fa-moon" aria-hidden="true"></i>
+                                </button>
+                            </li>
+                            
+                            <!-- Notifications -->
+                            <li class="nav-item dropdown">
+                                <a class="nav-link position-relative" href="#" id="notificationDropdown" role="button" 
+                                   data-bs-toggle="dropdown" aria-expanded="false" aria-label="Notifications">
+                                    <i class="fas fa-bell" aria-hidden="true"></i>
+                                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none" 
+                                          id="notification-badge">
+                                        <span class="visually-hidden">unread notifications</span>
+                                    </span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="notificationDropdown">
+                                    <li><h6 class="dropdown-header">Notifications</h6></li>
+                                    <li><div class="dropdown-item-text text-muted" id="no-notifications">No new notifications</div></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item" href="#notifications">View All</a></li>
+                                </ul>
+                            </li>
+                            
+                            <!-- User Menu -->
+                            <li class="nav-item dropdown" v-if-authenticated></li>
+                                <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" 
+                                   role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-1" aria-hidden="true"></i>
+                                    <span id="current-user-name" v-text-user-name>User</span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                    <li><h6 class="dropdown-header" id="user-info">Welcome!</h6></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#profile" data-route="profile">
+                                            <i class="fas fa-user me-2" aria-hidden="true"></i>Profile
+                                        </a>
+                                    </li>
+                                    <li v-if-role="ADMIN,SUPER_ADMIN"></li>
+                                        <a class="dropdown-item" href="#settings" data-route="settings">
+                                            <i class="fas fa-cog me-2" aria-hidden="true"></i>Settings
+                                        </a>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <small class="dropdown-item-text text-muted">
+                                            <i class="fas fa-id-badge me-2"></i>
+                                            Role: <span v-text-role>User</span>
+                                        </small>
+                                    </li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li>
+                                        <a class="dropdown-item" href="#" id="logout-btn">
+                                            <i class="fas fa-sign-out-alt me-2" aria-hidden="true"></i>Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+        <!-- Breadcrumb Navigation -->
+        <nav aria-label="breadcrumb" class="bg-light border-bottom">
+            <div class="container-fluid py-2">
+                <div class="d-flex justify-content-between align-items-center">
+                    <ol class="breadcrumb mb-0" id="breadcrumb">
+                        <li class="breadcrumb-item">
+                            <a href="#dashboard" data-route="dashboard">
+                                <i class="fas fa-home me-1" aria-hidden="true"></i>Home
                             </a>
-                            <ul class="dropdown-menu dropdown-menu-end">
-                                <li><a class="dropdown-item" href="#profile"><i class="fas fa-user me-2"></i>Profile</a></li>
-                                <li><a class="dropdown-item" href="#settings"><i class="fas fa-cog me-2"></i>Settings</a></li>
-                                <li><hr class="dropdown-divider"></li>
-                                <li><a class="dropdown-item" href="#" id="logout-btn"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
-                            </ul>
                         </li>
-                    </ul>
+                    </ol>
+                    
+                    <!-- Page Actions -->
+                    <div class="d-flex align-items-center" id="page-actions">
+                        <!-- Dynamic action buttons will be added here -->
+                    </div>
                 </div>
             </div>
         </nav>
 
-        <!-- Breadcrumb Navigation -->
-        <nav aria-label="breadcrumb" class="bg-light py-2">
-            <div class="container-fluid">
-                <ol class="breadcrumb mb-0" id="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#dashboard">Home</a></li>
-                </ol>
-            </div>
-        </nav>
-
         <!-- Main Content Area -->
-        <main class="container-fluid py-4">
-            <div id="main-content">
+        <main class="container-fluid py-4" role="main">
+            <!-- Page Header -->
+            <div class="d-flex justify-content-between align-items-center mb-4" id="page-header">
+                <div>
+                    <h1 class="h3 mb-0" id="page-title">Dashboard</h1>
+                    <p class="text-muted mb-0" id="page-description">Welcome to the School Information Management System</p>
+                </div>
+                <div id="page-toolbar">
+                    <!-- Page-specific toolbar buttons will be added here -->
+                </div>
+            </div>
+            
+            <!-- Alert Container -->
+            <div id="alert-container" class="mb-4">
+                <!-- System alerts and messages will be displayed here -->
+            </div>
+            
+            <!-- Main Content -->
+            <div id="main-content" class="fade-in">
                 <!-- Dynamic content will be loaded here -->
+                <div class="d-flex justify-content-center align-items-center" style="min-height: 300px;">
+                    <div class="text-center">
+                        <div class="spinner-border text-primary mb-3" role="status">
+                            <span class="visually-hidden">Loading content...</span>
+                        </div>
+                        <p class="text-muted">Loading application...</p>
+                    </div>
+                </div>
             </div>
         </main>
+
+        <!-- Footer -->
+        <footer class="bg-light border-top py-3 mt-auto">
+            <div class="container-fluid">
+                <div class="row align-items-center">
+                    <div class="col-md-6">
+                        <small class="text-muted">
+                            © 2024 School Information Management System. All rights reserved.
+                        </small>
+                    </div>
+                    <div class="col-md-6 text-md-end">
+                        <small class="text-muted">
+                            Version 1.0.0 | 
+                            <a href="#help" class="text-decoration-none">Help</a> | 
+                            <a href="#support" class="text-decoration-none">Support</a>
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </footer>
 
         <!-- Toast Notifications Container -->
         <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container">
@@ -106,41 +276,37 @@
     </div>
 
     <!-- Login Modal -->
-    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title">
-                        <i class="fas fa-sign-in-alt me-2"></i>Login to SIM
-                    </h5>
-                </div>
-                <div class="modal-body">
-                    <form id="login-form">
-                        <div class="mb-3">
-                            <label for="login-identifier" class="form-label">Email or Username</label>
-                            <input type="text" class="form-control" id="login-identifier" name="identifier" required>
-                            <div class="invalid-feedback"></div>
+    <div class="modal fade" id="loginModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" 
+         aria-labelledby="loginModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content border-0 shadow-lg">
+                <div class="modal-body p-0">
+                    <div class="row g-0">
+                        <!-- Login Form Side -->
+                        <div class="col-md-8">
+                            <div id="login-form-container" class="p-4">
+                                <!-- Login form component will be rendered here -->
+                            </div>
                         </div>
-                        <div class="mb-3">
-                            <label for="login-password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="login-password" name="password" required>
-                            <div class="invalid-feedback"></div>
+                        
+                        <!-- Branding Side -->
+                        <div class="col-md-4 bg-primary text-white d-none d-md-flex">
+                            <div class="d-flex flex-column justify-content-center align-items-center p-4 text-center">
+                                <div class="mb-4">
+                                    <i class="fas fa-graduation-cap" style="font-size: 4rem; opacity: 0.9;"></i>
+                                </div>
+                                <h4 class="fw-bold mb-3">School Information Management</h4>
+                                <p class="mb-4 opacity-75">
+                                    Streamline your educational administration with our comprehensive management system.
+                                </p>
+                                <div class="text-center opacity-75">
+                                    <small>
+                                        <i class="fas fa-shield-alt me-2"></i>
+                                        Secure & Reliable
+                                    </small>
+                                </div>
+                            </div>
                         </div>
-                        <div class="mb-3 form-check">
-                            <input type="checkbox" class="form-check-input" id="remember-me" name="rememberMe">
-                            <label class="form-check-label" for="remember-me">Remember me</label>
-                        </div>
-                        <div class="d-grid">
-                            <button type="submit" class="btn btn-primary" id="login-submit-btn">
-                                <span class="spinner-border spinner-border-sm me-2 d-none" id="login-spinner"></span>
-                                <i class="fas fa-sign-in-alt me-2"></i>Login
-                            </button>
-                        </div>
-                    </form>
-                    <div class="text-center mt-3">
-                        <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
-                            Forgot your password?
-                        </a>
                     </div>
                 </div>
             </div>
@@ -148,22 +314,25 @@
     </div>
 
     <!-- Forgot Password Modal -->
-    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1" aria-labelledby="forgotPasswordModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title">Reset Password</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    <h5 class="modal-title" id="forgotPasswordModalLabel">Reset Password</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <p class="text-muted mb-3">Enter your email address and we'll send you a link to reset your password.</p>
                     <form id="forgot-password-form">
                         <div class="mb-3">
                             <label for="reset-email" class="form-label">Email Address</label>
-                            <input type="email" class="form-control" id="reset-email" name="email" required>
+                            <input type="email" class="form-control" id="reset-email" name="email" required 
+                                   placeholder="Enter your email address">
                             <div class="invalid-feedback"></div>
                         </div>
                         <div class="d-grid">
                             <button type="submit" class="btn btn-primary">
+                                <span class="spinner-border spinner-border-sm me-2 d-none" id="reset-spinner"></span>
                                 <i class="fas fa-paper-plane me-2"></i>Send Reset Link
                             </button>
                         </div>
@@ -173,14 +342,127 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Axios for HTTP requests -->
-    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js"></script>
-    <!-- Chart.js for data visualization -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js"></script>
+    <!-- Confirmation Modal -->
+    <div class="modal fade" id="confirmationModal" tabindex="-1" aria-labelledby="confirmationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="confirmationModalLabel">Confirm Action</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-exclamation-triangle text-warning me-3 fs-2" aria-hidden="true"></i>
+                        <div>
+                            <p class="mb-0" id="confirmation-message">Are you sure you want to perform this action?</p>
+                            <small class="text-muted" id="confirmation-details"></small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirm-action-btn">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Loading Modal -->
+    <div class="modal fade" id="loadingModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
+            <div class="modal-content">
+                <div class="modal-body text-center py-4">
+                    <div class="spinner-border text-primary mb-3" role="status">
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                    <p class="mb-0" id="loading-message">Processing...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Offline Banner -->
+    <div class="alert alert-warning alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x d-none" 
+         id="offline-banner" style="z-index: 1060; margin-top: 10px;">
+        <i class="fas fa-wifi me-2" aria-hidden="true"></i>
+        <strong>You're offline!</strong> Some features may not work properly.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Update Available Banner -->
+    <div class="alert alert-info alert-dismissible fade show position-fixed top-0 start-50 translate-middle-x d-none" 
+         id="update-banner" style="z-index: 1060; margin-top: 10px;">
+        <i class="fas fa-download me-2" aria-hidden="true"></i>
+        <strong>Update available!</strong> 
+        <button type="button" class="btn btn-sm btn-outline-primary ms-2" id="update-btn">Update Now</button>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+
+    <!-- Critical JavaScript - Load immediately -->
+    <script>
+        // Critical inline script for theme and initial setup
+        (function() {
+            // Set initial theme
+            const savedTheme = localStorage.getItem('sim-theme') || 'light';
+            document.documentElement.setAttribute('data-bs-theme', savedTheme);
+            
+            // Performance mark
+            if (performance && performance.mark) {
+                performance.mark('app-start');
+            }
+            
+            // Error handling for uncaught errors
+            window.addEventListener('error', function(e) {
+                console.error('Global error:', e.error);
+                // Could send to error reporting service
+            });
+            
+            // Handle unhandled promise rejections
+            window.addEventListener('unhandledrejection', function(e) {
+                console.error('Unhandled promise rejection:', e.reason);
+                // Could send to error reporting service
+            });
+        })();
+    </script>
+
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" 
+            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" 
+            crossorigin="anonymous" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.2/dist/axios.min.js" 
+            integrity="sha512-b94Z6431JyXY14iSXwgzeZurHHRNkLt9d6bAHt7BZT38eqV+GyngIi/tVye4jBKPYQ2lBdRs0glww4fmpuLRwA==" 
+            crossorigin="anonymous" defer></script>
+    
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.min.js" 
+            crossorigin="anonymous" defer></script>
+    
+    <!-- Service Worker Registration -->
+    <script>
+        // Register service worker for offline functionality (if available)
+        if ('serviceWorker' in navigator && 'production' === 'production') {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(function(registration) {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(function(err) {
+                        console.log('ServiceWorker registration failed');
+                    });
+            });
+        }
+    </script>
     
     <!-- Application JavaScript -->
     <script src="js/main.js" type="module"></script>
+    
+    <!-- Analytics (if needed) -->
+    <script>
+        // Placeholder for analytics code
+        // Could integrate with Google Analytics, Mixpanel, etc.
+        if (typeof gtag !== 'undefined') {
+            gtag('config', 'GA_MEASUREMENT_ID');
+        }
+    </script>
 </body>
 </html>

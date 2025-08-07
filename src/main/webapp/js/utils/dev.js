@@ -8,8 +8,8 @@
  */
 export class DevLogger {
   constructor() {
-    this.isDevelopment = process.env.NODE_ENV === 'development';
-    this.logLevel = process.env.LOG_LEVEL || 'info';
+    this.isDevelopment = (typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'development') || true;
+    this.logLevel = (typeof process !== 'undefined' && process.env && process.env.LOG_LEVEL) || 'info';
     this.levels = {
       debug: 0,
       info: 1,
@@ -119,7 +119,7 @@ export class DevLogger {
  */
 export class PerformanceMonitor {
   constructor() {
-    this.isEnabled = process.env.ENABLE_PERFORMANCE_MONITORING === 'true';
+    this.isEnabled = (typeof process !== 'undefined' && process.env && process.env.ENABLE_PERFORMANCE_MONITORING === 'true') || false;
     this.marks = new Map();
     this.measures = new Map();
   }
@@ -188,7 +188,7 @@ export class PerformanceMonitor {
  */
 export class MockDataGenerator {
   constructor() {
-    this.isEnabled = process.env.ENABLE_MOCK_DATA === 'true';
+    this.isEnabled = (typeof process !== 'undefined' && process.env && process.env.ENABLE_MOCK_DATA === 'true') || false;
   }
 
   /**
@@ -271,7 +271,7 @@ export class MockDataGenerator {
  * Development tools initialization
  */
 export function initDevTools() {
-  if (process.env.NODE_ENV === 'development') {
+  if ((typeof process !== 'undefined' && process.env && process.env.NODE_ENV === 'development') || true) {
     // Add development tools to window for debugging
     window.devTools = {
       logger: new DevLogger(),
@@ -285,9 +285,9 @@ export function initDevTools() {
       console.log('App State:', window.SIMApp ? window.SIMApp.getCurrentUser() : 'Not initialized');
       console.log('Current Route:', window.SIMApp ? window.SIMApp.router.getCurrentRoute() : 'No router');
       console.log('Environment:', {
-        NODE_ENV: process.env.NODE_ENV,
-        API_BASE_URL: process.env.API_BASE_URL,
-        APP_VERSION: process.env.APP_VERSION
+        NODE_ENV: (typeof process !== 'undefined' && process.env && process.env.NODE_ENV) || 'development',
+        API_BASE_URL: (typeof process !== 'undefined' && process.env && process.env.API_BASE_URL) || 'http://localhost:8080/api/v1',
+        APP_VERSION: (typeof process !== 'undefined' && process.env && process.env.APP_VERSION) || '1.0.0'
       });
       console.groupEnd();
     };

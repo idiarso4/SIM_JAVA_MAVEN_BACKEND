@@ -55,9 +55,14 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findByIsActiveFalse();
 
     /**
-     * Find users by name containing (case insensitive)
+     * Find users by first name containing (case insensitive)
      */
-    Page<User> findByNameContainingIgnoreCase(String name, Pageable pageable);
+    Page<User> findByFirstNameContainingIgnoreCase(String firstName, Pageable pageable);
+    
+    /**
+     * Find users by last name containing (case insensitive)
+     */
+    Page<User> findByLastNameContainingIgnoreCase(String lastName, Pageable pageable);
 
     /**
      * Find users by email containing (case insensitive)
@@ -140,7 +145,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * Search users by multiple criteria
      */
     @Query("SELECT u FROM User u WHERE " +
-           "(:name IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+           "(:name IS NULL OR LOWER(CONCAT(u.firstName, ' ', u.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
            "(:email IS NULL OR LOWER(u.email) LIKE LOWER(CONCAT('%', :email, '%'))) AND " +
            "(:userType IS NULL OR u.userType = :userType) AND " +
            "(:isActive IS NULL OR u.isActive = :isActive)")

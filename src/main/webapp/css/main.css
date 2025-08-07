@@ -1,5 +1,9 @@
 /* Main CSS for School Information Management System */
 
+/* Import component styles */
+@import url('components.css');
+@import url('login.css');
+
 /* Root Variables */
 :root {
     --primary-color: #0d6efd;

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM - Login Test</title>
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            max-width: 400px;
+            width: 100%;
+        }
+        
+        .login-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 2rem;
+            text-align: center;
+        }
+        
+        .login-body {
+            padding: 2rem;
+        }
+        
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+        }
+        
+        .spinner-border-sm {
+            width: 1rem;
+            height: 1rem;
+        }
+        
+        .lockout-info {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        
+        .login-attempts {
+            font-size: 0.875rem;
+            color: #6c757d;
+            text-align: center;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <h2><i class="fas fa-graduation-cap me-2"></i>SIM</h2>
+            <p class="mb-0">School Information Management</p>
+        </div>
+        
+        <div class="login-body">
+            <!-- Alert container -->
+            <div id="alert-container"></div>
+            
+            <!-- Lockout info -->
+            <div id="lockout-info" class="lockout-info d-none">
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-lock text-warning me-2"></i>
+                    <div>
+                        <strong>Account Temporarily Locked</strong>
+                        <div id="lockout-message" class="small"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Login Form -->
+            <form id="login-form">
+                <div class="mb-3">
+                    <label for="identifier" class="form-label">
+                        <i class="fas fa-user me-1"></i>Email or Username
+                    </label>
+                    <input type="text" class="form-control" id="identifier" name="identifier" 
+                           placeholder="Enter your email or username" required>
+                    <div class="invalid-feedback"></div>
+                </div>
+                
+                <div class="mb-3">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock me-1"></i>Password
+                    </label>
+                    <div class="input-group">
+                        <input type="password" class="form-control" id="password" name="password" 
+                               placeholder="Enter your password" required>
+                        <button class="btn btn-outline-secondary" type="button" id="toggle-password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="invalid-feedback"></div>
+                </div>
+                
+                <div class="mb-3 form-check">
+                    <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                    <label class="form-check-label" for="rememberMe">
+                        Remember me
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-login w-100" id="login-btn">
+                    <span id="login-spinner" class="spinner-border spinner-border-sm me-2 d-none"></span>
+                    <span id="login-text">Sign In</span>
+                </button>
+            </form>
+            
+            <div class="text-center mt-3">
+                <a href="#" class="text-decoration-none" id="forgot-password-link">
+                    Forgot your password?
+                </a>
+            </div>
+            
+            <!-- Login attempts info -->
+            <div id="login-attempts-info" class="login-attempts d-none">
+                <i class="fas fa-exclamation-triangle text-warning me-1"></i>
+                <span id="attempts-text"></span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script type="module">
+        // Real backend configuration
+        window.APP_CONFIG = {
+            API_BASE_URL: 'http://localhost:8080/api/v1',
+            TOKEN_KEY: 'sim_auth_token',
+            REFRESH_TOKEN_KEY: 'sim_refresh_token',
+            USER_KEY: 'sim_current_user'
+        };
+        
+        // Simple state manager for testing
+        window.stateManager = {
+            state: {},
+            set: function(key, value) {
+                this.state[key] = value;
+                console.log('State set:', key, value);
+            },
+            get: function(key) {
+                return this.state[key];
+            },
+            subscribe: function(key, callback) {
+                console.log('Subscribed to:', key);
+                return () => console.log('Unsubscribed from:', key);
+            }
+        };
+        
+        // Simple logger for testing
+        window.logger = {
+            debug: console.log,
+            info: console.info,
+            warn: console.warn,
+            error: console.error
+        };
+        
+        // Simple API service for real backend calls
+        class SimpleApiService {
+            async post(endpoint, data) {
+                const url = `${window.APP_CONFIG.API_BASE_URL}${endpoint}`;
+                console.log('Making API call to:', url, data);
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    const error = new Error(errorData.message || `HTTP ${response.status}`);
+                    error.status = response.status;
+                    error.response = { data: errorData };
+                    throw error;
+                }
+                
+                return { data: await response.json() };
+            }
+        }
+        
+        // Simple auth service for real backend
+        class SimpleAuthService {
+            constructor() {
+                this.apiService = new SimpleApiService();
+                this.loginAttempts = parseInt(localStorage.getItem('sim_login_attempts') || '0');
+                this.maxLoginAttempts = 5;
+                this.lockoutDuration = 15 * 60 * 1000; // 15 minutes
+            }
+            
+            isLockedOut() {
+                const lockoutUntil = localStorage.getItem('sim_lockout_until');
+                return lockoutUntil && Date.now() < parseInt(lockoutUntil);
+            }
+            
+            getRemainingLockoutTime() {
+                const lockoutUntil = localStorage.getItem('sim_lockout_until');
+                if (!lockoutUntil || Date.now() >= parseInt(lockoutUntil)) return 0;
+                return Math.ceil((parseInt(lockoutUntil) - Date.now()) / (60 * 1000));
+            }
+            
+            handleFailedLogin() {
+                this.loginAttempts++;
+                localStorage.setItem('sim_login_attempts', this.loginAttempts.toString());
+                
+                if (this.loginAttempts >= this.maxLoginAttempts) {
+                    const lockoutUntil = Date.now() + this.lockoutDuration;
+                    localStorage.setItem('sim_lockout_until', lockoutUntil.toString());
+                }
+            }
+            
+            clearLoginAttempts() {
+                this.loginAttempts = 0;
+                localStorage.removeItem('sim_login_attempts');
+                localStorage.removeItem('sim_lockout_until');
+            }
+            
+            async login(credentials) {
+                if (this.isLockedOut()) {
+                    const remainingTime = this.getRemainingLockoutTime();
+                    throw new Error(`Account temporarily locked. Try again in ${remainingTime} minutes.`);
+                }
+                
+                try {
+                    const response = await this.apiService.post('/auth/login', {
+                        identifier: credentials.identifier,
+                        password: credentials.password,
+                        rememberMe: credentials.rememberMe
+                    });
+                    
+                    if (response.data && response.data.token) {
+                        this.clearLoginAttempts();
+                        
+                        // Store tokens
+                        localStorage.setItem(window.APP_CONFIG.TOKEN_KEY, response.data.token);
+                        if (response.data.refreshToken) {
+                            localStorage.setItem(window.APP_CONFIG.REFRESH_TOKEN_KEY, response.data.refreshToken);
+                        }
+                        if (response.data.user) {
+                            localStorage.setItem(window.APP_CONFIG.USER_KEY, JSON.stringify(response.data.user));
+                        }
+                        
+                        return {
+                            success: true,
+                            user: response.data.user,
+                            token: response.data.token
+                        };
+                    }
+                    
+                    throw new Error('Invalid response from server');
+                    
+                } catch (error) {
+                    if (error.status === 401) {
+                        this.handleFailedLogin();
+                        throw new Error('Invalid email/username or password');
+                    } else if (error.status === 423) {
+                        throw new Error('Account is temporarily locked. Please contact support.');
+                    } else if (error.status === 429) {
+                        throw new Error('Too many login attempts. Please try again later.');
+                    } else {
+                        throw new Error(error.message || 'Login failed. Please check your connection.');
+                    }
+                }
+            }
+        }
+        
+        // Initialize auth service
+        const authService = new SimpleAuthService();
+        
+        // DOM elements
+        const loginForm = document.getElementById('login-form');
+        const loginBtn = document.getElementById('login-btn');
+        const loginSpinner = document.getElementById('login-spinner');
+        const loginText = document.getElementById('login-text');
+        const alertContainer = document.getElementById('alert-container');
+        const lockoutInfo = document.getElementById('lockout-info');
+        const lockoutMessage = document.getElementById('lockout-message');
+        const attemptsInfo = document.getElementById('login-attempts-info');
+        const attemptsText = document.getElementById('attempts-text');
+        const togglePassword = document.getElementById('toggle-password');
+        const passwordField = document.getElementById('password');
+        
+        // Password toggle functionality
+        togglePassword.addEventListener('click', function() {
+            const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordField.setAttribute('type', type);
+            
+            const icon = this.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+        
+        // Check for account lockout on page load
+        function checkLockoutStatus() {
+            if (authService.isLockedOut()) {
+                const remainingTime = authService.getRemainingLockoutTime();
+                showLockoutInfo(remainingTime);
+                loginBtn.disabled = true;
+            } else {
+                hideLockoutInfo();
+                loginBtn.disabled = false;
+            }
+            
+            // Show login attempts if any
+            const attempts = authService.loginAttempts;
+            if (attempts > 0 && attempts < authService.maxLoginAttempts) {
+                showAttemptsInfo(attempts);
+            }
+        }
+        
+        function showLockoutInfo(remainingMinutes) {
+            lockoutMessage.textContent = `Please try again in ${remainingMinutes} minutes.`;
+            lockoutInfo.classList.remove('d-none');
+        }
+        
+        function hideLockoutInfo() {
+            lockoutInfo.classList.add('d-none');
+        }
+        
+        function showAttemptsInfo(attempts) {
+            const remaining = authService.maxLoginAttempts - attempts;
+            attemptsText.textContent = `${remaining} login attempts remaining`;
+            attemptsInfo.classList.remove('d-none');
+        }
+        
+        function hideAttemptsInfo() {
+            attemptsInfo.classList.add('d-none');
+        }
+        
+        function showAlert(message, type = 'danger') {
+            const alertHtml = `
+                <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-triangle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            `;
+            alertContainer.innerHTML = alertHtml;
+        }
+        
+        function clearFieldErrors() {
+            document.querySelectorAll('.is-invalid').forEach(field => {
+                field.classList.remove('is-invalid');
+            });
+        }
+        
+        function showFieldError(fieldName, message) {
+            const field = document.querySelector(`[name="${fieldName}"]`);
+            if (field) {
+                field.classList.add('is-invalid');
+                const feedback = field.parentElement.querySelector('.invalid-feedback');
+                if (feedback) {
+                    feedback.textContent = message;
+                }
+            }
+        }
+        
+        function setLoadingState(loading) {
+            loginBtn.disabled = loading;
+            if (loading) {
+                loginSpinner.classList.remove('d-none');
+                loginText.textContent = 'Signing In...';
+            } else {
+                loginSpinner.classList.add('d-none');
+                loginText.textContent = 'Sign In';
+            }
+        }
+        
+        // Handle form submission
+        loginForm.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            // Clear previous errors
+            clearFieldErrors();
+            alertContainer.innerHTML = '';
+            
+            // Check if account is locked
+            if (authService.isLockedOut()) {
+                const remainingTime = authService.getRemainingLockoutTime();
+                showAlert(`Account is temporarily locked. Please try again in ${remainingTime} minutes.`, 'warning');
+                return;
+            }
+            
+            // Get form data
+            const formData = new FormData(loginForm);
+            const credentials = {
+                identifier: formData.get('identifier').trim(),
+                password: formData.get('password'),
+                rememberMe: formData.get('rememberMe') === 'on'
+            };
+            
+            // Basic validation
+            if (!credentials.identifier) {
+                showFieldError('identifier', 'Email or username is required');
+                return;
+            }
+            
+            if (!credentials.password) {
+                showFieldError('password', 'Password is required');
+                return;
+            }
+            
+            // Set loading state
+            setLoadingState(true);
+            
+            try {
+                // Attempt login
+                const result = await authService.login(credentials);
+                
+                if (result.success) {
+                    // Login successful
+                    showAlert('Login successful! Redirecting...', 'success');
+                    hideAttemptsInfo();
+                    
+                    // Simulate redirect after 2 seconds
+                    setTimeout(() => {
+                        showAlert('Welcome to SIM Dashboard! (This is a test - backend not running)', 'info');
+                    }, 2000);
+                    
+                } else {
+                    throw new Error(result.message || 'Login failed');
+                }
+                
+            } catch (error) {
+                console.error('Login error:', error);
+                
+                // Show error message
+                showAlert(error.message || 'Login failed. Please try again.');
+                
+                // Update attempts info
+                const attempts = authService.loginAttempts;
+                if (attempts > 0 && attempts < authService.maxLoginAttempts) {
+                    showAttemptsInfo(attempts);
+                } else if (attempts >= authService.maxLoginAttempts) {
+                    hideAttemptsInfo();
+                    checkLockoutStatus();
+                }
+                
+            } finally {
+                setLoadingState(false);
+            }
+        });
+        
+        // Check lockout status on page load
+        checkLockoutStatus();
+        
+        // Add backend connection info
+        setTimeout(() => {
+            showAlert('Connected to real backend at http://localhost:8080 - Use valid credentials to login.', 'info');
+        }, 1000);
+        
+        console.log('Login test page loaded successfully');
+        console.log('AuthService initialized:', authService);
+    </script>
+</body>
+</html>

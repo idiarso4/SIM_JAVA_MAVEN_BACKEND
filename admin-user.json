@@ -1,0 +1,8 @@
+{
+  "username": "admin",
+  "email": "admin@sim.edu",
+  "name": "System Administrator",
+  "password": "admin123",
+  "userType": "ADMIN",
+  "isActive": true
+}

@@ -1,0 +1,16 @@
+{
+    "name": "School Information Management System",
+    "short_name": "SIM",
+    "description": "School Information Management System",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#667eea",
+    "theme_color": "#667eea",
+    "icons": [
+        {
+            "src": "favicon-32x32.png",
+            "sizes": "32x32",
+            "type": "image/png"
+        }
+    ]
+}

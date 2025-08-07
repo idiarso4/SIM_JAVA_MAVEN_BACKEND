@@ -25,7 +25,7 @@ public class CacheServiceImpl implements CacheService {
     @Autowired
     private CacheManager cacheManager;
 
-    @Autowired
+    @Autowired(required = false)
     private RedisTemplate<String, Object> redisTemplate;
 
     // Cache Invalidation Implementation

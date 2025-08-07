@@ -50,10 +50,11 @@ spring:
           min-idle: 0
   
   cache:
-    type: redis
-    redis:
-      time-to-live: 600000
-      cache-null-values: false
+    type: none
+    # Temporarily disabled Redis cache to fix startup issues
+    # redis:
+    #   time-to-live: 600000
+    #   cache-null-values: false
   
   servlet:
     multipart:
@@ -134,7 +135,7 @@ spring:
   
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: create-drop
     show-sql: true
   
   h2:

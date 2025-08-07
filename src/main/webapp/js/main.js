@@ -22,12 +22,19 @@ const AppState = {
     error: null
 };
 
-// Import modules (will be implemented in subsequent tasks)
+// Import modules
 import { AuthService } from './services/auth.js';
 import { ApiService } from './services/api.js';
 import { Router } from './utils/router.js';
 import { NotificationService } from './services/notification.js';
 import { LoadingService } from './services/loading.js';
+import { templateManager } from './utils/template.js';
+import { layoutManager } from './utils/layout.js';
+import { stateManager } from './utils/state.js';
+import { validator } from './utils/validation.js';
+import { rbacManager } from './utils/rbac.js';
+import { directiveManager } from './utils/directives.js';
+import { initDevTools, logger, performance as perfMonitor } from './utils/dev.js';
 
 /**
  * Application class - Main application controller
@@ -39,6 +46,12 @@ class Application {
         this.router = new Router();
         this.notificationService = new NotificationService();
         this.loadingService = new LoadingService();
+        this.templateManager = templateManager;
+        this.layoutManager = layoutManager;
+        this.stateManager = stateManager;
+        this.validator = validator;
+        this.rbacManager = rbacManager;
+        this.directiveManager = directiveManager;
         
         this.init();
     }
@@ -48,10 +61,17 @@ class Application {
      */
     async init() {
         try {
-            console.log('Initializing SIM Application...');
+            logger.info('Initializing SIM Application...');
+            perfMonitor.mark('app-init-start');
+            
+            // Initialize development tools
+            initDevTools();
             
             // Show loading spinner
             this.loadingService.show();
+            
+            // Initialize core systems
+            await this.initializeCoreServices();
             
             // Set up event listeners
             this.setupEventListeners();
@@ -62,16 +82,142 @@ class Application {
             // Initialize router
             this.router.init();
             
+            // Setup application state
+            this.setupApplicationState();
+            
             // Hide loading spinner and show app
             this.loadingService.hide();
             this.showApp();
             
-            console.log('SIM Application initialized successfully');
+            perfMonitor.mark('app-init-end');
+            perfMonitor.measure('app-initialization', 'app-init-start', 'app-init-end');
+            
+            logger.info('SIM Application initialized successfully');
+            this.layoutManager.announce('Application loaded successfully');
             
         } catch (error) {
-            console.error('Failed to initialize application:', error);
+            logger.error('Failed to initialize application:', error);
             this.handleError(error);
         }
+    }
+
+    /**
+     * Initialize core services
+     */
+    async initializeCoreServices() {
+        try {
+            // Initialize template manager
+            await this.templateManager.loadComponentTemplates();
+            
+            // Initialize layout manager
+            this.layoutManager.init();
+            
+            // Setup API interceptors
+            this.setupApiInterceptors();
+            
+            // Setup error handling
+            this.setupGlobalErrorHandling();
+            
+            logger.debug('Core services initialized');
+        } catch (error) {
+            logger.error('Failed to initialize core services:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Setup API interceptors
+     */
+    setupApiInterceptors() {
+        // Add request interceptor for authentication
+        this.apiService.setDefaultHeader('X-Requested-With', 'XMLHttpRequest');
+        
+        // Add response interceptor for error handling
+        const originalRequest = this.apiService.request.bind(this.apiService);
+        this.apiService.request = async (method, endpoint, options = {}) => {
+            try {
+                const response = await originalRequest(method, endpoint, options);
+                return response;
+            } catch (error) {
+                this.handleApiError(error);
+                throw error;
+            }
+        };
+    }
+
+    /**
+     * Setup global error handling
+     */
+    setupGlobalErrorHandling() {
+        // Handle unhandled promise rejections
+        window.addEventListener('unhandledrejection', (event) => {
+            logger.error('Unhandled promise rejection:', event.reason);
+            this.notificationService.showError('An unexpected error occurred');
+            event.preventDefault();
+        });
+
+        // Handle global errors
+        window.addEventListener('error', (event) => {
+            logger.error('Global error:', event.error);
+            this.notificationService.showError('An unexpected error occurred');
+        });
+    }
+
+    /**
+     * Handle API errors
+     */
+    handleApiError(error) {
+        if (error.status === 401) {
+            // Unauthorized - redirect to login
+            this.clearAuthData();
+            this.showLoginModal();
+        } else if (error.status === 403) {
+            // Forbidden
+            this.notificationService.showError('Access denied');
+        } else if (error.status === 429) {
+            // Too many requests
+            this.notificationService.showWarning('Too many requests. Please try again later.');
+        } else if (error.status >= 500) {
+            // Server error
+            this.notificationService.showError('Server error. Please try again later.');
+        }
+    }
+
+    /**
+     * Setup application state
+     */
+    setupApplicationState() {
+        // Listen for theme changes
+        window.addEventListener('themeChanged', (event) => {
+            logger.debug('Theme changed to:', event.detail.theme);
+        });
+
+        // Listen for layout changes
+        window.addEventListener('layoutResize', (event) => {
+            logger.debug('Layout resized:', event.detail);
+        });
+
+        // Setup periodic token refresh
+        if (AppState.isAuthenticated) {
+            this.setupTokenRefresh();
+        }
+    }
+
+    /**
+     * Setup token refresh
+     */
+    setupTokenRefresh() {
+        // Refresh token every 30 minutes
+        setInterval(async () => {
+            try {
+                if (this.isAuthenticated()) {
+                    await this.authService.refreshToken();
+                    logger.debug('Token refreshed automatically');
+                }
+            } catch (error) {
+                logger.warn('Automatic token refresh failed:', error);
+            }
+        }, 30 * 60 * 1000);
     }
 
     /**
@@ -266,10 +412,26 @@ class Application {
         AppState.isAuthenticated = true;
         
         // Update UI
-        document.getElementById('current-user-name').textContent = userData.firstName || userData.username;
+        const userNameElement = document.getElementById('current-user-name');
+        if (userNameElement) {
+            userNameElement.textContent = userData.firstName || userData.username;
+        }
+        
+        // Update user info in dropdown
+        const userInfoElement = document.getElementById('user-info');
+        if (userInfoElement) {
+            const roleDisplay = this.rbacManager.getUserRoleDisplayName();
+            userInfoElement.textContent = `${userData.firstName || userData.username} (${roleDisplay})`;
+        }
         
         // Store in localStorage
         localStorage.setItem(APP_CONFIG.USER_KEY, JSON.stringify(userData));
+        
+        // Apply RBAC permissions to UI
+        setTimeout(() => {
+            this.rbacManager.applyUIPermissions();
+            this.updateNavigationBasedOnPermissions();
+        }, 100);
     }
 
     /**
@@ -286,11 +448,101 @@ class Application {
     }
 
     /**
-     * Show login modal
+     * Show login modal or redirect to login page
      */
     showLoginModal() {
-        const loginModal = new bootstrap.Modal(document.getElementById('loginModal'));
-        loginModal.show();
+        // Check if we're already on the login page
+        if (window.location.pathname.includes('login.html')) {
+            return;
+        }
+        
+        // Redirect to dedicated login page for better UX
+        window.location.href = 'login.html';
+    }
+
+    /**
+     * Initialize login form component
+     */
+    async initializeLoginForm() {
+        try {
+            const { default: LoginForm } = await import('./components/login-form.js');
+            const container = document.getElementById('login-form-container');
+            
+            if (container) {
+                this.loginForm = new LoginForm(container, {
+                    showRememberMe: true,
+                    showForgotPassword: true,
+                    autoFocus: false // We'll handle focus manually
+                });
+                
+                // Setup login form event listeners
+                this.setupLoginFormListeners();
+                
+                logger.debug('Login form initialized');
+            }
+        } catch (error) {
+            logger.error('Failed to initialize login form:', error);
+            this.notificationService.showError('Failed to load login form');
+        }
+    }
+
+    /**
+     * Setup login form event listeners
+     */
+    setupLoginFormListeners() {
+        const container = document.getElementById('login-form-container');
+        if (!container) return;
+
+        // Handle login attempt
+        container.addEventListener('loginAttempt', async (e) => {
+            const { loginData } = e.detail;
+            
+            try {
+                logger.debug('Processing login attempt');
+                const response = await this.authService.login(loginData);
+                
+                if (response.success) {
+                    this.loginForm.handleLoginSuccess(response.user);
+                    
+                    // Store auth data
+                    this.setAuthenticatedUser(response.user);
+                    
+                    // Hide login modal
+                    const loginModal = bootstrap.Modal.getInstance(document.getElementById('loginModal'));
+                    if (loginModal) {
+                        loginModal.hide();
+                    }
+                    
+                    // Show success notification
+                    this.notificationService.showSuccess('Welcome back!');
+                    
+                    // Navigate to dashboard
+                    this.router.navigate('dashboard');
+                    
+                } else {
+                    throw new Error(response.message || 'Login failed');
+                }
+                
+            } catch (error) {
+                logger.error('Login attempt failed:', error);
+                this.loginForm.handleLoginError(error);
+            }
+        });
+
+        // Handle login success
+        container.addEventListener('loginSuccess', (e) => {
+            const { userData } = e.detail;
+            logger.info('Login successful for user:', userData.username);
+            
+            // Update UI state
+            this.layoutManager.announce(`Welcome back, ${userData.firstName || userData.username}`);
+        });
+
+        // Handle login error
+        container.addEventListener('loginError', (e) => {
+            const { error } = e.detail;
+            logger.warn('Login error handled by form:', error.message);
+        });
     }
 
     /**
@@ -363,20 +615,157 @@ class Application {
      * Check if user has specific permission
      */
     hasPermission(permission) {
-        if (!AppState.currentUser || !AppState.currentUser.permissions) {
-            return false;
-        }
-        return AppState.currentUser.permissions.includes(permission);
+        return this.rbacManager.hasPermission(permission);
     }
 
     /**
      * Check if user has specific role
      */
     hasRole(role) {
-        if (!AppState.currentUser || !AppState.currentUser.role) {
-            return false;
-        }
-        return AppState.currentUser.role === role;
+        return this.rbacManager.hasRole(role);
+    }
+
+    /**
+     * Update navigation based on user permissions
+     */
+    updateNavigationBasedOnPermissions() {
+        const navItems = [
+            { element: 'nav-students', route: 'students' },
+            { element: 'nav-users', route: 'users' },
+            { element: 'nav-grades', route: 'grades' },
+            { element: 'nav-reports', route: 'reports' }
+        ];
+
+        navItems.forEach(({ element, route }) => {
+            const navElement = document.querySelector(`[data-route="${route}"]`);
+            if (navElement) {
+                if (this.rbacManager.canAccessRoute(route)) {
+                    navElement.style.display = '';
+                    navElement.parentElement.style.display = '';
+                } else {
+                    navElement.style.display = 'none';
+                    navElement.parentElement.style.display = 'none';
+                }
+            }
+        });
+
+        // Update page actions based on permissions
+        this.updatePageActions();
+    }
+
+    /**
+     * Update page actions based on current route and permissions
+     */
+    updatePageActions() {
+        const currentRoute = this.router.getCurrentRoute();
+        if (!currentRoute) return;
+
+        const pageToolbar = document.getElementById('page-toolbar');
+        if (!pageToolbar) return;
+
+        // Clear existing actions
+        pageToolbar.innerHTML = '';
+
+        // Add route-specific actions based on permissions
+        const routeActions = this.getRouteActions(currentRoute.path);
+        routeActions.forEach(action => {
+            if (!action.permissions || this.rbacManager.hasAnyPermission(action.permissions)) {
+                const button = document.createElement('button');
+                button.className = `btn ${action.class || 'btn-primary'} me-2`;
+                button.innerHTML = `${action.icon ? `<i class="${action.icon} me-1"></i>` : ''}${action.text}`;
+                
+                if (action.onClick) {
+                    button.addEventListener('click', action.onClick);
+                }
+                
+                pageToolbar.appendChild(button);
+            }
+        });
+    }
+
+    /**
+     * Get actions for specific route
+     */
+    getRouteActions(route) {
+        const actions = {
+            'students': [
+                {
+                    text: 'Add Student',
+                    icon: 'fas fa-plus',
+                    class: 'btn-primary',
+                    permissions: ['CREATE_STUDENT', 'MANAGE_STUDENTS'],
+                    onClick: () => this.showCreateStudentModal()
+                },
+                {
+                    text: 'Import Students',
+                    icon: 'fas fa-upload',
+                    class: 'btn-outline-primary',
+                    permissions: ['MANAGE_STUDENTS'],
+                    onClick: () => this.showImportStudentsModal()
+                },
+                {
+                    text: 'Export Students',
+                    icon: 'fas fa-download',
+                    class: 'btn-outline-secondary',
+                    permissions: ['EXPORT_STUDENT_DATA', 'EXPORT_DATA'],
+                    onClick: () => this.exportStudents()
+                }
+            ],
+            'users': [
+                {
+                    text: 'Add User',
+                    icon: 'fas fa-user-plus',
+                    class: 'btn-primary',
+                    permissions: ['CREATE_USER', 'MANAGE_USERS'],
+                    onClick: () => this.showCreateUserModal()
+                }
+            ],
+            'grades': [
+                {
+                    text: 'Add Grade',
+                    icon: 'fas fa-plus',
+                    class: 'btn-primary',
+                    permissions: ['EDIT_GRADES', 'MANAGE_GRADES'],
+                    onClick: () => this.showAddGradeModal()
+                }
+            ],
+            'reports': [
+                {
+                    text: 'Generate Report',
+                    icon: 'fas fa-chart-bar',
+                    class: 'btn-primary',
+                    permissions: ['VIEW_REPORTS'],
+                    onClick: () => this.showGenerateReportModal()
+                }
+            ]
+        };
+
+        return actions[route] || [];
+    }
+
+    // Placeholder methods for actions (to be implemented in future tasks)
+    showCreateStudentModal() {
+        this.notificationService.showInfo('Create Student feature will be implemented in upcoming tasks');
+    }
+
+    showImportStudentsModal() {
+        this.notificationService.showInfo('Import Students feature will be implemented in upcoming tasks');
+    }
+
+    exportStudents() {
+        this.notificationService.showInfo('Export Students feature will be implemented in upcoming tasks');
+    }
+
+    showCreateUserModal() {
+        this.notificationService.showInfo('Create User feature will be implemented in upcoming tasks');
+    }
+
+    showAddGradeModal() {
+        this.notificationService.showInfo('Add Grade feature will be implemented in upcoming tasks');
+    }
+
+    showGenerateReportModal() {
+        this.notificationService.showInfo('Generate Report feature will be implemented in upcoming tasks');
     }
 }
 

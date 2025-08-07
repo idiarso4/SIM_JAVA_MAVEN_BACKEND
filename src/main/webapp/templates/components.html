@@ -1,0 +1,235 @@
+<!-- HTML Templates for Dynamic Components -->
+<!-- These templates will be used by JavaScript to create dynamic content -->
+
+<!-- Loading Card Template -->
+<template id="loading-card-template">
+    <div class="card h-100">
+        <div class="card-body d-flex justify-content-center align-items-center">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-2" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <div class="text-muted">Loading...</div>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Error Card Template -->
+<template id="error-card-template">
+    <div class="card h-100 border-danger">
+        <div class="card-body d-flex justify-content-center align-items-center">
+            <div class="text-center">
+                <i class="fas fa-exclamation-triangle text-danger fs-1 mb-3"></i>
+                <h5 class="card-title text-danger">Error Loading Data</h5>
+                <p class="card-text text-muted">Unable to load content. Please try again.</p>
+                <button class="btn btn-outline-danger btn-sm retry-btn">
+                    <i class="fas fa-redo me-1"></i>Retry
+                </button>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Empty State Template -->
+<template id="empty-state-template">
+    <div class="text-center py-5">
+        <i class="fas fa-inbox text-muted fs-1 mb-3"></i>
+        <h4 class="text-muted">No Data Available</h4>
+        <p class="text-muted">There's nothing to display at the moment.</p>
+        <button class="btn btn-primary create-btn">
+            <i class="fas fa-plus me-1"></i>Create New
+        </button>
+    </div>
+</template>
+
+<!-- Data Table Template -->
+<template id="data-table-template">
+    <div class="card">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 table-title">Data Table</h5>
+            <div class="d-flex align-items-center gap-2">
+                <!-- Search -->
+                <div class="input-group input-group-sm" style="width: 250px;">
+                    <input type="text" class="form-control search-input" placeholder="Search...">
+                    <button class="btn btn-outline-secondary search-btn" type="button">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </div>
+                <!-- Actions -->
+                <div class="btn-group" role="group">
+                    <button class="btn btn-sm btn-primary add-btn">
+                        <i class="fas fa-plus me-1"></i>Add
+                    </button>
+                    <button class="btn btn-sm btn-outline-secondary refresh-btn">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover mb-0 data-table">
+                    <thead class="table-light">
+                        <!-- Dynamic headers will be inserted here -->
+                    </thead>
+                    <tbody>
+                        <!-- Dynamic rows will be inserted here -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="card-footer">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="text-muted">
+                    <small class="table-info">Showing 0 of 0 entries</small>
+                </div>
+                <nav aria-label="Table pagination">
+                    <ul class="pagination pagination-sm mb-0 table-pagination">
+                        <!-- Pagination will be inserted here -->
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Form Modal Template -->
+<template id="form-modal-template">
+    <div class="modal fade" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form class="modal-form">
+                    <div class="modal-body">
+                        <!-- Form fields will be inserted here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-primary">
+                            <span class="spinner-border spinner-border-sm me-2 d-none"></span>
+                            Save
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- Statistics Card Template -->
+<template id="stats-card-template">
+    <div class="card dashboard-card h-100">
+        <div class="card-body">
+            <div class="d-flex align-items-center">
+                <div class="flex-grow-1">
+                    <div class="dashboard-stat stat-value">0</div>
+                    <div class="dashboard-label stat-label">Statistic</div>
+                </div>
+                <div class="stat-icon">
+                    <i class="fas fa-chart-bar fa-2x text-primary"></i>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer bg-transparent">
+            <small class="text-muted stat-description">
+                <i class="fas fa-arrow-up text-success me-1"></i>
+                <span class="stat-change">0%</span> from last month
+            </small>
+        </div>
+    </div>
+</template>
+
+<!-- Alert Template -->
+<template id="alert-template">
+    <div class="alert alert-dismissible fade show" role="alert">
+        <div class="d-flex align-items-center">
+            <i class="alert-icon me-2"></i>
+            <div class="flex-grow-1">
+                <strong class="alert-title">Alert</strong>
+                <div class="alert-message">Alert message</div>
+            </div>
+        </div>
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+</template>
+
+<!-- Breadcrumb Item Template -->
+<template id="breadcrumb-item-template">
+    <li class="breadcrumb-item">
+        <a href="#" class="breadcrumb-link">Item</a>
+    </li>
+</template>
+
+<!-- Breadcrumb Active Item Template -->
+<template id="breadcrumb-active-template">
+    <li class="breadcrumb-item active" aria-current="page">Item</li>
+</template>
+
+<!-- Notification Item Template -->
+<template id="notification-item-template">
+    <li>
+        <a class="dropdown-item d-flex align-items-start notification-item" href="#">
+            <div class="me-3">
+                <i class="notification-icon"></i>
+            </div>
+            <div class="flex-grow-1">
+                <div class="fw-medium notification-title">Notification</div>
+                <small class="text-muted notification-time">Just now</small>
+            </div>
+        </a>
+    </li>
+</template>
+
+<!-- Progress Bar Template -->
+<template id="progress-template">
+    <div class="progress-container mb-3">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+            <small class="text-muted progress-label">Progress</small>
+            <small class="text-muted progress-percentage">0%</small>
+        </div>
+        <div class="progress">
+            <div class="progress-bar progress-bar-striped progress-bar-animated" 
+                 role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+            </div>
+        </div>
+    </div>
+</template>
+
+<!-- File Upload Template -->
+<template id="file-upload-template">
+    <div class="file-upload-area border border-2 border-dashed rounded p-4 text-center">
+        <div class="file-upload-content">
+            <i class="fas fa-cloud-upload-alt fs-1 text-muted mb-3"></i>
+            <h5>Drop files here or click to browse</h5>
+            <p class="text-muted">Supported formats: PDF, DOC, DOCX, XLS, XLSX</p>
+            <input type="file" class="file-input d-none" multiple accept=".pdf,.doc,.docx,.xls,.xlsx">
+            <button type="button" class="btn btn-outline-primary browse-btn">
+                <i class="fas fa-folder-open me-1"></i>Browse Files
+            </button>
+        </div>
+        <div class="file-list mt-3 d-none">
+            <!-- Selected files will be listed here -->
+        </div>
+    </div>
+</template>
+
+<!-- Chart Container Template -->
+<template id="chart-container-template">
+    <div class="card h-100">
+        <div class="card-header d-flex justify-content-between align-items-center">
+            <h5 class="card-title mb-0 chart-title">Chart</h5>
+            <div class="btn-group btn-group-sm chart-controls" role="group">
+                <button type="button" class="btn btn-outline-secondary" data-period="week">Week</button>
+                <button type="button" class="btn btn-outline-secondary active" data-period="month">Month</button>
+                <button type="button" class="btn btn-outline-secondary" data-period="year">Year</button>
+            </div>
+        </div>
+        <div class="card-body">
+            <canvas class="chart-canvas" width="400" height="200"></canvas>
+        </div>
+    </div>
+</template>
