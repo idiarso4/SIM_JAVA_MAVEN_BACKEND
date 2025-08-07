@@ -48,9 +48,12 @@ public class CreateScheduleRequest {
     @Size(max = 500, message = "Notes must not exceed 500 characters")
     private String notes;
 
+    @Builder.Default
     private Boolean isActive = true;
 
     // Validation flags
+    @Builder.Default
     private Boolean skipConflictCheck = false;
+    @Builder.Default
     private Boolean allowOverlap = false;
 }

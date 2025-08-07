@@ -2,6 +2,10 @@
 echo Starting School Information Management System...
 echo.
 
+REM Set JAVA_HOME and Maven path
+set JAVA_HOME=C:\Program Files\Eclipse Adoptium\jdk-17.0.14.7-hotspot
+set PATH=C:\Maven\apache-maven-3.9.9\bin;%PATH%
+
 REM Check if Maven is installed
 mvn --version >nul 2>&1
 if %errorlevel% neq 0 (
@@ -19,6 +23,8 @@ mvn clean compile -DskipTests
 
 if %errorlevel% neq 0 (
     echo Compilation failed!
+    echo Please check the error messages above.
+    echo Most likely missing Lombok annotations (@Getter, @Setter, @Slf4j, @Builder)
     pause
     exit /b 1
 )

@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -577,6 +577,9 @@ public class ReportServiceImpl implements ReportService {
                     break;
                 case LATE:
                     classSummary.put("late", (Long) classSummary.get("late") + 1);
+                    break;
+                case SICK:
+                    classSummary.put("sick", (Long) classSummary.getOrDefault("sick", 0L) + 1);
                     break;
                 case PERMIT:
                     classSummary.put("excused", (Long) classSummary.get("excused") + 1);

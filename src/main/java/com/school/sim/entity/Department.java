@@ -1,5 +1,7 @@
 package com.school.sim.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -16,6 +18,11 @@ import java.util.Objects;
         @Index(name = "idx_department_code", columnList = "code"),
         @Index(name = "idx_department_name", columnList = "name")
 })
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Department {
 
     @Id
@@ -35,6 +42,7 @@ public class Department {
     @Column(name = "description", columnDefinition = "TEXT")
     private String description;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
@@ -44,12 +52,9 @@ public class Department {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @OneToMany(mappedBy = "department", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Major> majors = new ArrayList<>();
-
-    // Constructors
-    public Department() {
-    }
 
     public Department(String code, String name) {
         this.code = code;

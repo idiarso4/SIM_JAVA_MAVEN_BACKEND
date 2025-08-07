@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
+
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
@@ -54,18 +54,16 @@ public class DatabaseOptimizationServiceImpl implements DatabaseOptimizationServ
         
         try {
             // Enable slow query log analysis (MySQL specific)
-            String slowQueryAnalysis = """
-                SELECT 
-                    query_time,
-                    lock_time,
-                    rows_sent,
-                    rows_examined,
-                    sql_text
-                FROM mysql.slow_log 
-                WHERE start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR)
-                ORDER BY query_time DESC 
-                LIMIT 50
-                """;
+            String slowQueryAnalysis = "SELECT " +
+                    "query_time, " +
+                    "lock_time, " +
+                    "rows_sent, " +
+                    "rows_examined, " +
+                    "sql_text " +
+                "FROM mysql.slow_log " +
+                "WHERE start_time >= DATE_SUB(NOW(), INTERVAL 24 HOUR) " +
+                "ORDER BY query_time DESC " +
+                "LIMIT 50";
             
             try {
                 List<Map<String, Object>> results = jdbcTemplate.queryForList(slowQueryAnalysis);

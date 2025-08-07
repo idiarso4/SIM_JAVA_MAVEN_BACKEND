@@ -221,11 +221,11 @@ public class AttendanceServiceImpl implements AttendanceService {
                 request.getStudentAttendances().size());
 
         return new AttendanceService.BulkAttendanceResult(
+                responses,
+                errors,
                 request.getStudentAttendances().size(),
                 responses.size(),
-                errors.size(),
-                errors,
-                responses);
+                errors.size());
     }
 
     // Helper methods

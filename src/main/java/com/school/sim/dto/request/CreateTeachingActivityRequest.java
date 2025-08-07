@@ -40,6 +40,7 @@ public class CreateTeachingActivityRequest {
     @Size(max = 500, message = "Notes must not exceed 500 characters")
     private String notes;
 
+    @Builder.Default
     private Boolean isCompleted = false;
 
     // Optional overrides for schedule defaults

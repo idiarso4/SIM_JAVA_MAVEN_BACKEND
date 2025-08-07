@@ -6,7 +6,7 @@ import com.school.sim.dto.request.CreateAttendanceRequest;
 import com.school.sim.dto.request.UpdateAttendanceRequest;
 import com.school.sim.dto.response.AttendanceReportResponse;
 import com.school.sim.dto.response.AttendanceResponse;
-import com.school.sim.dto.response.BulkAttendanceResult;
+
 import com.school.sim.entity.AttendanceStatus;
 import com.school.sim.service.AttendanceReportService;
 import com.school.sim.service.AttendanceService;
@@ -37,7 +37,7 @@ import javax.validation.constraints.NotNull;
 import java.io.ByteArrayOutputStream;
 import java.time.LocalDate;
 import java.util.HashMap;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Optional;
 
@@ -278,10 +278,10 @@ public class AttendanceController {
             
             Map<String, Object> response = new HashMap<>();
             response.put("message", "Bulk attendance recorded successfully");
-            response.put("totalProcessed", result.getTotalRecords());
-            response.put("successCount", result.getSuccessfulRecords());
-            response.put("errorCount", result.getFailedRecords());
-            response.put("successfulRecords", result.getRecordedAttendances());
+            response.put("totalProcessed", result.getTotalProcessed());
+            response.put("successCount", result.getSuccessCount());
+            response.put("errorCount", result.getErrorCount());
+            response.put("successfulRecords", result.getSuccessfulRecords());
             response.put("errors", result.getErrors());
             response.put("timestamp", System.currentTimeMillis());
             

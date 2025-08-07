@@ -133,6 +133,23 @@ public class ClassRoom {
         this.classCode = classCode;
     }
 
+    // Alias methods for compatibility
+    public String getCode() {
+        return classCode;
+    }
+
+    public void setCode(String code) {
+        this.classCode = code;
+    }
+
+    public String getLocation() {
+        return name; // Using name as location for now
+    }
+
+    public void setLocation(String location) {
+        this.name = location;
+    }
+
     public Integer getCapacity() {
         return capacity;
     }

@@ -1,5 +1,7 @@
 package com.school.sim.entity;
 
+import lombok.*;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -17,6 +19,11 @@ import java.util.Objects;
         @Index(name = "idx_student_nis", columnList = "nis"),
         @Index(name = "idx_student_status", columnList = "status")
 })
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class Student {
 
     @Id
@@ -81,6 +88,7 @@ public class Student {
     @Column(name = "asal_sekolah", length = 100)
     private String asalSekolah;
 
+    @Builder.Default
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, length = 20)
     private StudentStatus status = StudentStatus.ACTIVE;
@@ -104,10 +112,6 @@ public class Student {
         inverseJoinColumns = @JoinColumn(name = "extracurricular_activity_id")
     )
     private List<ExtracurricularActivity> extracurricularActivities;
-
-    // Constructors
-    public Student() {
-    }
 
     public Student(String nis, String namaLengkap) {
         this.nis = nis;

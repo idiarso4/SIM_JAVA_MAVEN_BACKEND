@@ -7,6 +7,9 @@ import javax.validation.constraints.Size;
  * Login request DTO for user authentication
  * Supports login with email or NIP (for teachers)
  */
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 public class LoginRequest {
 
     @NotBlank(message = "Identifier is required")
@@ -17,21 +20,10 @@ public class LoginRequest {
     @Size(min = 6, max = 100, message = "Password must be between 6 and 100 characters")
     private String password;
 
+    @lombok.Builder.Default
     private boolean rememberMe = false;
 
-    // Constructors
-    public LoginRequest() {}
 
-    public LoginRequest(String identifier, String password) {
-        this.identifier = identifier;
-        this.password = password;
-    }
-
-    public LoginRequest(String identifier, String password, boolean rememberMe) {
-        this.identifier = identifier;
-        this.password = password;
-        this.rememberMe = rememberMe;
-    }
 
     // Getters and Setters
     public String getIdentifier() {

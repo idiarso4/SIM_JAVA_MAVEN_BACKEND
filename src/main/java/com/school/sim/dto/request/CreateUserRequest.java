@@ -9,6 +9,9 @@ import javax.validation.constraints.Size;
 /**
  * Request DTO for creating a new user
  */
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 public class CreateUserRequest {
 
     @NotBlank(message = "Name is required")
@@ -36,17 +39,10 @@ public class CreateUserRequest {
     @NotNull(message = "User type is required")
     private UserType userType;
 
+    @lombok.Builder.Default
     private boolean active = true;
 
-    // Constructors
-    public CreateUserRequest() {}
 
-    public CreateUserRequest(String name, String email, String password, UserType userType) {
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.userType = userType;
-    }
 
     // Getters and Setters
     public String getName() {

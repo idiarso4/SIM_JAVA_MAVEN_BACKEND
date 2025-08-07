@@ -3,9 +3,6 @@ package com.school.sim.config;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
-import com.fasterxml.jackson.databind.type.MapType;
-import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,7 +11,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.interceptor.CacheErrorHandler;
-import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -217,22 +213,30 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     public CacheErrorHandler errorHandler() {
         return new CacheErrorHandler() {
             @Override
-            public void handleCacheGetError(RuntimeException exception, org.springframework.cache.Cache cache, Object key) {
+            public void handleCacheGetError(@org.springframework.lang.NonNull RuntimeException exception, 
+                                           @org.springframework.lang.NonNull org.springframework.cache.Cache cache, 
+                                           @org.springframework.lang.NonNull Object key) {
                 logger.warn("Cache GET error for cache '{}' and key '{}': {}", cache.getName(), key, exception.getMessage());
             }
 
             @Override
-            public void handleCachePutError(RuntimeException exception, org.springframework.cache.Cache cache, Object key, Object value) {
+            public void handleCachePutError(@org.springframework.lang.NonNull RuntimeException exception, 
+                                          @org.springframework.lang.NonNull org.springframework.cache.Cache cache, 
+                                          @org.springframework.lang.NonNull Object key, 
+                                          @org.springframework.lang.Nullable Object value) {
                 logger.warn("Cache PUT error for cache '{}' and key '{}': {}", cache.getName(), key, exception.getMessage());
             }
 
             @Override
-            public void handleCacheEvictError(RuntimeException exception, org.springframework.cache.Cache cache, Object key) {
+            public void handleCacheEvictError(@org.springframework.lang.NonNull RuntimeException exception, 
+                                            @org.springframework.lang.NonNull org.springframework.cache.Cache cache, 
+                                            @org.springframework.lang.NonNull Object key) {
                 logger.warn("Cache EVICT error for cache '{}' and key '{}': {}", cache.getName(), key, exception.getMessage());
             }
 
             @Override
-            public void handleCacheClearError(RuntimeException exception, org.springframework.cache.Cache cache) {
+            public void handleCacheClearError(@org.springframework.lang.NonNull RuntimeException exception, 
+                                            @org.springframework.lang.NonNull org.springframework.cache.Cache cache) {
                 logger.warn("Cache CLEAR error for cache '{}': {}", cache.getName(), exception.getMessage());
             }
         };

@@ -69,6 +69,7 @@ public class User {
     @Column(name = "user_type", nullable = false, length = 20)
     private UserType userType;
 
+    @Builder.Default
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;
 
@@ -93,6 +94,7 @@ public class User {
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
+    @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_roles",

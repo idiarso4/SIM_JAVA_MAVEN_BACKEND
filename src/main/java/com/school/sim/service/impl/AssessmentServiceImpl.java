@@ -5,7 +5,7 @@ import com.school.sim.dto.response.AssessmentResponse;
 import com.school.sim.dto.response.StudentAssessmentResponse;
 import com.school.sim.entity.*;
 import com.school.sim.exception.ResourceNotFoundException;
-import com.school.sim.exception.ValidationException;
+
 import com.school.sim.repository.*;
 import com.school.sim.service.AssessmentService;
 import lombok.RequiredArgsConstructor;

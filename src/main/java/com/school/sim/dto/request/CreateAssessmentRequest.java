@@ -62,5 +62,6 @@ public class CreateAssessmentRequest {
     @Size(max = 2000, message = "Instructions must not exceed 2000 characters")
     private String instructions;
 
+    @Builder.Default
     private Boolean isActive = true;
 }

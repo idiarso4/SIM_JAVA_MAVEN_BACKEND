@@ -13,6 +13,9 @@ import java.time.LocalDate;
 /**
  * Request DTO for creating a new student
  */
+@lombok.Builder
+@lombok.NoArgsConstructor
+@lombok.AllArgsConstructor
 public class CreateStudentRequest {
 
     @NotBlank(message = "NIS is required")
@@ -65,16 +68,10 @@ public class CreateStudentRequest {
     @Size(max = 100, message = "Origin school must not exceed 100 characters")
     private String asalSekolah;
 
+    @lombok.Builder.Default
     private StudentStatus status = StudentStatus.ACTIVE;
 
-    // Constructors
-    public CreateStudentRequest() {}
 
-    public CreateStudentRequest(String nis, String namaLengkap, Integer tahunMasuk) {
-        this.nis = nis;
-        this.namaLengkap = namaLengkap;
-        this.tahunMasuk = tahunMasuk;
-    }
 
     // Getters and Setters
     public String getNis() {

@@ -137,4 +137,29 @@ public class Subject {
     public void setUpdatedAt(LocalDateTime updatedAt) {
         this.updatedAt = updatedAt;
     }
+    
+    // Alias methods for compatibility
+    public String getName() {
+        return namaMapel;
+    }
+    
+    public void setName(String name) {
+        this.namaMapel = name;
+    }
+    
+    public String getCode() {
+        return kodeMapel;
+    }
+    
+    public void setCode(String code) {
+        this.kodeMapel = code;
+    }
+    
+    public Integer getCredits() {
+        return sks;
+    }
+    
+    public void setCredits(Integer credits) {
+        this.sks = credits;
+    }
 }

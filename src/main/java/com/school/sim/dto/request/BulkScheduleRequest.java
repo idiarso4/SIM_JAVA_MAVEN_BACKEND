@@ -22,8 +22,12 @@ public class BulkScheduleRequest {
     @Valid
     private List<CreateScheduleRequest> schedules;
 
+    @Builder.Default
     private Boolean skipConflictCheck = false;
+    @Builder.Default
     private Boolean allowOverlap = false;
+    @Builder.Default
     private Boolean validateAll = true;
+    @Builder.Default
     private Boolean stopOnFirstError = true;
 }

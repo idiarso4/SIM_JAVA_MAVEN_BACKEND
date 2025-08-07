@@ -38,6 +38,8 @@ public class UpdateScheduleRequest {
     private Boolean isActive;
 
     // Validation flags
+    @Builder.Default
     private Boolean skipConflictCheck = false;
+    @Builder.Default
     private Boolean allowOverlap = false;
 }

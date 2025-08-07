@@ -45,6 +45,7 @@ public class GradeAssessmentRequest {
         @Size(max = 500, message = "Notes must not exceed 500 characters")
         private String notes;
 
+        @Builder.Default
         private Boolean isSubmitted = false;
     }
 }

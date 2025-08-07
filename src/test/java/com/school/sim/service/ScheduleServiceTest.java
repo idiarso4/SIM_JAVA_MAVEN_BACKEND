@@ -4,7 +4,7 @@ import com.school.sim.dto.request.CreateScheduleRequest;
 import com.school.sim.dto.response.ScheduleResponse;
 import com.school.sim.entity.*;
 import com.school.sim.repository.*;
-import com.school.sim.service.ScheduleService;
+
 import com.school.sim.service.impl.ScheduleServiceImpl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

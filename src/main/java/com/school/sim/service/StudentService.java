@@ -4,7 +4,7 @@ import com.school.sim.dto.request.CreateStudentRequest;
 import com.school.sim.dto.request.UpdateStudentRequest;
 import com.school.sim.dto.request.StudentSearchRequest;
 import com.school.sim.dto.response.StudentResponse;
-import com.school.sim.entity.Student;
+
 import com.school.sim.entity.StudentStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;

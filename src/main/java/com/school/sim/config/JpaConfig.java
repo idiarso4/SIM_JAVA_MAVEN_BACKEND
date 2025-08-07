@@ -1,6 +1,5 @@
 package com.school.sim.config;
 
-import org.hibernate.jpa.HibernatePersistenceProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.domain.AuditorAware;
@@ -35,7 +34,7 @@ public class JpaConfig {
     public static class AuditorAwareImpl implements AuditorAware<String> {
         
         @Override
-        public Optional<String> getCurrentAuditor() {
+        public @org.springframework.lang.NonNull Optional<String> getCurrentAuditor() {
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
             
             if (authentication == null || !authentication.isAuthenticated() || 
