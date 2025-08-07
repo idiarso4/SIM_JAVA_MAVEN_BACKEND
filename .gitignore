@@ -48,6 +48,9 @@ buildNumber.properties
 bin/
 
 # Spring Boot
+
+# Kiro specs
+.kiro/
 *.pid
 spring-boot-*.log
 
