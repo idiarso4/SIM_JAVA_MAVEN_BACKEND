@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Dashboard - Clean Version</title>
+    
+    <!-- Force no cache -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link href="css/dashboard.css?v=<?php echo time(); ?>" rel="stylesheet">
+</head>
+<body>
+    <!-- Notification Container -->
+    <div id="notification-container" class="position-fixed top-0 end-0 p-3" style="z-index: 9999;"></div>
+
+    <!-- Application Root -->
+    <div id="app-root">
+        <div class="d-flex justify-content-center align-items-center min-vh-100">
+            <div class="text-center">
+                <div class="mb-4">
+                    <div class="logo-circle bg-primary text-white d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px; border-radius: 50%; font-size: 2rem;">
+                        <i class="fas fa-graduation-cap"></i>
+                    </div>
+                </div>
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h4 class="text-primary mb-2">SIM Dashboard</h4>
+                <p class="text-muted">School Information Management System</p>
+                <small class="text-success">Clean Version - No Cache</small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Dashboard JS with cache busting -->
+    <script>
+        // Force reload dashboard.js without cache
+        const script = document.createElement('script');
+        script.src = 'js/components/dashboard.js?v=' + Date.now();
+        script.onload = function() {
+            console.log('🚀 Dashboard script loaded fresh - no cache');
+        };
+        document.head.appendChild(script);
+    </script>
+    
+    <script>
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('🚀 Clean Dashboard Starting...');
+            
+            // Wait for dashboard script to load
+            const checkDashboard = setInterval(() => {
+                if (typeof Dashboard !== 'undefined') {
+                    clearInterval(checkDashboard);
+                    
+                    console.log('🚀 Initializing Clean SIM Dashboard...');
+                    
+                    // Clear the loading screen
+                    document.getElementById('app-root').innerHTML = '';
+                    
+                    // Initialize dashboard
+                    window.dashboard = new Dashboard();
+                    window.dashboard.init();
+                    
+                    console.log('🚀 Clean SIM Dashboard Ready!');
+                }
+            }, 100);
+        });
+    </script>
+</body>
+</html>

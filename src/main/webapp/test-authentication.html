@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM Authentication Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .test-case { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .failure { background-color: #f8d7da; border-color: #f5c6cb; }
+        .info { background-color: #d1ecf1; border-color: #bee5eb; }
+        button { margin: 5px; padding: 10px 15px; }
+        input { margin: 5px; padding: 8px; width: 200px; }
+        #results { margin-top: 20px; max-height: 400px; overflow-y: auto; }
+    </style>
+</head>
+<body>
+    <h1>🔐 SIM Authentication Test</h1>
+    
+    <div class="info">
+        <h3>Valid Credentials:</h3>
+        <ul>
+            <li><strong>admin@sim.edu</strong> / admin123</li>
+            <li><strong>admin</strong> / admin123</li>
+            <li><strong>teacher@sim.edu</strong> / teacher123</li>
+            <li><strong>user@sim.edu</strong> / user123</li>
+        </ul>
+    </div>
+
+    <h3>Manual Test:</h3>
+    <div>
+        <input type="text" id="username" placeholder="Username" value="admin@sim.edu">
+        <input type="password" id="password" placeholder="Password" value="admin123">
+        <button onclick="testLogin()">Test Login</button>
+        <button onclick="clearResults()">Clear Results</button>
+    </div>
+
+    <h3>Automated Tests:</h3>
+    <button onclick="runAllTests()">Run All Tests</button>
+    <button onclick="testValidCredentials()">Test Valid Credentials</button>
+    <button onclick="testInvalidCredentials()">Test Invalid Credentials</button>
+
+    <div id="results"></div>
+
+    <script src="js/components/dashboard.js"></script>
+    <script>
+        let authService;
+
+        // Initialize auth service
+        document.addEventListener('DOMContentLoaded', function() {
+            authService = new AuthService();
+            console.log('🚀 Auth service initialized for testing');
+            addResult('🚀 Authentication test page loaded', 'info');
+        });
+
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            addResult(`Testing: ${username} / ${'*'.repeat(password.length)}`, 'info');
+            
+            try {
+                const result = await authService.login(username, password);
+                addResult(`✅ SUCCESS: ${result.message}`, 'success');
+                addResult(`User: ${result.user.name} (${result.user.role})`, 'info');
+                authService.logout(); // Clean up
+            } catch (error) {
+                addResult(`❌ FAILED: ${error.message}`, 'failure');
+            }
+        }
+
+        async function testValidCredentials() {
+            const validCreds = [
+                { username: 'admin@sim.edu', password: 'admin123' },
+                { username: 'admin', password: 'admin123' },
+                { username: 'teacher@sim.edu', password: 'teacher123' },
+                { username: 'user@sim.edu', password: 'user123' }
+            ];
+
+            addResult('🧪 Testing Valid Credentials...', 'info');
+
+            for (const cred of validCreds) {
+                try {
+                    const result = await authService.login(cred.username, cred.password);
+                    addResult(`✅ ${cred.username}: SUCCESS (${result.user.role})`, 'success');
+                    authService.logout(); // Clean up
+                } catch (error) {
+                    addResult(`❌ ${cred.username}: FAILED - ${error.message}`, 'failure');
+                }
+            }
+        }
+
+        async function testInvalidCredentials() {
+            const invalidCreds = [
+                { username: 'admin@sim.edu', password: 'wrong123', reason: 'Wrong password' },
+                { username: 'wrong@sim.edu', password: 'admin123', reason: 'Wrong username' },
+                { username: 'admin', password: 'password', reason: 'Wrong password' },
+                { username: '', password: 'admin123', reason: 'Empty username' },
+                { username: 'admin@sim.edu', password: '', reason: 'Empty password' },
+                { username: 'random', password: 'random', reason: 'Invalid credentials' },
+                { username: 'admin@sim.edu', password: '123', reason: 'Password too short' },
+                { username: 'ADMIN@SIM.EDU', password: 'admin123', reason: 'Case sensitive test' },
+                { username: 'admin@sim.edu', password: 'ADMIN123', reason: 'Case sensitive password' }
+            ];
+
+            addResult('🧪 Testing Invalid Credentials (should all fail)...', 'info');
+
+            for (const cred of invalidCreds) {
+                try {
+                    const result = await authService.login(cred.username, cred.password);
+                    addResult(`❌ ${cred.username}/${cred.password}: SECURITY BREACH! Should have failed (${cred.reason})`, 'failure');
+                } catch (error) {
+                    addResult(`✅ ${cred.username}/${cred.password}: Correctly rejected (${cred.reason})`, 'success');
+                }
+            }
+        }
+
+        async function runAllTests() {
+            clearResults();
+            addResult('🚀 Starting Complete Authentication Test Suite...', 'info');
+            
+            await testValidCredentials();
+            await new Promise(resolve => setTimeout(resolve, 1000)); // Wait 1 second
+            await testInvalidCredentials();
+            
+            addResult('🏁 All tests completed! Check results above.', 'info');
+        }
+
+        function addResult(message, type) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `test-case ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}</strong>: ${message}`;
+            results.appendChild(div);
+            results.scrollTop = results.scrollHeight;
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+    </script>
+</body>
+</html>

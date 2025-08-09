@@ -12,6 +12,8 @@ import com.school.sim.service.StudentService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -161,7 +163,7 @@ public class StudentServiceImpl implements StudentService {
     public Optional<StudentResponse> getStudentById(Long studentId) {
         logger.debug("Fetching student by ID: {}", studentId);
         return studentRepository.findById(studentId)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -169,7 +171,7 @@ public class StudentServiceImpl implements StudentService {
     public Optional<StudentResponse> getStudentByNis(String nis) {
         logger.debug("Fetching student by NIS: {}", nis);
         return studentRepository.findByNis(nis)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -177,25 +179,24 @@ public class StudentServiceImpl implements StudentService {
     public Page<StudentResponse> getAllStudents(Pageable pageable) {
         logger.debug("Fetching all students with pagination: {}", pageable);
         return studentRepository.findAll(pageable)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
     @Transactional(readOnly = true)
     public Page<StudentResponse> searchStudents(StudentSearchRequest searchRequest, Pageable pageable) {
         logger.debug("Searching students with criteria: {}", searchRequest);
-        
+
         return studentRepository.advancedSearchStudents(
-            searchRequest.getName(),
-            searchRequest.getNis(),
-            searchRequest.getClassRoomId(),
-            searchRequest.getStatus(),
-            searchRequest.getTahunMasuk(),
-            searchRequest.getAgama(),
-            searchRequest.getAsalSekolah(),
-            searchRequest.getParentName(),
-            pageable
-        ).map(StudentResponse::from);
+                searchRequest.getName(),
+                searchRequest.getNis(),
+                searchRequest.getClassRoomId(),
+                searchRequest.getStatus(),
+                searchRequest.getTahunMasuk(),
+                searchRequest.getAgama(),
+                searchRequest.getAsalSekolah(),
+                searchRequest.getParentName(),
+                pageable).map(StudentResponse::from);
     }
 
     @Override
@@ -203,7 +204,7 @@ public class StudentServiceImpl implements StudentService {
     public Page<StudentResponse> getStudentsByClassRoom(Long classRoomId, Pageable pageable) {
         logger.debug("Fetching students by class room ID: {}", classRoomId);
         return studentRepository.findByClassRoomId(classRoomId, pageable)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -211,7 +212,7 @@ public class StudentServiceImpl implements StudentService {
     public Page<StudentResponse> getStudentsByStatus(StudentStatus status, Pageable pageable) {
         logger.debug("Fetching students by status: {}", status);
         return studentRepository.findByStatus(status, pageable)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -219,7 +220,7 @@ public class StudentServiceImpl implements StudentService {
     public Page<StudentResponse> getStudentsByMajor(Long majorId, Pageable pageable) {
         logger.debug("Fetching students by major ID: {}", majorId);
         return studentRepository.findByMajorId(majorId, pageable)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -227,7 +228,7 @@ public class StudentServiceImpl implements StudentService {
     public Page<StudentResponse> getStudentsByGrade(Integer grade, Pageable pageable) {
         logger.debug("Fetching students by grade: {}", grade);
         return studentRepository.findByGrade(grade, pageable)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -235,7 +236,7 @@ public class StudentServiceImpl implements StudentService {
     public Page<StudentResponse> getStudentsByAcademicYear(String academicYear, Pageable pageable) {
         logger.debug("Fetching students by academic year: {}", academicYear);
         return studentRepository.findByAcademicYear(academicYear, pageable)
-            .map(StudentResponse::from);
+                .map(StudentResponse::from);
     }
 
     @Override
@@ -243,7 +244,7 @@ public class StudentServiceImpl implements StudentService {
         logger.info("Deleting student with ID: {}", studentId);
 
         Student student = findStudentById(studentId);
-        
+
         // Check if student has attendance or assessment records
         if (hasAttendanceRecords(studentId) || hasAssessmentRecords(studentId)) {
             throw new ValidationException("Cannot delete student with existing attendance or assessment records");
@@ -336,13 +337,13 @@ public class StudentServiceImpl implements StudentService {
         }
 
         Long oldClassRoomId = student.getClassRoom() != null ? student.getClassRoom().getId() : null;
-        
+
         student.setClassRoom(newClassRoom);
         student.setUpdatedAt(LocalDateTime.now());
         studentRepository.save(student);
 
-        logger.info("Successfully transferred student {} from class room {} to class room {}", 
-                   studentId, oldClassRoomId, newClassRoomId);
+        logger.info("Successfully transferred student {} from class room {} to class room {}",
+                studentId, oldClassRoomId, newClassRoomId);
     }
 
     @Override
@@ -364,28 +365,25 @@ public class StudentServiceImpl implements StudentService {
         // Students by status
         List<Object[]> statusStats = studentRepository.getStudentStatisticsByStatus();
         Map<String, Long> statusMap = statusStats.stream()
-            .collect(Collectors.toMap(
-                row -> row[0].toString(),
-                row -> (Long) row[1]
-            ));
+                .collect(Collectors.toMap(
+                        row -> row[0].toString(),
+                        row -> (Long) row[1]));
         statistics.put("studentsByStatus", statusMap);
 
         // Students by grade
         List<Object[]> gradeStats = studentRepository.getStudentStatisticsByGrade();
         Map<String, Long> gradeMap = gradeStats.stream()
-            .collect(Collectors.toMap(
-                row -> "Grade " + row[0].toString(),
-                row -> (Long) row[1]
-            ));
+                .collect(Collectors.toMap(
+                        row -> "Grade " + row[0].toString(),
+                        row -> (Long) row[1]));
         statistics.put("studentsByGrade", gradeMap);
 
         // Students by major
         List<Object[]> majorStats = studentRepository.getStudentStatisticsByMajor();
         Map<String, Long> majorMap = majorStats.stream()
-            .collect(Collectors.toMap(
-                row -> row[0].toString(),
-                row -> (Long) row[1]
-            ));
+                .collect(Collectors.toMap(
+                        row -> row[0].toString(),
+                        row -> (Long) row[1]));
         statistics.put("studentsByMajor", majorMap);
 
         // Students without class assignment
@@ -404,8 +402,8 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentResponse> getStudentsWithoutClassAssignment() {
         logger.debug("Fetching students without class assignment");
         return studentRepository.findByClassRoomIsNull().stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -413,8 +411,8 @@ public class StudentServiceImpl implements StudentService {
     public List<StudentResponse> getStudentsWithoutUserAccount() {
         logger.debug("Fetching students without user account");
         return studentRepository.findStudentsWithoutUserAccount().stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -494,45 +492,51 @@ public class StudentServiceImpl implements StudentService {
     }
 
     // Additional methods implementation continues...
-    
+
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponse> getStudentsByBirthYear(Integer birthYear) {
         return studentRepository.findByBirthYear(birthYear).stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponse> getStudentsByAgeRange(Integer minAge, Integer maxAge) {
         return studentRepository.findByAgeRange(minAge, maxAge).stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponse> getStudentsByGender(String gender) {
-        return studentRepository.findByGender(gender).stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+        try {
+            Gender genderEnum = Gender.valueOf(gender.toUpperCase());
+            return studentRepository.findByJenisKelamin(genderEnum).stream()
+                    .map(StudentResponse::from)
+                    .collect(Collectors.toList());
+        } catch (IllegalArgumentException e) {
+            // If invalid gender string, return empty list
+            return new ArrayList<>();
+        }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponse> getStudentsByReligion(String religion) {
         return studentRepository.findByAgama(religion).stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<StudentResponse> getStudentsByOriginSchool(String originSchool) {
         return studentRepository.findByAsalSekolah(originSchool).stream()
-            .map(StudentResponse::from)
-            .collect(Collectors.toList());
+                .map(StudentResponse::from)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -555,13 +559,13 @@ public class StudentServiceImpl implements StudentService {
         // This would typically involve a separate enrollment history table
         // For now, return basic information
         Student student = findStudentById(studentId);
-        
+
         Map<String, Object> enrollment = new HashMap<>();
         enrollment.put("studentId", studentId);
         enrollment.put("currentClassRoom", student.getClassRoom());
         enrollment.put("enrollmentDate", student.getCreatedAt());
         enrollment.put("status", student.getStatus());
-        
+
         return List.of(enrollment);
     }
 
@@ -570,10 +574,10 @@ public class StudentServiceImpl implements StudentService {
     public boolean canAssignToClassRoom(Long classRoomId, int additionalStudents) {
         ClassRoom classRoom = findClassRoomById(classRoomId);
         long currentCount = getActiveStudentCountByClassRoom(classRoomId);
-        
+
         // Assuming maximum capacity of 40 students per class
         int maxCapacity = classRoom.getCapacity() != null ? classRoom.getCapacity() : 40;
-        
+
         return (currentCount + additionalStudents) <= maxCapacity;
     }
 
@@ -622,12 +626,12 @@ public class StudentServiceImpl implements StudentService {
 
     private Student findStudentById(Long studentId) {
         return studentRepository.findById(studentId)
-            .orElseThrow(() -> new ResourceNotFoundException("Student not found with ID: " + studentId));
+                .orElseThrow(() -> new ResourceNotFoundException("Student not found with ID: " + studentId));
     }
 
     private ClassRoom findClassRoomById(Long classRoomId) {
         return classRoomRepository.findById(classRoomId)
-            .orElseThrow(() -> new ResourceNotFoundException("Class room not found with ID: " + classRoomId));
+                .orElseThrow(() -> new ResourceNotFoundException("Class room not found with ID: " + classRoomId));
     }
 
     private void updateStudentStatus(Long studentId, StudentStatus status) {

@@ -33,8 +33,8 @@ import java.util.Map;
  * Redis caching configuration for the School Information Management System
  * Provides comprehensive caching strategy with different TTL policies for various data types
  */
-// @Configuration
-// @EnableCaching
+@Configuration
+@EnableCaching
 public class RedisCacheConfig extends CachingConfigurerSupport {
 
     private static final Logger logger = LoggerFactory.getLogger(RedisCacheConfig.class);
@@ -82,7 +82,7 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
     }
 
     /**
-     * Redis template for general operations
+     * Redis template for general operations (JSON values)
      */
     @Bean
     @Primary
@@ -105,6 +105,22 @@ public class RedisCacheConfig extends CachingConfigurerSupport {
         template.afterPropertiesSet();
         
         logger.info("Redis template configured successfully");
+        return template;
+    }
+
+    /**
+     * String-to-String Redis template (for TokenBlacklistService)
+     */
+    @Bean
+    public RedisTemplate<String, String> stringRedisTemplate(RedisConnectionFactory connectionFactory) {
+        RedisTemplate<String, String> template = new RedisTemplate<>();
+        template.setConnectionFactory(connectionFactory);
+        StringRedisSerializer stringSerializer = new StringRedisSerializer();
+        template.setKeySerializer(stringSerializer);
+        template.setValueSerializer(stringSerializer);
+        template.setHashKeySerializer(stringSerializer);
+        template.setHashValueSerializer(stringSerializer);
+        template.afterPropertiesSet();
         return template;
     }
 
