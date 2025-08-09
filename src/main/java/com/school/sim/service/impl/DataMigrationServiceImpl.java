@@ -795,4 +795,78 @@ public class DataMigrationServiceImpl implements DataMigrationService {
     @Override public Map<String, String> getDataTypeMappings() { return DATA_TYPE_MAPPINGS; }
     @Override public Map<String, Object> estimateMigrationTime(Map<String, Object> config) { return new HashMap<>(); }
     @Override public Map<String, Object> checkMigrationPrerequisites() { return Map.of("prerequisitesMet", true); }
+
+    @Override
+    public Map<String, Object> initializeTestData() {
+        logger.info("Initializing test data for development and testing...");
+        
+        Map<String, Object> result = new HashMap<>();
+        result.put("startTime", LocalDateTime.now());
+        
+        try {
+            // Create basic roles
+            logger.info("Creating basic roles...");
+            springBootJdbcTemplate.execute("INSERT INTO roles (name, description, is_system_role, created_at, updated_at) VALUES " +
+                "('ADMIN', 'System Administrator', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('TEACHER', 'Teacher', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('STUDENT', 'Student', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE name=name");
+            
+            // Create basic permissions
+            logger.info("Creating basic permissions...");
+            springBootJdbcTemplate.execute("INSERT INTO permissions (name, description, created_at, updated_at) VALUES " +
+                "('VIEW_STUDENTS', 'View student information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('MANAGE_STUDENTS', 'Create, update, delete students', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('VIEW_USERS', 'View user information', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('MANAGE_USERS', 'Create, update, delete users', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('VIEW_GRADES', 'View grades and assessments', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('MANAGE_GRADES', 'Create, update, delete grades', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('VIEW_REPORTS', 'View reports', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('GENERATE_REPORTS', 'Generate and export reports', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('MANAGE_CLASSES', 'Manage class schedules and assignments', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('VIEW_ATTENDANCE', 'View attendance records', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('MANAGE_ATTENDANCE', 'Manage attendance records', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE name=name");
+            
+            // Create admin user
+            logger.info("Creating admin user...");
+            springBootJdbcTemplate.execute("INSERT INTO users (username, email, first_name, last_name, password, user_type, is_active, email_verified_at, created_at, updated_at) VALUES " +
+                "('admin', 'admin@sim.edu', 'System', 'Administrator', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'ADMIN', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE username=username");
+            
+            // Create teacher user
+            logger.info("Creating teacher user...");
+            springBootJdbcTemplate.execute("INSERT INTO users (username, email, first_name, last_name, password, user_type, nip, is_active, email_verified_at, created_at, updated_at) VALUES " +
+                "('teacher', 'teacher@sim.edu', 'Test', 'Teacher', '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2uheWG/igi.', 'TEACHER', 'T001', true, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE username=username");
+            
+            // Create sample students
+            logger.info("Creating sample students...");
+            springBootJdbcTemplate.execute("INSERT INTO students (nis, nama_lengkap, tempat_lahir, tanggal_lahir, jenis_kelamin, agama, alamat, nama_ayah, nama_ibu, tahun_masuk, asal_sekolah, status, created_at, updated_at) VALUES " +
+                "('2024001', 'Ahmad Rizki Pratama', 'Jakarta', '2006-03-15', 'LAKI_LAKI', 'Islam', 'Jl. Merdeka No. 123, Jakarta', 'Budi Pratama', 'Siti Nurhaliza', 2024, 'SMP Negeri 1 Jakarta', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('2024002', 'Sari Dewi Lestari', 'Bandung', '2006-07-22', 'PEREMPUAN', 'Islam', 'Jl. Sudirman No. 456, Bandung', 'Andi Lestari', 'Dewi Sartika', 2024, 'SMP Negeri 2 Bandung', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('2024003', 'Muhammad Fajar Sidiq', 'Surabaya', '2006-01-10', 'LAKI_LAKI', 'Islam', 'Jl. Pemuda No. 789, Surabaya', 'Hasan Sidiq', 'Fatimah Zahra', 2024, 'SMP Negeri 3 Surabaya', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('2024004', 'Indira Putri Maharani', 'Yogyakarta', '2006-05-18', 'PEREMPUAN', 'Hindu', 'Jl. Malioboro No. 321, Yogyakarta', 'I Made Maharani', 'Ni Kadek Sari', 2024, 'SMP Negeri 1 Yogyakarta', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP), " +
+                "('2024005', 'Kevin Alexander Wijaya', 'Medan', '2006-09-03', 'LAKI_LAKI', 'Kristen', 'Jl. Asia No. 654, Medan', 'Alexander Wijaya', 'Maria Susanti', 2024, 'SMP Swasta Medan', 'ACTIVE', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP) " +
+                "ON DUPLICATE KEY UPDATE nis=nis");
+            
+            result.put("status", "SUCCESS");
+            result.put("message", "Test data initialized successfully");
+            result.put("endTime", LocalDateTime.now());
+            result.put("rolesCreated", 3);
+            result.put("permissionsCreated", 11);
+            result.put("usersCreated", 2);
+            result.put("studentsCreated", 5);
+            
+            logger.info("Test data initialization completed successfully");
+            return result;
+            
+        } catch (Exception e) {
+            logger.error("Error initializing test data", e);
+            result.put("status", "ERROR");
+            result.put("message", "Failed to initialize test data: " + e.getMessage());
+            result.put("endTime", LocalDateTime.now());
+            return result;
+        }
+    }
 }

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Real Backend Connection</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .status {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        pre {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #e9ecef;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔧 Real Backend Connection Test</h1>
+        <p>This page tests the connection to the real Spring Boot backend (NO MOCK DATA).</p>
+
+        <div id="status-container"></div>
+
+        <div>
+            <button onclick="testBackendHealth()">Test Backend Health</button>
+            <button onclick="testLogin()">Test Login API</button>
+            <button onclick="testInvalidLogin()">Test Invalid Login</button>
+            <button onclick="clearResults()">Clear Results</button>
+        </div>
+
+        <div id="results"></div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'http://localhost:8080';
+
+        function showStatus(message, type = 'info') {
+            const container = document.getElementById('status-container');
+            container.innerHTML = `<div class="status ${type}">${message}</div>`;
+        }
+
+        function addResult(title, data, success = true) {
+            const results = document.getElementById('results');
+            const resultDiv = document.createElement('div');
+            resultDiv.innerHTML = `
+                <h3>${title}</h3>
+                <div class="status ${success ? 'success' : 'error'}">
+                    ${success ? '✅ Success' : '❌ Failed'}
+                </div>
+                <pre>${JSON.stringify(data, null, 2)}</pre>
+            `;
+            results.appendChild(resultDiv);
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+            document.getElementById('status-container').innerHTML = '';
+        }
+
+        async function testBackendHealth() {
+            showStatus('Testing backend health...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/actuator/health`);
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('✅ Backend is healthy and running!', 'success');
+                    addResult('Backend Health Check', data, true);
+                } else {
+                    showStatus('❌ Backend health check failed', 'error');
+                    addResult('Backend Health Check', data, false);
+                }
+            } catch (error) {
+                showStatus('❌ Cannot connect to backend server', 'error');
+                addResult('Backend Health Check', { error: error.message }, false);
+            }
+        }
+
+        async function testLogin() {
+            showStatus('Testing login with valid credentials...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        identifier: 'admin',
+                        password: 'admin123',
+                        rememberMe: false
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    showStatus('✅ Login successful!', 'success');
+                    addResult('Valid Login Test', {
+                        status: response.status,
+                        user: data.user,
+                        tokenReceived: !!data.token,
+                        tokenLength: data.token ? data.token.length : 0
+                    }, true);
+                } else {
+                    showStatus('❌ Login failed', 'error');
+                    addResult('Valid Login Test', data, false);
+                }
+            } catch (error) {
+                showStatus('❌ Login request failed', 'error');
+                addResult('Valid Login Test', { error: error.message }, false);
+            }
+        }
+
+        async function testInvalidLogin() {
+            showStatus('Testing login with invalid credentials...', 'info');
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/v1/auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        identifier: 'invalid',
+                        password: 'wrong',
+                        rememberMe: false
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.status === 401) {
+                    showStatus('✅ Invalid login correctly rejected!', 'success');
+                    addResult('Invalid Login Test', {
+                        status: response.status,
+                        message: data.message || 'Unauthorized'
+                    }, true);
+                } else {
+                    showStatus('❌ Invalid login should have been rejected', 'error');
+                    addResult('Invalid Login Test', data, false);
+                }
+            } catch (error) {
+                showStatus('❌ Invalid login request failed', 'error');
+                addResult('Invalid Login Test', { error: error.message }, false);
+            }
+        }
+
+        // Auto-test on page load
+        window.addEventListener('load', () => {
+            testBackendHealth();
+        });
+    </script>
+</body>
+
+</html>""

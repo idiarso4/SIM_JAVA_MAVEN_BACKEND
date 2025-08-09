@@ -40,6 +40,32 @@ public class MigrationController {
     private MigrationValidationService migrationValidationService;
 
     /**
+     * Initialize basic data for testing
+     */
+    @PostMapping("/init-data")
+    @Operation(summary = "Initialize test data", description = "Initialize basic roles, users, and students for testing")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Data initialized successfully"),
+            @ApiResponse(responseCode = "400", description = "Data initialization failed"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public ResponseEntity<Map<String, Object>> initializeTestData() {
+        logger.info("Initializing test data...");
+        
+        try {
+            Map<String, Object> result = dataMigrationService.initializeTestData();
+            logger.info("Test data initialized successfully");
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            logger.error("Error initializing test data", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to initialize test data");
+            errorResponse.put("message", e.getMessage());
+            return ResponseEntity.internalServerError().body(errorResponse);
+        }
+    }
+
+    /**
      * Execute complete migration from Laravel to Spring Boot
      */
     @PostMapping("/execute/complete")
@@ -92,6 +118,31 @@ public class MigrationController {
         } catch (Exception e) {
             logger.error("Failed to execute partial migration", e);
             throw e;
+        }
+    }
+
+    /**
+     * Initialize basic data (roles, permissions, admin user)
+     */
+    @PostMapping("/init-basic-data")
+    @Operation(summary = "Initialize basic data", description = "Initialize roles, permissions, and admin user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Data initialized successfully"),
+            @ApiResponse(responseCode = "500", description = "Failed to initialize data")
+    })
+    public ResponseEntity<Map<String, Object>> initializeBasicData() {
+        logger.info("Initializing basic data");
+        
+        try {
+            Map<String, Object> result = dataMigrationService.initializeTestData();
+            logger.info("Basic data initialized successfully");
+            return ResponseEntity.ok(result);
+        } catch (Exception e) {
+            logger.error("Failed to initialize basic data", e);
+            Map<String, Object> errorResponse = new HashMap<>();
+            errorResponse.put("error", "Failed to initialize data: " + e.getMessage());
+            errorResponse.put("success", false);
+            return ResponseEntity.internalServerError().body(errorResponse);
         }
     }
 

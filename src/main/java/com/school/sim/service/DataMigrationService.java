@@ -49,6 +49,11 @@ public interface DataMigrationService {
     List<Map<String, Object>> extractTableData(String tableName, Map<String, Object> config);
     
     /**
+     * Initialize test data for development and testing
+     */
+    Map<String, Object> initializeTestData();
+    
+    /**
      * Extract data with pagination
      */
     Map<String, Object> extractDataWithPagination(String tableName, int page, int size, Map<String, Object> config);

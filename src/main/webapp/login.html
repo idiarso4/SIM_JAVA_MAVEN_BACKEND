@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="light">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login - School Information Management System</title>
-    
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
     <link rel="icon" type="image/png" sizes="32x32" href="assets/favicon-32x32.png">
-    
+
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- Font Awesome -->
@@ -16,7 +17,7 @@
     <!-- Custom CSS -->
     <link href="css/main.css" rel="stylesheet">
     <link href="css/login.css" rel="stylesheet">
-    
+
     <style>
         body {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -26,13 +27,13 @@
             justify-content: center;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         .login-wrapper {
             width: 100%;
             max-width: 1000px;
             margin: 2rem;
         }
-        
+
         .login-card {
             background: white;
             border-radius: 20px;
@@ -40,7 +41,7 @@
             overflow: hidden;
             min-height: 600px;
         }
-        
+
         .login-brand {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
@@ -52,7 +53,7 @@
             padding: 3rem 2rem;
             position: relative;
         }
-        
+
         .login-brand::before {
             content: '';
             position: absolute;
@@ -63,105 +64,105 @@
             background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
             opacity: 0.3;
         }
-        
+
         .login-brand-content {
             position: relative;
             z-index: 1;
         }
-        
+
         .brand-icon {
             font-size: 4rem;
             margin-bottom: 1.5rem;
             opacity: 0.9;
         }
-        
+
         .brand-title {
             font-size: 2rem;
             font-weight: 700;
             margin-bottom: 1rem;
             line-height: 1.2;
         }
-        
+
         .brand-subtitle {
             font-size: 1.1rem;
             opacity: 0.8;
             margin-bottom: 2rem;
             line-height: 1.4;
         }
-        
+
         .brand-features {
             list-style: none;
             padding: 0;
             margin: 0;
         }
-        
+
         .brand-features li {
             display: flex;
             align-items: center;
             margin-bottom: 0.75rem;
             opacity: 0.8;
         }
-        
+
         .brand-features i {
             margin-right: 0.75rem;
             width: 20px;
             text-align: center;
         }
-        
+
         .login-form-section {
             padding: 3rem 2rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
         }
-        
+
         .form-header {
             text-align: center;
             margin-bottom: 2rem;
         }
-        
+
         .form-title {
             color: #2c3e50;
             font-size: 1.75rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
         }
-        
+
         .form-subtitle {
             color: #6c757d;
             font-size: 1rem;
         }
-        
+
         .login-form {
             max-width: 400px;
             margin: 0 auto;
             width: 100%;
         }
-        
+
         .form-floating {
             margin-bottom: 1.5rem;
         }
-        
-        .form-floating > .form-control {
+
+        .form-floating>.form-control {
             border: 2px solid #e9ecef;
             border-radius: 12px;
             padding: 1rem 1rem 1rem 3rem;
             font-size: 1rem;
             transition: all 0.3s ease;
         }
-        
-        .form-floating > .form-control:focus {
+
+        .form-floating>.form-control:focus {
             border-color: #667eea;
             box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
             transform: translateY(-2px);
         }
-        
-        .form-floating > label {
+
+        .form-floating>label {
             padding-left: 3rem;
             color: #6c757d;
             font-weight: 500;
         }
-        
+
         .form-icon {
             position: absolute;
             left: 1rem;
@@ -171,11 +172,11 @@
             z-index: 4;
             transition: color 0.3s ease;
         }
-        
+
         .form-floating:focus-within .form-icon {
             color: #667eea;
         }
-        
+
         .password-toggle {
             position: absolute;
             right: 1rem;
@@ -190,20 +191,20 @@
             border-radius: 4px;
             transition: color 0.3s ease;
         }
-        
+
         .password-toggle:hover {
             color: #667eea;
         }
-        
+
         .form-check {
             margin-bottom: 1.5rem;
         }
-        
+
         .form-check-input:checked {
             background-color: #667eea;
             border-color: #667eea;
         }
-        
+
         .login-btn {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             border: none;
@@ -217,67 +218,67 @@
             position: relative;
             overflow: hidden;
         }
-        
+
         .login-btn:hover:not(:disabled) {
             transform: translateY(-2px);
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
         }
-        
+
         .login-btn:active {
             transform: translateY(0);
         }
-        
+
         .login-btn:disabled {
             opacity: 0.7;
             cursor: not-allowed;
             transform: none;
         }
-        
+
         .forgot-password {
             text-align: center;
             margin-top: 1.5rem;
         }
-        
+
         .forgot-password a {
             color: #667eea;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
-        
+
         .forgot-password a:hover {
             color: #764ba2;
             text-decoration: underline;
         }
-        
+
         .alert {
             border-radius: 12px;
             border: none;
             margin-bottom: 1.5rem;
         }
-        
+
         .alert-danger {
             background-color: #f8d7da;
             color: #721c24;
         }
-        
+
         .alert-success {
             background-color: #d1edff;
             color: #0c5460;
         }
-        
+
         .alert-warning {
             background-color: #fff3cd;
             color: #856404;
         }
-        
+
         .footer-links {
             text-align: center;
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid #e9ecef;
         }
-        
+
         .footer-links a {
             color: #6c757d;
             text-decoration: none;
@@ -285,125 +286,129 @@
             font-size: 0.9rem;
             transition: color 0.3s ease;
         }
-        
+
         .footer-links a:hover {
             color: #667eea;
         }
-        
+
         /* Responsive Design */
         @media (max-width: 768px) {
             .login-wrapper {
                 margin: 1rem;
             }
-            
+
             .login-card {
                 border-radius: 15px;
             }
-            
+
             .login-brand {
                 padding: 2rem 1.5rem;
             }
-            
+
             .brand-icon {
                 font-size: 3rem;
             }
-            
+
             .brand-title {
                 font-size: 1.5rem;
             }
-            
+
             .login-form-section {
                 padding: 2rem 1.5rem;
             }
-            
+
             .form-title {
                 font-size: 1.5rem;
             }
         }
-        
+
         /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
                 transform: translateY(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
-        
+
         @keyframes fadeInLeft {
             from {
                 opacity: 0;
                 transform: translateX(-30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-        
+
         @keyframes fadeInRight {
             from {
                 opacity: 0;
                 transform: translateX(30px);
             }
+
             to {
                 opacity: 1;
                 transform: translateX(0);
             }
         }
-        
+
         .login-brand {
             animation: fadeInLeft 0.8s ease-out;
         }
-        
+
         .login-form-section {
             animation: fadeInRight 0.8s ease-out;
         }
-        
+
         .form-floating {
             animation: fadeInUp 0.6s ease-out;
         }
-        
+
         .form-floating:nth-child(2) {
             animation-delay: 0.1s;
         }
-        
+
         .form-floating:nth-child(3) {
             animation-delay: 0.2s;
         }
-        
+
         /* Loading Animation */
         .login-spinner {
             width: 1.2rem;
             height: 1.2rem;
         }
-        
+
         /* Dark Theme Support */
         @media (prefers-color-scheme: dark) {
             [data-bs-theme="auto"] .login-card {
                 background: #2c3e50;
                 color: #ecf0f1;
             }
-            
+
             [data-bs-theme="auto"] .form-title {
                 color: #ecf0f1;
             }
-            
-            [data-bs-theme="auto"] .form-floating > .form-control {
+
+            [data-bs-theme="auto"] .form-floating>.form-control {
                 background-color: #34495e;
                 border-color: #4a5f7a;
                 color: #ecf0f1;
             }
-            
-            [data-bs-theme="auto"] .form-floating > label {
+
+            [data-bs-theme="auto"] .form-floating>label {
                 color: #bdc3c7;
             }
         }
     </style>
 </head>
+
 <body>
     <div class="login-wrapper">
         <div class="login-card">
@@ -440,7 +445,7 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Login Form Section -->
                 <div class="col-lg-7">
                     <div class="login-form-section">
@@ -448,47 +453,33 @@
                             <h2 class="form-title">Welcome Back</h2>
                             <p class="form-subtitle">Please sign in to your account</p>
                         </div>
-                        
+
                         <!-- Alert Container -->
                         <div id="alert-container"></div>
-                        
+
                         <!-- Login Form -->
                         <form id="login-form" class="login-form" novalidate>
                             <!-- Identifier Field -->
                             <div class="form-floating">
                                 <i class="fas fa-user form-icon"></i>
-                                <input 
-                                    type="text" 
-                                    class="form-control" 
-                                    id="identifier" 
-                                    name="identifier" 
-                                    placeholder="Email or Username"
-                                    autocomplete="username"
-                                    required
-                                >
+                                <input type="text" class="form-control" id="identifier" name="identifier"
+                                    placeholder="Email or Username" autocomplete="username" required>
                                 <label for="identifier">Email or Username</label>
                                 <div class="invalid-feedback"></div>
                             </div>
-                            
+
                             <!-- Password Field -->
                             <div class="form-floating">
                                 <i class="fas fa-lock form-icon"></i>
-                                <input 
-                                    type="password" 
-                                    class="form-control" 
-                                    id="password" 
-                                    name="password" 
-                                    placeholder="Password"
-                                    autocomplete="current-password"
-                                    required
-                                >
+                                <input type="password" class="form-control" id="password" name="password"
+                                    placeholder="Password" autocomplete="current-password" required>
                                 <label for="password">Password</label>
                                 <button type="button" class="password-toggle" id="password-toggle">
                                     <i class="fas fa-eye"></i>
                                 </button>
                                 <div class="invalid-feedback"></div>
                             </div>
-                            
+
                             <!-- Remember Me -->
                             <div class="form-check">
                                 <input type="checkbox" class="form-check-input" id="remember-me" name="rememberMe">
@@ -496,7 +487,7 @@
                                     Remember me for 30 days
                                 </label>
                             </div>
-                            
+
                             <!-- Submit Button -->
                             <div class="d-grid">
                                 <button type="submit" class="btn btn-primary login-btn" id="login-btn">
@@ -505,18 +496,26 @@
                                     <span class="login-text">Sign In</span>
                                 </button>
                             </div>
-                            
+
                             <!-- Forgot Password -->
                             <div class="forgot-password">
                                 <a href="#" id="forgot-password-link">Forgot your password?</a>
                             </div>
                         </form>
-                        
+
                         <!-- Footer Links -->
                         <div class="footer-links">
                             <a href="#help">Help</a>
                             <a href="#support">Support</a>
                             <a href="#privacy">Privacy</a>
+                        </div>
+
+                        <!-- Backend Status -->
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-server me-1"></i>
+                                Backend: <span id="backend-status">Checking...</span>
+                            </small>
                         </div>
                     </div>
                 </div>
@@ -526,7 +525,7 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-    
+
     <script type="module">
         // Configuration
         window.APP_CONFIG = {
@@ -535,7 +534,24 @@
             REFRESH_TOKEN_KEY: 'sim_refresh_token',
             USER_KEY: 'sim_current_user'
         };
-        
+
+        // Check backend availability
+        let backendAvailable = false;
+
+        async function checkBackendAvailability() {
+            try {
+                const response = await fetch(window.APP_CONFIG.API_BASE_URL.replace('/api/v1', '') + '/actuator/health', {
+                    method: 'GET',
+                    timeout: 5000
+                });
+                backendAvailable = response.ok;
+                return backendAvailable;
+            } catch (error) {
+                backendAvailable = false;
+                return false;
+            }
+        }
+
         // Simple utilities for standalone login page
         window.logger = {
             debug: console.log,
@@ -543,32 +559,78 @@
             warn: console.warn,
             error: console.error
         };
-        
+
         window.stateManager = {
             state: {},
-            set: function(key, value) {
+            set: function (key, value) {
                 this.state[key] = value;
             },
-            get: function(key) {
+            get: function (key) {
                 return this.state[key];
             },
-            subscribe: function(key, callback) {
-                return () => {};
+            subscribe: function (key, callback) {
+                return () => { };
             }
         };
-        
-        // Import and initialize auth service
-        let authService;
-        
-        try {
-            const { AuthService } = await import('./js/services/auth.js');
-            authService = new AuthService();
-            console.log('Auth service initialized');
-        } catch (error) {
-            console.error('Failed to initialize auth service:', error);
-            showAlert('danger', 'Failed to initialize authentication system');
+
+        // No mock data - only real backend API
+
+        // Simple Auth Service - REAL BACKEND ONLY (NO LOCKOUT FOR DEVELOPMENT)
+        class SimpleAuthService {
+            constructor() {
+                this.loginAttempts = 0;
+                this.maxLoginAttempts = 999; // Disable lockout for development
+                this.lockoutDuration = 0; // No lockout
+            }
+
+            // Override lockout methods to always return false/safe values
+            isLockedOut() { return false; }
+            getRemainingLockoutTime() { return 0; }
+            handleFailedLogin() { /* Do nothing */ }
+            clearLoginAttempts() { /* Do nothing */ }
+
+            async login(credentials) {
+                console.log('Making API call to:', window.APP_CONFIG.API_BASE_URL + '/auth/login', credentials);
+
+                const response = await fetch(window.APP_CONFIG.API_BASE_URL + '/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(credentials)
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json().catch(() => ({}));
+                    throw new Error(errorData.message || 'Invalid email/username or password');
+                }
+
+                const data = await response.json();
+
+                return {
+                    success: true,
+                    user: data.user,
+                    token: data.token || data.accessToken
+                };
+            }
         }
-        
+
+        // FORCE CLEAR ALL LOCKOUT DATA FOR DEVELOPMENT
+        localStorage.clear(); // Clear everything
+        sessionStorage.clear(); // Clear session storage too
+
+        // Clear specific lockout keys
+        localStorage.removeItem('sim_login_attempts');
+        localStorage.removeItem('sim_lockout_until');
+        localStorage.removeItem('loginAttempts');
+        localStorage.removeItem('lockoutUntil');
+
+        console.log('All lockout data cleared for development');
+
+        // Initialize auth service
+        const authService = new SimpleAuthService();
+        console.log('AuthService initialized:', authService);
+
         // DOM elements
         const loginForm = document.getElementById('login-form');
         const loginBtn = document.getElementById('login-btn');
@@ -579,20 +641,23 @@
         const passwordField = document.getElementById('password');
         const alertContainer = document.getElementById('alert-container');
         const forgotPasswordLink = document.getElementById('forgot-password-link');
-        
+
         // Event listeners
         loginForm.addEventListener('submit', handleLogin);
         passwordToggle.addEventListener('click', togglePassword);
         forgotPasswordLink.addEventListener('click', handleForgotPassword);
-        
+
+        // Check backend status on page load
+        checkAndUpdateBackendStatus();
+
         // Handle form submission
         async function handleLogin(e) {
             e.preventDefault();
-            
+
             // Clear previous alerts and errors
             clearAlerts();
             clearFieldErrors();
-            
+
             // Get form data
             const formData = new FormData(loginForm);
             const credentials = {
@@ -600,45 +665,58 @@
                 password: formData.get('password'),
                 rememberMe: formData.get('rememberMe') === 'on'
             };
-            
+
             // Basic validation
             if (!credentials.identifier) {
                 showFieldError('identifier', 'Email or username is required');
                 return;
             }
-            
+
             if (!credentials.password) {
                 showFieldError('password', 'Password is required');
                 return;
             }
-            
+
             // Set loading state
             setLoadingState(true);
-            
+
             try {
                 console.log('Attempting login for:', credentials.identifier);
-                
+
+                // Check backend availability first
+                const isBackendAvailable = await checkBackendAvailability();
+
+                if (!isBackendAvailable) {
+                    throw new Error('Backend server is not available. Please ensure the Spring Boot application is running on port 8080.');
+                }
+
                 const result = await authService.login(credentials);
-                
+
                 if (result.success) {
                     showAlert('success', 'Login successful! Redirecting to dashboard...');
-                    
+
+                    // Store auth data
+                    localStorage.setItem(window.APP_CONFIG.TOKEN_KEY, result.token);
+                    localStorage.setItem(window.APP_CONFIG.USER_KEY, JSON.stringify(result.user));
+
                     // Redirect to main application after short delay
                     setTimeout(() => {
                         window.location.href = 'index.html';
                     }, 1500);
-                    
+
                 } else {
                     throw new Error(result.message || 'Login failed');
                 }
-                
+
             } catch (error) {
                 console.error('Login error:', error);
-                
+
                 let message = 'Login failed. Please try again.';
-                
-                if (error.status === 401) {
-                    message = 'Invalid email/username or password.';
+
+                if (error.name === 'TypeError' && error.message.includes('fetch')) {
+                    message = 'Cannot connect to backend server. Please ensure Spring Boot application is running on port 8080.';
+                } else if (error.status === 401) {
+                    message = 'Invalid username or password.';
                 } else if (error.status === 429) {
                     message = 'Too many login attempts. Please try again later.';
                 } else if (error.status === 423) {
@@ -646,21 +724,21 @@
                 } else if (error.message) {
                     message = error.message;
                 }
-                
+
                 showAlert('danger', message);
-                
+
                 // Focus back to first field
                 document.getElementById('identifier').focus();
-                
+
             } finally {
                 setLoadingState(false);
             }
         }
-        
+
         // Toggle password visibility
         function togglePassword() {
             const icon = passwordToggle.querySelector('i');
-            
+
             if (passwordField.type === 'password') {
                 passwordField.type = 'text';
                 icon.className = 'fas fa-eye-slash';
@@ -669,17 +747,37 @@
                 icon.className = 'fas fa-eye';
             }
         }
-        
+
         // Handle forgot password
         function handleForgotPassword(e) {
             e.preventDefault();
             showAlert('info', 'Password reset functionality will be available soon. Please contact your administrator.');
         }
-        
+
+        // Check and update backend status
+        async function checkAndUpdateBackendStatus() {
+            const statusElement = document.getElementById('backend-status');
+
+            try {
+                const isAvailable = await checkBackendAvailability();
+
+                if (isAvailable) {
+                    statusElement.innerHTML = '<span class="text-success">Connected (Port 8080)</span>';
+                    statusElement.parentElement.querySelector('i').className = 'fas fa-server text-success me-1';
+                } else {
+                    statusElement.innerHTML = '<span class="text-danger">Disconnected</span>';
+                    statusElement.parentElement.querySelector('i').className = 'fas fa-server text-danger me-1';
+                }
+            } catch (error) {
+                statusElement.innerHTML = '<span class="text-danger">Error</span>';
+                statusElement.parentElement.querySelector('i').className = 'fas fa-server text-danger me-1';
+            }
+        }
+
         // Set loading state
         function setLoadingState(loading) {
             loginBtn.disabled = loading;
-            
+
             if (loading) {
                 loginSpinner.classList.remove('d-none');
                 loginIcon.classList.add('d-none');
@@ -690,7 +788,7 @@
                 loginText.textContent = 'Sign In';
             }
         }
-        
+
         // Show alert
         function showAlert(type, message) {
             const alertHtml = `
@@ -702,12 +800,12 @@
             `;
             alertContainer.innerHTML = alertHtml;
         }
-        
+
         // Clear alerts
         function clearAlerts() {
             alertContainer.innerHTML = '';
         }
-        
+
         // Get alert icon
         function getAlertIcon(type) {
             const icons = {
@@ -718,7 +816,7 @@
             };
             return icons[type] || icons.info;
         }
-        
+
         // Show field error
         function showFieldError(fieldName, message) {
             const field = document.querySelector(`[name="${fieldName}"]`);
@@ -730,26 +828,50 @@
                 }
             }
         }
-        
+
         // Clear field errors
         function clearFieldErrors() {
             document.querySelectorAll('.is-invalid').forEach(field => {
                 field.classList.remove('is-invalid');
             });
         }
-        
+
+        // Update backend status indicator
+        function updateBackendStatus() {
+            const statusElement = document.getElementById('backend-mode');
+            if (statusElement) {
+                if (usingMockBackend) {
+                    statusElement.innerHTML = '<span class="text-warning">Demo Mode</span>';
+                } else {
+                    statusElement.innerHTML = '<span class="text-success">Connected</span>';
+                }
+            }
+        }
+
+        // Check backend status on load
+        checkBackendAvailability().then(available => {
+            if (!available && !usingMockBackend) {
+                authService = new MockAuthService();
+                usingMockBackend = true;
+            }
+            updateBackendStatus();
+        });
+
         // Check if already logged in
-        if (authService && authService.isAuthenticated()) {
+        const existingToken = localStorage.getItem(window.APP_CONFIG.TOKEN_KEY);
+        if (existingToken) {
             showAlert('info', 'You are already logged in. Redirecting...');
             setTimeout(() => {
                 window.location.href = 'index.html';
             }, 2000);
         }
-        
+
         // Focus on first field
         document.getElementById('identifier').focus();
-        
+
         console.log('Login page initialized');
+        console.log('Using mock backend:', usingMockBackend);
     </script>
 </body>
+
 </html>

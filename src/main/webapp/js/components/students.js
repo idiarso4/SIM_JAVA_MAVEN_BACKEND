@@ -12,7 +12,7 @@ export default class Students {
         this.studentService = new StudentService();
         this.notificationService = new NotificationService();
         this.loadingService = new LoadingService();
-        
+
         this.data = {
             students: [],
             loading: false,
@@ -29,7 +29,7 @@ export default class Students {
                 major: ''
             }
         };
-        
+
         this.pageSizeOptions = [5, 10, 20, 50];
     }
 
@@ -106,9 +106,9 @@ export default class Students {
                                 Showing ${this.getDisplayRange()} of ${this.data.totalElements} students
                             </span>
                             <select class="form-select form-select-sm" id="page-size-select" style="width: auto;">
-                                ${this.pageSizeOptions.map(size => 
-                                    `<option value="${size}" ${this.data.pageSize === size ? 'selected' : ''}>${size} per page</option>`
-                                ).join('')}
+                                ${this.pageSizeOptions.map(size =>
+            `<option value="${size}" ${this.data.pageSize === size ? 'selected' : ''}>${size} per page</option>`
+        ).join('')}
                             </select>
                         </div>
                     </div>
@@ -139,13 +139,13 @@ export default class Students {
                     <i class="fas fa-user-graduate fa-4x text-muted mb-3"></i>
                     <h5>No Students Found</h5>
                     <p class="text-muted">
-                        ${this.data.searchTerm || Object.values(this.data.filters).some(f => f) 
-                            ? 'No students match your search criteria.' 
-                            : 'No students have been added yet.'}
+                        ${this.data.searchTerm || Object.values(this.data.filters).some(f => f)
+                    ? 'No students match your search criteria.'
+                    : 'No students have been added yet.'}
                     </p>
-                    ${!this.data.searchTerm && !Object.values(this.data.filters).some(f => f) 
-                        ? '<button type="button" class="btn btn-primary" onclick="document.getElementById(\'add-student-btn\').click()">Add First Student</button>'
-                        : ''}
+                    ${!this.data.searchTerm && !Object.values(this.data.filters).some(f => f)
+                    ? '<button type="button" class="btn btn-primary" onclick="document.getElementById(\'add-student-btn\').click()">Add First Student</button>'
+                    : ''}
                 </div>
             `;
         }
@@ -196,7 +196,7 @@ export default class Students {
 
     renderStudentRow(student) {
         const statusBadge = this.getStatusBadge(student.status);
-        const enrollmentDate = student.enrollmentDate ? 
+        const enrollmentDate = student.enrollmentDate ?
             new Date(student.enrollmentDate).toLocaleDateString() : 'N/A';
 
         return `
@@ -259,10 +259,10 @@ export default class Students {
         const currentPage = this.data.currentPage;
         const totalPages = this.data.totalPages;
         const maxVisiblePages = 5;
-        
+
         let startPage = Math.max(0, currentPage - Math.floor(maxVisiblePages / 2));
         let endPage = Math.min(totalPages - 1, startPage + maxVisiblePages - 1);
-        
+
         if (endPage - startPage < maxVisiblePages - 1) {
             startPage = Math.max(0, endPage - maxVisiblePages + 1);
         }
@@ -337,8 +337,8 @@ export default class Students {
         if (this.data.sortBy !== column) {
             return '<i class="fas fa-sort text-muted ms-1"></i>';
         }
-        
-        return this.data.sortDir === 'asc' 
+
+        return this.data.sortDir === 'asc'
             ? '<i class="fas fa-sort-up text-primary ms-1"></i>'
             : '<i class="fas fa-sort-down text-primary ms-1"></i>';
     }
@@ -350,17 +350,17 @@ export default class Students {
             'GRADUATED': { class: 'bg-info', text: 'Graduated' },
             'SUSPENDED': { class: 'bg-danger', text: 'Suspended' }
         };
-        
+
         const config = statusConfig[status] || { class: 'bg-secondary', text: status || 'Unknown' };
         return `<span class="badge ${config.class}">${config.text}</span>`;
     }
 
     getDisplayRange() {
         if (this.data.totalElements === 0) return '0-0';
-        
+
         const start = this.data.currentPage * this.data.pageSize + 1;
         const end = Math.min((this.data.currentPage + 1) * this.data.pageSize, this.data.totalElements);
-        
+
         return `${start}-${end}`;
     }
 
@@ -493,7 +493,7 @@ export default class Students {
             });
 
             const response = await this.studentService.getStudents(params);
-            
+
             this.data.students = response.content || [];
             this.data.totalPages = response.totalPages || 0;
             this.data.totalElements = response.totalElements || 0;
@@ -519,7 +519,7 @@ export default class Students {
             major: ''
         };
         this.data.currentPage = 0;
-        
+
         // Reset form controls
         const container = document.querySelector('.students-container');
         if (container) {
@@ -561,11 +561,11 @@ export default class Students {
         try {
             // Import StudentForm dynamically
             const { StudentForm } = await import('./student-form.js');
-            
+
             // Create form container
             const formContainer = document.createElement('div');
             document.body.appendChild(formContainer);
-            
+
             // Initialize form
             const studentForm = new StudentForm(formContainer, {
                 mode: mode,
@@ -581,9 +581,9 @@ export default class Students {
                     document.body.removeChild(formContainer);
                 }
             });
-            
+
             await studentForm.init();
-            
+
         } catch (error) {
             console.error('Error showing student form:', error);
             this.notificationService.showError('Error loading student form');
@@ -596,30 +596,30 @@ export default class Students {
     async showStudentDetails(studentId) {
         try {
             this.loadingService.show('Loading student details...');
-            
+
             const student = await this.studentService.getStudentById(studentId);
-            
+
             // Create details modal
             const modalHtml = this.createStudentDetailsModal(student);
             const modalContainer = document.createElement('div');
             modalContainer.innerHTML = modalHtml;
             document.body.appendChild(modalContainer);
-            
+
             // Show modal
             const modal = new bootstrap.Modal(modalContainer.querySelector('.modal'));
             modal.show();
-            
+
             // Handle edit button in details modal
             modalContainer.querySelector('.modal').addEventListener('editStudent', (e) => {
                 modal.hide();
                 this.showStudentForm('edit', e.detail.studentId);
             });
-            
+
             // Remove modal when hidden
             modalContainer.querySelector('.modal').addEventListener('hidden.bs.modal', () => {
                 document.body.removeChild(modalContainer);
             });
-            
+
         } catch (error) {
             console.error('Error loading student details:', error);
             this.notificationService.showApiError(error);
@@ -632,10 +632,10 @@ export default class Students {
      * Create student details modal HTML
      */
     createStudentDetailsModal(student) {
-        const enrollmentDate = student.enrollmentDate ? 
+        const enrollmentDate = student.enrollmentDate ?
             new Date(student.enrollmentDate).toLocaleDateString() : 'N/A';
         const statusBadge = this.getStatusBadge(student.status);
-        
+
         return `
             <div class="modal fade" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog modal-lg">
@@ -729,52 +729,52 @@ export default class Students {
         try {
             // Get student details for confirmation
             const student = await this.studentService.getStudentById(studentId);
-            
+
             // Create confirmation modal
             const modalHtml = this.createDeleteConfirmationModal(student);
             const modalContainer = document.createElement('div');
             modalContainer.innerHTML = modalHtml;
             document.body.appendChild(modalContainer);
-            
+
             // Show modal
             const modal = new bootstrap.Modal(modalContainer.querySelector('.modal'));
             modal.show();
-            
+
             // Handle confirmation
             const confirmBtn = modalContainer.querySelector('#confirm-delete-btn');
             const cancelBtn = modalContainer.querySelector('#cancel-delete-btn');
-            
+
             confirmBtn.addEventListener('click', async () => {
                 try {
                     confirmBtn.disabled = true;
                     confirmBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Deleting...';
-                    
+
                     await this.studentService.deleteStudent(studentId);
-                    
+
                     this.notificationService.showSuccess(`Student ${student.firstName} ${student.lastName} deleted successfully`);
-                    
+
                     // Refresh the students list
                     await this.loadStudents();
-                    
+
                     modal.hide();
                 } catch (error) {
                     console.error('Error deleting student:', error);
                     this.notificationService.showApiError(error);
-                    
+
                     confirmBtn.disabled = false;
                     confirmBtn.innerHTML = '<i class="fas fa-trash me-1"></i>Delete Student';
                 }
             });
-            
+
             cancelBtn.addEventListener('click', () => {
                 modal.hide();
             });
-            
+
             // Remove modal when hidden
             modalContainer.querySelector('.modal').addEventListener('hidden.bs.modal', () => {
                 document.body.removeChild(modalContainer);
             });
-            
+
         } catch (error) {
             console.error('Error loading student for deletion:', error);
             this.notificationService.showApiError(error);
@@ -786,7 +786,7 @@ export default class Students {
      */
     createDeleteConfirmationModal(student) {
         const statusBadge = this.getStatusBadge(student.status);
-        
+
         return `
             <div class="modal fade" tabindex="-1" aria-hidden="true">
                 <div class="modal-dialog">
