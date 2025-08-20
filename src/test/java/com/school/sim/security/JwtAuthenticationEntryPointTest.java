@@ -13,11 +13,8 @@ import org.springframework.http.MediaType;
 import org.springframework.security.core.AuthenticationException;
 
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.StringWriter;
 
 
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -36,14 +33,10 @@ class JwtAuthenticationEntryPointTest {
     private AuthenticationException authException;
 
     private JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private StringWriter stringWriter;
-    private PrintWriter printWriter;
 
     @BeforeEach
     void setUp() throws IOException {
         jwtAuthenticationEntryPoint = new JwtAuthenticationEntryPoint();
-        stringWriter = new StringWriter();
-        printWriter = new PrintWriter(stringWriter);
         
         when(response.getOutputStream()).thenReturn(mock(javax.servlet.ServletOutputStream.class));
     }

@@ -38,7 +38,6 @@ public class TeachingActivityServiceImpl implements TeachingActivityService {
     private final SubjectRepository subjectRepository;
     private final ClassRoomRepository classRoomRepository;
     private final UserRepository userRepository;
-    private final AttendanceRepository attendanceRepository;
 
     @Override
     @Transactional

@@ -117,7 +117,8 @@ public class AttendanceServiceImpl implements AttendanceService {
     @Override
     public Page<AttendanceResponse> getAttendanceByStudent(Long studentId, Pageable pageable) {
         log.debug("Fetching attendance for student: {}", studentId);
-        Student student = findStudentById(studentId);
+        // Validate student exists
+        findStudentById(studentId);
         List<Attendance> attendances = attendanceRepository.findAll().stream()
                 .filter(a -> a.getStudent().getId().equals(studentId))
                 .collect(Collectors.toList());

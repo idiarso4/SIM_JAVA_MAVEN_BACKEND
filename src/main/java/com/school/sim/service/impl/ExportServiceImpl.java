@@ -61,7 +61,9 @@ public class ExportServiceImpl implements ExportService {
             
             // Add metadata
             if (data.containsKey("metadata")) {
-                Map<String, Object> metadata = (Map<String, Object>) data.get("metadata");
+                Object metadataObj = data.get("metadata");
+                @SuppressWarnings("unchecked")
+                Map<String, Object> metadata = (Map<String, Object>) metadataObj;
                 for (Map.Entry<String, Object> entry : metadata.entrySet()) {
                     Row metaRow = sheet.createRow(rowNum++);
                     metaRow.createCell(0).setCellValue(entry.getKey() + ":");
@@ -72,7 +74,9 @@ public class ExportServiceImpl implements ExportService {
             
             // Add main data
             if (data.containsKey("data") && data.get("data") instanceof List) {
-                List<Map<String, Object>> tableData = (List<Map<String, Object>>) data.get("data");
+                Object dataObj = data.get("data");
+                @SuppressWarnings("unchecked")
+                List<Map<String, Object>> tableData = (List<Map<String, Object>>) dataObj;
                 if (!tableData.isEmpty()) {
                     // Create header row
                     Row headerRow = sheet.createRow(rowNum++);
@@ -370,9 +374,13 @@ public class ExportServiceImpl implements ExportService {
                         break;
                     case "csv":
                         if (data.containsKey("data") && data.get("data") instanceof List) {
-                            List<Map<String, Object>> listData = (List<Map<String, Object>>) data.get("data");
-                            List<String> headers = options.containsKey("headers") ? 
-                                (List<String>) options.get("headers") : null;
+                            Object listDataObj = data.get("data");
+                            @SuppressWarnings("unchecked")
+                            List<Map<String, Object>> listData = (List<Map<String, Object>>) listDataObj;
+                            Object headersObj = options.get("headers");
+                            @SuppressWarnings("unchecked")
+                            List<String> headers = options.containsKey("headers") ?
+                                (List<String>) headersObj : null;
                             result = exportToCSV(listData, headers);
                         } else {
                             throw new RuntimeException("Invalid data format for CSV export");

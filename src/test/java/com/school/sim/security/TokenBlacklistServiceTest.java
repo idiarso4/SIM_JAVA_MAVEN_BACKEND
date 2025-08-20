@@ -120,12 +120,13 @@ class TokenBlacklistServiceTest {
     @Test
     void clearAllBlacklistedTokens_ShouldClearAllTokens() {
         // Arrange
-        when(redisTemplate.keys("blacklisted_token:*")).thenReturn(Set.of("key1", "key2"));
+        Set<String> keys = Set.of("key1", "key2");
+        when(redisTemplate.keys("blacklisted_token:*")).thenReturn(keys);
 
         // Act
         tokenBlacklistService.clearAllBlacklistedTokens();
 
         // Assert
-        verify(redisTemplate).delete(any(Set.class));
+        verify(redisTemplate).delete(keys);
     }
 }

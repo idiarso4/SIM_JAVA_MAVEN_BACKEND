@@ -3,7 +3,6 @@ package com.school.sim.service.impl;
 import com.school.sim.dto.request.AttendanceReportRequest;
 import com.school.sim.dto.response.AttendanceReportResponse;
 import com.school.sim.entity.Attendance;
-import com.school.sim.entity.AttendanceStatus;
 import com.school.sim.entity.Student;
 import com.school.sim.repository.AttendanceRepository;
 import com.school.sim.repository.StudentRepository;

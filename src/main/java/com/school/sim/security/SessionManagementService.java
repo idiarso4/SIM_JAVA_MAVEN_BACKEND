@@ -122,9 +122,8 @@ public class SessionManagementService {
             String token = (String) sessionData.get("token");
 
             if (token != null) {
-                // Add token to blacklist
-                TokenBlacklistService tokenBlacklistService = new TokenBlacklistService();
-                // Note: This would need proper dependency injection in a real implementation
+                // Token blacklisting not implemented yet - would require TokenBlacklistService injection
+                logger.debug("Token found for session termination: {}", token.substring(0, Math.min(10, token.length())) + "...");
             }
 
             // Remove session data
@@ -223,7 +222,8 @@ public class SessionManagementService {
     public long getSessionCount(String username) {
         try {
             String activeSessionsKey = ACTIVE_SESSIONS_PREFIX + username;
-            return redisTemplate.opsForSet().size(activeSessionsKey);
+            Long size = redisTemplate.opsForSet().size(activeSessionsKey);
+            return size != null ? size : 0;
         } catch (Exception e) {
             logger.error("Error getting session count for user: {}", username, e);
             return 0;

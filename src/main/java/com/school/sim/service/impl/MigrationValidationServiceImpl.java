@@ -252,7 +252,9 @@ public class MigrationValidationServiceImpl implements MigrationValidationServic
             
             for (Map.Entry<String, Object> testEntry : testResults.entrySet()) {
                 if (testEntry.getValue() instanceof Map) {
-                    Map<String, Object> test = (Map<String, Object>) testEntry.getValue();
+                    Object testObj = testEntry.getValue();
+                    @SuppressWarnings("unchecked")
+                    Map<String, Object> test = (Map<String, Object>) testObj;
                     if ("PASSED".equals(test.get("status")) || "SUCCESS".equals(test.get("status"))) {
                         passedTests++;
                     }
@@ -313,7 +315,7 @@ public class MigrationValidationServiceImpl implements MigrationValidationServic
                     String sampleQuery = "SELECT * FROM " + laravelTable + " LIMIT 5";
                     List<Map<String, Object>> sampleData = laravelJdbcTemplate.queryForList(sampleQuery);
                     
-                    if (sampleData.isEmpty() && count > 0) {
+                    if (sampleData.isEmpty() && count != null && count > 0) {
                         testErrors.add("No sample data extracted from table: " + laravelTable);
                     }
                     
@@ -700,15 +702,19 @@ public class MigrationValidationServiceImpl implements MigrationValidationServic
         // Count validations from different sections
         if (report.containsKey("dataCompleteness")) {
             totalValidations++;
-            Map<String, Object> completeness = (Map<String, Object>) report.get("dataCompleteness");
+            Object completenessObj = report.get("dataCompleteness");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> completeness = (Map<String, Object>) completenessObj;
             if ("COMPLETE".equals(completeness.get("status"))) {
                 passedValidations++;
             }
         }
-        
+
         if (report.containsKey("referentialIntegrity")) {
             totalValidations++;
-            Map<String, Object> integrity = (Map<String, Object>) report.get("referentialIntegrity");
+            Object integrityObj = report.get("referentialIntegrity");
+            @SuppressWarnings("unchecked")
+            Map<String, Object> integrity = (Map<String, Object>) integrityObj;
             if ("VALID".equals(integrity.get("status"))) {
                 passedValidations++;
             }

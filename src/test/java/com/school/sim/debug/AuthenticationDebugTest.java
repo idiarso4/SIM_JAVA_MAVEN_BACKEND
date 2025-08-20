@@ -27,7 +27,7 @@ public class AuthenticationDebugTest {
     public void testJwtTokenProviderExists() {
         // Test if JwtTokenProvider can be instantiated
         try {
-            JwtTokenProvider jwtTokenProvider = new JwtTokenProvider();
+            new JwtTokenProvider();
             System.out.println("JwtTokenProvider created successfully");
         } catch (Exception e) {
             System.err.println("Error creating JwtTokenProvider: " + e.getMessage());

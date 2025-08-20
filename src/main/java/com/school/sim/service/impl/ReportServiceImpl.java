@@ -59,12 +59,6 @@ public class ReportServiceImpl implements ReportService {
     @Autowired
     private SubjectRepository subjectRepository;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    @Autowired
-    private ExtracurricularActivityRepository extracurricularActivityRepository;
-
     // Academic Reports Implementation
 
     @Override
@@ -349,9 +343,6 @@ public class ReportServiceImpl implements ReportService {
         overallDistribution.put("F", 0);
 
         for (StudentAssessment assessment : allAssessments) {
-            BigDecimal percentage = assessment.getScore()
-                    .divide(assessment.getAssessment().getMaxScore(), 4, RoundingMode.HALF_UP)
-                    .multiply(new BigDecimal("100"));
             String letterGrade = calculateLetterGrade(assessment.getScore().doubleValue(),
                     assessment.getAssessment().getMaxScore().doubleValue());
             overallDistribution.put(letterGrade, overallDistribution.get(letterGrade) + 1);

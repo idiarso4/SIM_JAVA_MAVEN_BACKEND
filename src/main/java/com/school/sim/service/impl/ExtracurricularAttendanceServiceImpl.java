@@ -278,9 +278,10 @@ public class ExtracurricularAttendanceServiceImpl implements ExtracurricularAtte
     @Override
     public List<ExtracurricularAttendanceResponse> markAllPresent(Long activityId, LocalDate date) {
         logger.info("Marking all students present for activity {} on {}", activityId, date);
-        ExtracurricularActivity activity = findActivityById(activityId);
+        // Validate activity exists
+        findActivityById(activityId);
         List<ExtracurricularAttendanceResponse> responses = new ArrayList<>();
-        
+
         // This is a placeholder - in real implementation, you would get all registered students
         // and mark them as present
         logger.info("Successfully marked students as present");
@@ -290,9 +291,10 @@ public class ExtracurricularAttendanceServiceImpl implements ExtracurricularAtte
     @Override
     public List<ExtracurricularAttendanceResponse> markAllAbsent(Long activityId, LocalDate date) {
         logger.info("Marking all students absent for activity {} on {}", activityId, date);
-        ExtracurricularActivity activity = findActivityById(activityId);
+        // Validate activity exists
+        findActivityById(activityId);
         List<ExtracurricularAttendanceResponse> responses = new ArrayList<>();
-        
+
         // This is a placeholder - in real implementation, you would get all registered students
         // and mark them as absent
         logger.info("Successfully marked students as absent");

@@ -1,7 +1,6 @@
 package com.school.sim.controller;
 
 import com.school.sim.service.ExcelService;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,9 +32,6 @@ class ExcelControllerTest {
 
     @MockBean
     private ExcelService excelService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     private MockMultipartFile testFile;
     private ExcelService.ImportResult importResult;

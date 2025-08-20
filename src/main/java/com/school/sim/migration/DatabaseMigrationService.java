@@ -198,8 +198,8 @@ public class DatabaseMigrationService {
         // Check for students without valid class assignments
         String invalidClassSql = "SELECT COUNT(*) FROM students WHERE class_room_id IS NULL AND status = 'ACTIVE'";
         Integer activeStudentsWithoutClass = jdbcTemplate.queryForObject(invalidClassSql, Integer.class);
-        
-        if (activeStudentsWithoutClass > 0) {
+
+        if (activeStudentsWithoutClass != null && activeStudentsWithoutClass > 0) {
             result.addWarning("Found " + activeStudentsWithoutClass + " active students without class assignment");
         }
     }
