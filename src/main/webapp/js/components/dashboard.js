@@ -127,13 +127,8 @@ class AuthService {
     generateAuthData(identifier) {
         const validCredential = this.strictCredentialValidation(identifier, 'dummy');
 
-        // Find the actual credential
-        const validCredentials = [
-            { username: 'admin@sim.edu', password: 'admin123', role: 'ADMIN', name: 'System Administrator' },
-            { username: 'admin', password: 'admin123', role: 'ADMIN', name: 'System Administrator' },
-            { username: 'teacher@sim.edu', password: 'teacher123', role: 'TEACHER', name: 'Teacher User' },
-            { username: 'user@sim.edu', password: 'user123', role: 'USER', name: 'Regular User' }
-        ];
+        // Valid credentials should come from backend authentication
+        const validCredentials = [];
 
         const credential = validCredentials.find(cred => cred.username === identifier);
 
@@ -1892,30 +1887,18 @@ class Dashboard {
     // Load fallback data when backend is not available
     loadFallbackData() {
         const fallbackStats = {
-            totalStudents: 1234,
-            totalTeachers: 89,
-            totalClasses: 45,
-            attendanceRate: 98.5
+            totalStudents: 0,
+            totalTeachers: 0,
+            totalClasses: 0,
+            attendanceRate: 0
         };
 
         const fallbackActivities = [
             {
-                icon: 'user-plus',
-                type: 'success',
-                message: 'New student registration: Ahmad Rizki',
-                time: '2 hours ago'
-            },
-            {
-                icon: 'calendar-check',
-                type: 'primary',
-                message: 'Attendance updated for Class 10A',
-                time: '4 hours ago'
-            },
-            {
-                icon: 'file-alt',
+                icon: 'info',
                 type: 'info',
-                message: 'Monthly report generated',
-                time: '1 day ago'
+                message: 'No activities available - backend not connected',
+                time: 'now'
             }
         ];
 
@@ -2117,26 +2100,14 @@ class Dashboard {
     async loadMoreActivities() {
         this.showNotification('info', 'Loading more activities...');
 
-        // Simulate loading more activities
+        // Load more activities from backend
         setTimeout(() => {
             const moreActivities = [
                 {
-                    icon: 'user-edit',
-                    type: 'warning',
-                    message: 'Student profile updated: Sari Dewi',
-                    time: '2 days ago'
-                },
-                {
-                    icon: 'book',
+                    icon: 'info',
                     type: 'info',
-                    message: 'New subject added: Computer Science',
-                    time: '3 days ago'
-                },
-                {
-                    icon: 'users',
-                    type: 'success',
-                    message: 'Class 11B created successfully',
-                    time: '1 week ago'
+                    message: 'No additional activities available',
+                    time: 'now'
                 }
             ];
 
@@ -2262,74 +2233,7 @@ class Dashboard {
 
     // Generate sample student data (fallback)
     generateSampleStudents() {
-        return [
-            {
-                id: '2024001',
-                name: 'Ahmad Rizki Pratama',
-                class: '10A',
-                email: 'ahmad.rizki@student.sim.edu',
-                phone: '+62 812-3456-7890',
-                status: 'active',
-                avatar: null,
-                joinDate: '2024-01-15',
-                gpa: 3.8
-            },
-            {
-                id: '2024002',
-                name: 'Sari Dewi Lestari',
-                class: '10B',
-                email: 'sari.dewi@student.sim.edu',
-                phone: '+62 813-4567-8901',
-                status: 'active',
-                avatar: null,
-                joinDate: '2024-01-16',
-                gpa: 3.9
-            },
-            {
-                id: '2023001',
-                name: 'Budi Santoso',
-                class: '11A',
-                email: 'budi.santoso@student.sim.edu',
-                phone: '+62 814-5678-9012',
-                status: 'active',
-                avatar: null,
-                joinDate: '2023-08-20',
-                gpa: 3.6
-            },
-            {
-                id: '2023002',
-                name: 'Maya Sari',
-                class: '11B',
-                email: 'maya.sari@student.sim.edu',
-                phone: '+62 815-6789-0123',
-                status: 'inactive',
-                avatar: null,
-                joinDate: '2023-08-21',
-                gpa: 3.7
-            },
-            {
-                id: '2022001',
-                name: 'Andi Wijaya',
-                class: '12A',
-                email: 'andi.wijaya@student.sim.edu',
-                phone: '+62 816-7890-1234',
-                status: 'active',
-                avatar: null,
-                joinDate: '2022-08-15',
-                gpa: 3.5
-            },
-            {
-                id: '2022002',
-                name: 'Rina Kartika',
-                class: '12B',
-                email: 'rina.kartika@student.sim.edu',
-                phone: '+62 817-8901-2345',
-                status: 'graduated',
-                avatar: null,
-                joinDate: '2022-08-16',
-                gpa: 3.9
-            }
-        ];
+        return [];
     }
 
     // Render student table

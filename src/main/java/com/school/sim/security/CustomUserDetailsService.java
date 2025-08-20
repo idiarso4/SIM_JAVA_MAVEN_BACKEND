@@ -42,19 +42,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
             return createUserDetails(user.getEmail(), user.getPassword(), getUserAuthorities(user));
         } catch (Exception e) {
-            // Fallback to mock users for testing when database is not available
-            if ("admin@example.com".equals(username)) {
-                return createUserDetails("admin@example.com", "$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG", // password: password
-                        List.of("ROLE_ADMIN", "ROLE_USER"));
-            } else if ("teacher@example.com".equals(username)) {
-                return createUserDetails("teacher@example.com", "$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG", // password: password
-                        List.of("ROLE_TEACHER", "ROLE_USER"));
-            } else if ("student@example.com".equals(username)) {
-                return createUserDetails("student@example.com", "$2a$10$dXJ3SW6G7P50lGmMkkmwe.20cQQubK3.HZWzG3YB1tlRy.fqvM/BG", // password: password
-                        List.of("ROLE_STUDENT", "ROLE_USER"));
-            }
-            
-            throw new UsernameNotFoundException("User not found with username: " + username);
+            // No fallback users - all authentication must go through database
+            throw new UsernameNotFoundException("User not found with username: " + username + " (Database error: " + e.getMessage() + ")");
         }
     }
 

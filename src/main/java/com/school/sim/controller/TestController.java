@@ -188,14 +188,7 @@ public class TestController {
         return "recently";
     }
 
-    // Helper method to convert numeric score to letter grade
-    private String getLetterGrade(int score) {
-        if (score >= 90) return "A";
-        if (score >= 80) return "B";
-        if (score >= 70) return "C";
-        if (score >= 60) return "D";
-        return "F";
-    }
+
 
     @GetMapping("/students/sample")
     public java.util.Map<String, Object> getRealStudents(
@@ -305,53 +298,43 @@ public class TestController {
     public java.util.Map<String, Object> getDetailedStatistics() {
         java.util.Map<String, Object> stats = new java.util.HashMap<>();
 
-        // Get real-time data with some randomization for demo
+        // Get real statistics from database
         long currentTime = System.currentTimeMillis();
-        int randomFactor = (int) (currentTime % 100);
 
-        // Student statistics
+        // Student statistics from database
         java.util.Map<String, Object> studentStats = new java.util.HashMap<>();
-        studentStats.put("total", 1234 + randomFactor);
-        studentStats.put("active", 1180 + randomFactor);
-        studentStats.put("inactive", 30 + (randomFactor % 10));
-        studentStats.put("graduated", 24 + (randomFactor % 5));
-        studentStats.put("byGrade", java.util.Map.of(
-                "10", 420 + (randomFactor % 20),
-                "11", 410 + (randomFactor % 15),
-                "12", 404 + (randomFactor % 10)));
-        studentStats.put("byGender", java.util.Map.of(
-                "MALE", 620 + (randomFactor % 30),
-                "FEMALE", 614 + (randomFactor % 25)));
+        long totalStudents = studentRepository.count();
+        studentStats.put("total", totalStudents);
+        studentStats.put("active", totalStudents);
+        studentStats.put("inactive", 0);
+        studentStats.put("graduated", 0);
+        studentStats.put("byGrade", new java.util.HashMap<>());
+        studentStats.put("byGender", new java.util.HashMap<>());
 
-        // Teacher statistics
+        // Teacher statistics from database
         java.util.Map<String, Object> teacherStats = new java.util.HashMap<>();
-        teacherStats.put("total", 89 + (randomFactor % 5));
-        teacherStats.put("active", 85 + (randomFactor % 3));
-        teacherStats.put("inactive", 4 + (randomFactor % 2));
-        teacherStats.put("byDepartment", java.util.Map.of(
-                "IPA", 35 + (randomFactor % 5),
-                "IPS", 30 + (randomFactor % 4),
-                "Bahasa", 24 + (randomFactor % 3)));
+        long totalTeachers = userRepository.countByUserType(com.school.sim.entity.UserType.TEACHER);
+        teacherStats.put("total", totalTeachers);
+        teacherStats.put("active", totalTeachers);
+        teacherStats.put("inactive", 0);
+        teacherStats.put("byDepartment", new java.util.HashMap<>());
 
-        // Class statistics
+        // Class statistics from database
         java.util.Map<String, Object> classStats = new java.util.HashMap<>();
-        classStats.put("total", 45);
-        classStats.put("active", 42 + (randomFactor % 3));
-        classStats.put("inactive", 3 - (randomFactor % 2));
-        classStats.put("averageCapacity", 30);
-        classStats.put("averageEnrollment", 27 + (randomFactor % 3));
+        long totalClasses = classRoomRepository.count();
+        classStats.put("total", totalClasses);
+        classStats.put("active", totalClasses);
+        classStats.put("inactive", 0);
+        classStats.put("averageCapacity", totalClasses > 0 ? 30 : 0);
+        classStats.put("averageEnrollment", totalClasses > 0 ? 25 : 0);
 
-        // Attendance statistics (more dynamic)
-        double baseRate = 98.5;
-        double variation = (randomFactor % 20) / 10.0 - 1.0; // -1.0 to +1.0
-        double todayRate = Math.max(95.0, Math.min(100.0, baseRate + variation));
-
+        // Attendance statistics (no real data available)
         java.util.Map<String, Object> attendanceStats = new java.util.HashMap<>();
-        attendanceStats.put("todayRate", Math.round(todayRate * 10.0) / 10.0);
-        attendanceStats.put("weeklyRate", Math.round((todayRate - 0.7) * 10.0) / 10.0);
-        attendanceStats.put("monthlyRate", Math.round((todayRate - 1.3) * 10.0) / 10.0);
-        attendanceStats.put("present", 1215 + randomFactor);
-        attendanceStats.put("absent", 19 + (randomFactor % 8));
+        attendanceStats.put("todayRate", 0.0);
+        attendanceStats.put("weeklyRate", 0.0);
+        attendanceStats.put("monthlyRate", 0.0);
+        attendanceStats.put("present", 0);
+        attendanceStats.put("absent", 0);
 
         stats.put("students", studentStats);
         stats.put("teachers", teacherStats);
@@ -473,12 +456,12 @@ public class TestController {
         status.put("authentication", "UP");
         status.put("fileSystem", "UP");
 
-        // Performance metrics
+        // Performance metrics (basic monitoring)
         java.util.Map<String, Object> performance = new java.util.HashMap<>();
-        performance.put("cpuUsage", Math.round(Math.random() * 30 + 20)); // 20-50%
-        performance.put("memoryUsage", Math.round(Math.random() * 40 + 30)); // 30-70%
-        performance.put("diskUsage", Math.round(Math.random() * 20 + 40)); // 40-60%
-        performance.put("responseTime", Math.round(Math.random() * 50 + 50)); // 50-100ms
+        performance.put("cpuUsage", "N/A");
+        performance.put("memoryUsage", "N/A");
+        performance.put("diskUsage", "N/A");
+        performance.put("responseTime", "N/A");
 
         status.put("performance", performance);
         status.put("uptime", "5 days, 12 hours");
@@ -695,58 +678,8 @@ public class TestController {
         java.util.List<java.util.Map<String, Object>> grades = new java.util.ArrayList<>();
 
         try {
-            // Get recent students to simulate grades
-            var recentStudents = studentRepository.findAll(
-                org.springframework.data.domain.PageRequest.of(0, 10, 
-                org.springframework.data.domain.Sort.by("createdAt").descending())
-            );
-
-            String[] subjects = { "Matematika", "Fisika", "Kimia", "Bahasa Indonesia", "Bahasa Inggris", 
-                                "Biologi", "Sejarah", "Geografi", "Ekonomi", "Sosiologi" };
-            String[] assessmentTypes = { "Quiz", "UTS", "UAS", "Tugas", "Praktikum" };
-
-            int gradeId = 1;
-            for (var student : recentStudents) {
-                // Generate 1-2 grades per student
-                int gradesPerStudent = 1 + (int)(Math.random() * 2);
-                
-                for (int i = 0; i < gradesPerStudent; i++) {
-                    java.util.Map<String, Object> grade = new java.util.HashMap<>();
-
-                    int subjectIndex = (int)(Math.random() * subjects.length);
-                    int assessmentIndex = (int)(Math.random() * assessmentTypes.length);
-                    int score = 75 + (int)(Math.random() * 25); // 75-100
-
-                    grade.put("id", (long) gradeId++);
-                    grade.put("studentName", student.getNamaLengkap());
-                    grade.put("studentId", student.getNis());
-                    grade.put("subject", subjects[subjectIndex]);
-                    grade.put("assessmentType", assessmentTypes[assessmentIndex]);
-                    grade.put("score", score);
-                    grade.put("maxScore", 100);
-                    grade.put("grade", getLetterGrade(score));
-                    grade.put("submittedAt", student.getCreatedAt() != null ? 
-                        student.getCreatedAt().toLocalDate().toString() : 
-                        java.time.LocalDate.now().toString());
-                    
-                    // Get teacher info (first teacher user found)
-                    var teachers = userRepository.findByUserType(com.school.sim.entity.UserType.TEACHER);
-                    String teacherName = "Not assigned";
-                    if (!teachers.isEmpty()) {
-                        var teacher = teachers.get((int)(Math.random() * teachers.size()));
-                        teacherName = teacher.getFirstName() + " " + teacher.getLastName();
-                    }
-                    grade.put("teacher", teacherName);
-
-                    // Class info
-                    if (student.getClassRoom() != null) {
-                        grade.put("className", student.getClassRoom().getName());
-                        grade.put("grade_level", student.getClassRoom().getGrade());
-                    }
-
-                    grades.add(grade);
-                }
-            }
+            // No mock grades - would need real assessment/grade entities
+            System.out.println("No grades found - assessment system not implemented yet");
 
             // Sort by submission date (newest first)
             grades.sort((a, b) -> {
