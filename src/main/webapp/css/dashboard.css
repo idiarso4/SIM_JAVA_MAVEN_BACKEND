@@ -495,6 +495,21 @@ body {
     animation: slideInRight 0.3s ease-out;
 }
 
+/* Alert Container */
+#alertContainer {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1050;
+    max-width: 400px;
+}
+
+#alertContainer .alert {
+    margin-bottom: 0.5rem;
+    animation: slideInRight 0.3s ease-out;
+    box-shadow: var(--box-shadow);
+}
+
 @keyframes slideInRight {
     from {
         opacity: 0;
@@ -780,6 +795,64 @@ body {
 .border-gradient {
     border: 2px solid;
     border-image: linear-gradient(135deg, var(--primary-color) 0%, var(--secondary-color) 100%) 1;
+}
+
+/* Avatar Styles */
+.avatar-sm {
+    width: 40px;
+    height: 40px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.avatar-md {
+    width: 60px;
+    height: 60px;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+.avatar-lg {
+    width: 80px;
+    height: 80px;
+    font-size: 1.5rem;
+    font-weight: 600;
+}
+
+/* Stat Item Styles */
+.stat-item {
+    padding: 0.5rem;
+    text-align: center;
+}
+
+.stat-item h4 {
+    margin-bottom: 0.25rem;
+    font-weight: 700;
+    font-size: 1.5rem;
+}
+
+.stat-item small {
+    font-size: 0.75rem;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Table Hover Effects */
+.table-hover tbody tr:hover {
+    background-color: rgba(102, 126, 234, 0.05);
+    transform: translateY(-1px);
+    transition: var(--transition);
+}
+
+/* Button Group Styles */
+.btn-group-sm .btn {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+}
+
+.btn-group .btn:hover {
+    z-index: 2;
 }
 
 /* Final Touches */

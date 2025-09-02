@@ -5,6 +5,7 @@ import com.school.sim.dto.request.UpdateUserRequest;
 import com.school.sim.dto.response.UserResponse;
 import com.school.sim.entity.Role;
 import com.school.sim.entity.User;
+import com.school.sim.entity.UserType;
 import com.school.sim.exception.ResourceNotFoundException;
 import com.school.sim.exception.ValidationException;
 import com.school.sim.repository.RoleRepository;
@@ -15,6 +16,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -343,6 +346,47 @@ public class UserServiceImpl implements UserService {
         
         userRepository.saveAll(users);
         logger.info("Successfully deactivated {} users", users.size());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getUsersByType(UserType userType, Pageable pageable) {
+        logger.debug("Fetching users by type: {} with pagination", userType);
+
+        Page<User> users = userRepository.findByUserType(userType, pageable);
+        return users.map(UserResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserResponse> getActiveUsersByType(UserType userType, Pageable pageable) {
+        logger.debug("Fetching active users by type: {} with pagination", userType);
+
+        Page<User> users = userRepository.findByUserTypeAndIsActive(userType, true, pageable);
+        return users.map(UserResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<UserResponse> searchUsersByTypeAndQuery(UserType userType, String query, Pageable pageable) {
+        logger.debug("Searching users by type: {} and query: '{}' with pagination", userType, query);
+
+        Page<User> users = userRepository.findByUserTypeAndQuery(userType, query, pageable);
+        return users.map(UserResponse::from);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean isCurrentUser(Long userId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !authentication.isAuthenticated()) {
+            return false;
+        }
+
+        String currentUserEmail = authentication.getName();
+        Optional<User> currentUser = userRepository.findByEmail(currentUserEmail);
+
+        return currentUser.isPresent() && currentUser.get().getId().equals(userId);
     }
 
     // Helper methods

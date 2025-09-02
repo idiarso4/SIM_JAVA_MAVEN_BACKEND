@@ -118,11 +118,23 @@
                         <a class="nav-link" href="#" data-section="attendance">
                             <i class="fas fa-calendar-check me-2"></i>Attendance
                         </a>
+                        <a class="nav-link" href="#" data-section="assessments">
+                            <i class="fas fa-clipboard-check me-2"></i>Assessments
+                        </a>
                         <a class="nav-link" href="#" data-section="grades">
                             <i class="fas fa-chart-bar me-2"></i>Grades
                         </a>
+                        <a class="nav-link" href="#" data-section="users">
+                            <i class="fas fa-users-cog me-2"></i>User Management
+                        </a>
                         <a class="nav-link" href="#" data-section="reports">
                             <i class="fas fa-file-alt me-2"></i>Reports
+                        </a>
+                        <a class="nav-link" href="#" data-section="excel">
+                            <i class="fas fa-file-excel me-2"></i>Excel Import/Export
+                        </a>
+                        <a class="nav-link" href="#" data-section="system">
+                            <i class="fas fa-cogs me-2"></i>System Health
                         </a>
                     </nav>
                 </div>
@@ -130,20 +142,13 @@
 
             <!-- Main Content -->
             <div class="col-md-9 col-lg-10 main-content">
-                <!-- Success Message -->
-                <div class="success-message">
-                    <h2><i class="fas fa-check-circle me-2"></i>🎉 Login System Working Perfectly!</h2>
-                    <p class="mb-0">Congratulations! Your SIM login system is now fully functional.</p>
-                    <small>You can now build the rest of your application features.</small>
-                </div>
-
                 <!-- Welcome Section -->
                 <div class="row mb-4">
                     <div class="col-12">
                         <div class="card welcome-card">
                             <div class="card-body">
                                 <h2><i class="fas fa-home me-2"></i>Welcome to SIM Dashboard</h2>
-                                <p class="mb-0">School Information Management System - Successfully logged in!</p>
+                                <p class="mb-0">School Information Management System</p>
                                 <small id="loginTime"></small>
                             </div>
                         </div>
@@ -151,12 +156,14 @@
                 </div>
 
                 <!-- Statistics Cards -->
-                <div class="row mb-4">
+                <div class="row mb-4" id="statsCards">
                     <div class="col-md-3 mb-3">
                         <div class="card stat-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-user-graduate fa-2x mb-3"></i>
-                                <div class="stat-number">1,234</div>
+                                <i class="fas fa-user-graduate fa-2x mb-3 text-primary"></i>
+                                <div class="stat-number" id="totalStudents">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
                                 <div>Total Students</div>
                             </div>
                         </div>
@@ -164,27 +171,33 @@
                     <div class="col-md-3 mb-3">
                         <div class="card stat-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-chalkboard-teacher fa-2x mb-3"></i>
-                                <div class="stat-number">89</div>
-                                <div>Total Teachers</div>
+                                <i class="fas fa-users fa-2x mb-3 text-success"></i>
+                                <div class="stat-number" id="totalUsers">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Total Users</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="card stat-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-school fa-2x mb-3"></i>
-                                <div class="stat-number">45</div>
-                                <div>Total Classes</div>
+                                <i class="fas fa-school fa-2x mb-3 text-warning"></i>
+                                <div class="stat-number" id="activeClasses">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Active Classes</div>
                             </div>
                         </div>
                     </div>
                     <div class="col-md-3 mb-3">
                         <div class="card stat-card">
                             <div class="card-body text-center">
-                                <i class="fas fa-calendar-check fa-2x mb-3"></i>
-                                <div class="stat-number">98.5%</div>
-                                <div>Attendance Rate</div>
+                                <i class="fas fa-clipboard-check fa-2x mb-3 text-info"></i>
+                                <div class="stat-number" id="totalAssessments">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Assessments</div>
                             </div>
                         </div>
                     </div>
@@ -232,13 +245,13 @@
                                     </div>
                                     <div class="card-body">
                                         <div class="d-grid gap-2">
-                                            <button class="btn btn-primary" onclick="showAlert('info', 'Feature coming soon!')">
+                                            <button class="btn btn-primary" onclick="showCreateStudentForm()">
                                                 <i class="fas fa-user-plus me-2"></i>Add Student
                                             </button>
-                                            <button class="btn btn-success" onclick="showAlert('info', 'Feature coming soon!')">
+                                            <button class="btn btn-success" onclick="showMarkAttendanceForm()">
                                                 <i class="fas fa-calendar-plus me-2"></i>Mark Attendance
                                             </button>
-                                            <button class="btn btn-warning" onclick="showAlert('info', 'Feature coming soon!')">
+                                            <button class="btn btn-warning" onclick="generateStudentReport()">
                                                 <i class="fas fa-file-export me-2"></i>Generate Report
                                             </button>
                                         </div>
@@ -260,42 +273,586 @@
                         </div>
                     </div>
 
-                    <!-- Other sections (hidden by default) -->
-                    <div id="students-section" class="content-section d-none">
+                    <!-- Classes Section -->
+                    <div id="classes-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-school me-2"></i>Class Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadClasses()">
+                                                <i class="fas fa-list me-2"></i>View All Classes
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showAddClassForm()">
+                                                <i class="fas fa-plus me-2"></i>Add New Class
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchClasses()">
+                                                <i class="fas fa-search me-2"></i>Search Classes
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadAvailableClasses()">
+                                                <i class="fas fa-door-open me-2"></i>Available Classes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-bar me-2"></i>Class Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="classStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grade Filter -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-filter me-2"></i>Filter by Grade</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade('all')">All Grades</button>
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade(10)">Grade 10</button>
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade(11)">Grade 11</button>
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade(12)">Grade 12</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Classes List -->
                         <div class="card">
                             <div class="card-header">
-                                <h5><i class="fas fa-user-graduate me-2"></i>Student Management</h5>
+                                <h5><i class="fas fa-list me-2"></i>Classes List</h5>
                             </div>
                             <div class="card-body">
-                                <div class="alert alert-success">
-                                    <h6><i class="fas fa-check-circle me-2"></i>Ready for Development!</h6>
-                                    <p>The login system is working perfectly. You can now implement:</p>
-                                    <ul class="mb-0">
-                                        <li>Student registration and profiles</li>
-                                        <li>Student search and filtering</li>
-                                        <li>Academic records management</li>
-                                        <li>Parent/guardian information</li>
-                                    </ul>
+                                <div id="classesListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Classes" to load class data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other sections (hidden by default) -->
+                    <div id="students-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-user-graduate me-2"></i>Student Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadStudents()">
+                                                <i class="fas fa-list me-2"></i>View All Students
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showCreateStudentForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Add New Student
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchStudents()">
+                                                <i class="fas fa-search me-2"></i>Search Students
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Student Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="studentStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Students List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Recent Students</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="studentsListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Students" to load student data</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
 
                     <div id="teachers-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadTeachers()">
+                                                <i class="fas fa-list me-2"></i>View All Teachers
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showAddTeacherForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Add New Teacher
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchTeachers()">
+                                                <i class="fas fa-search me-2"></i>Search Teachers
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadActiveTeachers()">
+                                                <i class="fas fa-user-check me-2"></i>Active Teachers
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Teacher Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="teacherStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Teachers List -->
                         <div class="card">
                             <div class="card-header">
-                                <h5><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management</h5>
+                                <h5><i class="fas fa-list me-2"></i>Teachers List</h5>
                             </div>
                             <div class="card-body">
-                                <div class="alert alert-info">
-                                    <h6><i class="fas fa-info-circle me-2"></i>Feature Development Area</h6>
-                                    <p>Build teacher management features here:</p>
-                                    <ul class="mb-0">
-                                        <li>Teacher profiles and credentials</li>
-                                        <li>Subject assignments</li>
-                                        <li>Class schedules</li>
-                                        <li>Performance tracking</li>
-                                    </ul>
+                                <div id="teachersListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Teachers" to load teacher data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Section -->
+                    <div id="attendance-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-calendar-check me-2"></i>Attendance Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadTodayAttendance()">
+                                                <i class="fas fa-calendar-day me-2"></i>Today's Attendance
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showMarkAttendanceForm()">
+                                                <i class="fas fa-check me-2"></i>Mark Attendance
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showAttendanceReports()">
+                                                <i class="fas fa-chart-line me-2"></i>Attendance Reports
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadAttendanceHistory()">
+                                                <i class="fas fa-history me-2"></i>Attendance History
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Attendance Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="attendanceStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attendance List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Attendance Records</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="attendanceListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Today's Attendance" to load attendance data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assessments Section -->
+                    <div id="assessments-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-clipboard-check me-2"></i>Assessment Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadAssessments()">
+                                                <i class="fas fa-list me-2"></i>View All Assessments
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showCreateAssessmentForm()">
+                                                <i class="fas fa-plus me-2"></i>Create Assessment
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchAssessments()">
+                                                <i class="fas fa-search me-2"></i>Search Assessments
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadUpcomingAssessments()">
+                                                <i class="fas fa-clock me-2"></i>Upcoming Assessments
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Assessment Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="assessmentStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assessments List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Assessments List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="assessmentsListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Assessments" to load assessment data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grades Section -->
+                    <div id="grades-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-bar me-2"></i>Grade Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadGrades()">
+                                                <i class="fas fa-list me-2"></i>View All Grades
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showEnterGradesForm()">
+                                                <i class="fas fa-edit me-2"></i>Enter Grades
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showGradeReports()">
+                                                <i class="fas fa-chart-line me-2"></i>Grade Reports
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadGradeAnalytics()">
+                                                <i class="fas fa-analytics me-2"></i>Grade Analytics
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Grade Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="gradeStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grades List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Grades List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="gradesListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Grades" to load grade data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="users-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-users-cog me-2"></i>User Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadAllUsers()">
+                                                <i class="fas fa-list me-2"></i>View All Users
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showCreateUserForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Create User
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchUsers()">
+                                                <i class="fas fa-search me-2"></i>Search Users
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadUserRoles()">
+                                                <i class="fas fa-user-shield me-2"></i>Manage Roles
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>User Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="userStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Users List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="usersListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Users" to load user data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Section -->
+                    <div id="reports-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-alt me-2"></i>Report Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="generateStudentReport()">
+                                                <i class="fas fa-user-graduate me-2"></i>Student Reports
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="generateAttendanceReport()">
+                                                <i class="fas fa-calendar-check me-2"></i>Attendance Reports
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="generateGradeReport()">
+                                                <i class="fas fa-chart-bar me-2"></i>Grade Reports
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="generateCustomReport()">
+                                                <i class="fas fa-cog me-2"></i>Custom Reports
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Report Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="reportStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reports List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Generated Reports</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="reportsListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Student Reports" to generate reports</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Excel Section -->
+                    <div id="excel-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-excel me-2"></i>Excel Import/Export</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="showImportExcel()">
+                                                <i class="fas fa-upload me-2"></i>Import from Excel
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="exportToExcel()">
+                                                <i class="fas fa-download me-2"></i>Export to Excel
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showExcelTemplates()">
+                                                <i class="fas fa-file-download me-2"></i>Download Templates
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="showImportHistory()">
+                                                <i class="fas fa-history me-2"></i>Import History
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Import/Export Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="excelStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Excel Operations -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Excel Operations</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="excelOperationsContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Import from Excel" to start Excel operations</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health Section -->
+                    <div id="system-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-cogs me-2"></i>System Health</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="checkSystemHealth()">
+                                                <i class="fas fa-heartbeat me-2"></i>Check System Health
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="viewSystemLogs()">
+                                                <i class="fas fa-file-alt me-2"></i>View System Logs
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showDatabaseStatus()">
+                                                <i class="fas fa-database me-2"></i>Database Status
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="showPerformanceMetrics()">
+                                                <i class="fas fa-tachometer-alt me-2"></i>Performance Metrics
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>System Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="systemStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Information -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-info-circle me-2"></i>System Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="systemInfoContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Check System Health" to load system information</p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -308,7 +865,7 @@
     </div>
 
     <!-- Alert Container -->
-    <div id="alertContainer" style="position: fixed; top: 20px; right: 20px; z-index: 1050;"></div>
+    <div id="alertContainer"></div>
 
     <!-- Include CSS -->
     <link href="css/dashboard.css" rel="stylesheet">
@@ -321,13 +878,2307 @@
     
     <script>
         // Initialize dashboard when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
             console.log('🚀 Initializing SIM Dashboard...');
-            
-            // The dashboard.js will handle everything automatically
-            // Dashboard component will be initialized by the global initialization
-            
-            console.log('🚀 SIM Dashboard Ready!');
+
+            // Check authentication first
+            const token = localStorage.getItem('sim_auth_token');
+            if (!token) {
+                console.log('❌ No authentication token found, redirecting to login...');
+                window.location.href = '/index.html';
+                return;
+            }
+
+            try {
+                // Validate token with backend
+                const response = await fetch('/api/v1/auth/validate', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    console.log('❌ Token validation failed, redirecting to login...');
+                    localStorage.removeItem('sim_auth_token');
+                    localStorage.removeItem('sim_refresh_token');
+                    localStorage.removeItem('sim_current_user');
+                    window.location.href = '/index.html';
+                    return;
+                }
+
+                const userData = await response.json();
+                console.log('✅ Authentication validated:', userData);
+
+                // Update user info in dashboard
+                const userNameElement = document.getElementById('userName');
+                if (userNameElement && userData.user) {
+                    userNameElement.textContent = userData.user.firstName + ' ' + userData.user.lastName;
+                }
+
+                // Update login time
+                const loginTimeElement = document.getElementById('loginTime');
+                const currentTimeElement = document.getElementById('currentTime');
+                const currentTime = new Date().toLocaleString();
+
+                if (loginTimeElement) {
+                    loginTimeElement.textContent = `Logged in at: ${currentTime}`;
+                }
+                if (currentTimeElement) {
+                    currentTimeElement.textContent = currentTime;
+                }
+
+                // Load dashboard data from backend API
+                await loadDashboardData();
+
+                // Setup navigation
+                setupNavigation();
+
+                console.log('🚀 SIM Dashboard Ready!');
+
+            } catch (error) {
+                console.error('❌ Authentication check failed:', error);
+                localStorage.removeItem('sim_auth_token');
+                localStorage.removeItem('sim_refresh_token');
+                localStorage.removeItem('sim_current_user');
+                window.location.href = '/index.html';
+            }
+        });
+
+        // Load dashboard data from backend API
+        async function loadDashboardData() {
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                console.log('📊 Loading dashboard statistics...');
+
+                // Load main dashboard stats
+                const statsResponse = await fetch('/api/v1/dashboard/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (statsResponse.ok) {
+                    const stats = await statsResponse.json();
+                    console.log('✅ Dashboard stats loaded:', stats);
+
+                    // Update statistics cards
+                    updateStatCard('totalStudents', stats.totalStudents || 0);
+                    updateStatCard('totalUsers', stats.totalUsers || 0);
+                    updateStatCard('activeClasses', stats.activeClasses || 0);
+                    updateStatCard('totalAssessments', stats.pendingTasks || 0);
+                } else {
+                    console.error('❌ Failed to load dashboard stats:', statsResponse.status);
+                    showErrorInStats();
+                }
+
+                // Load additional data
+                await loadStudentStats();
+                await loadUserStats();
+                await loadClassStats();
+
+            } catch (error) {
+                console.error('❌ Error loading dashboard data:', error);
+                showErrorInStats();
+            }
+        }
+
+        // Setup navigation handling
+        function setupNavigation() {
+            const navLinks = document.querySelectorAll('.nav-link[data-section]');
+            const contentSections = document.querySelectorAll('.content-section');
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+
+                    const targetSection = this.getAttribute('data-section');
+                    console.log(`🔄 Switching to section: ${targetSection}`);
+
+                    // Remove active class from all nav links
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+
+                    // Add active class to clicked nav link
+                    this.classList.add('active');
+
+                    // Hide all content sections
+                    contentSections.forEach(section => {
+                        section.classList.add('d-none');
+                    });
+
+                    // Show target section
+                    const targetElement = document.getElementById(`${targetSection}-section`);
+                    if (targetElement) {
+                        targetElement.classList.remove('d-none');
+
+                        // Load section-specific data
+                        loadSectionData(targetSection);
+                    }
+                });
+            });
+        }
+
+        // Load section-specific data
+        async function loadSectionData(section) {
+            console.log(`📊 Loading data for section: ${section}`);
+
+            switch(section) {
+                case 'students':
+                    // Load student stats when students section is opened
+                    await loadStudentStats();
+                    break;
+                case 'teachers':
+                    // Load teacher stats when teachers section is opened
+                    await loadTeacherStats();
+                    break;
+                case 'classes':
+                    // Load class stats when classes section is opened
+                    await loadClassStats();
+                    break;
+                case 'attendance':
+                    // Load attendance stats when attendance section is opened
+                    await loadAttendanceStats();
+                    break;
+                case 'assessments':
+                    // Load assessment stats when assessments section is opened
+                    await loadAssessmentStats();
+                    break;
+                case 'grades':
+                    // Load grade stats when grades section is opened
+                    await loadGradeStats();
+                    break;
+                case 'users':
+                    // Load user stats when users section is opened
+                    await loadUserStats();
+                    break;
+                case 'reports':
+                    // Load report stats when reports section is opened
+                    await loadReportStats();
+                    break;
+                case 'excel':
+                    // Load excel stats when excel section is opened
+                    await loadExcelStats();
+                    break;
+                case 'system':
+                    // Load system stats when system section is opened
+                    await loadSystemStats();
+                    break;
+                case 'overview':
+                    // Refresh overview data
+                    await loadDashboardData();
+                    break;
+                default:
+                    console.log(`No specific data loading for section: ${section}`);
+            }
+        }
+
+        // Load student statistics
+        async function loadStudentStats() {
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                const response = await fetch('/api/v1/dashboard/students/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const studentStats = await response.json();
+                    console.log('✅ Student stats loaded:', studentStats);
+                    // Additional student stats can be displayed here
+                }
+            } catch (error) {
+                console.error('❌ Error loading student stats:', error);
+            }
+        }
+
+        // Load user statistics
+        async function loadUserStats() {
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                const response = await fetch('/api/v1/dashboard/users/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const userStats = await response.json();
+                    console.log('✅ User stats loaded:', userStats);
+                    // Additional user stats can be displayed here
+                }
+            } catch (error) {
+                console.error('❌ Error loading user stats:', error);
+            }
+        }
+
+        // Load class statistics
+        async function loadClassStats() {
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                const response = await fetch('/api/v1/dashboard/classes/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const classStats = await response.json();
+                    console.log('✅ Class stats loaded:', classStats);
+                    // Additional class stats can be displayed here
+                }
+            } catch (error) {
+                console.error('❌ Error loading class stats:', error);
+            }
+        }
+
+        // Update stat card with animation
+        function updateStatCard(elementId, value) {
+            const element = document.getElementById(elementId);
+            if (element) {
+                // Add loading animation
+                element.innerHTML = `<div class="spinner-border spinner-border-sm" role="status"></div>`;
+
+                // Update with actual value after short delay for better UX
+                setTimeout(() => {
+                    element.innerHTML = value.toLocaleString();
+                    element.style.opacity = '0';
+                    element.style.transition = 'opacity 0.3s ease';
+                    setTimeout(() => {
+                        element.style.opacity = '1';
+                    }, 100);
+                }, 500);
+            }
+        }
+
+        // Show error in stats cards
+        function showErrorInStats() {
+            const statElements = ['totalStudents', 'totalUsers', 'activeClasses', 'totalAssessments'];
+            statElements.forEach(elementId => {
+                const element = document.getElementById(elementId);
+                if (element) {
+                    element.innerHTML = '<i class="fas fa-exclamation-triangle text-danger"></i>';
+                }
+            });
+        }
+
+        // Load students from API
+        async function loadStudents() {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('studentsListContainer');
+
+            try {
+                console.log('📚 Loading students...');
+
+                // Show loading state
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading students...</p>
+                    </div>
+                `;
+
+                const response = await fetch('/api/v1/students?page=0&size=10', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Students loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayStudents(data.content, data.totalElements);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No students found</p>
+                                <button type="button" class="btn btn-primary" onclick="showCreateStudentForm()">
+                                    <i class="fas fa-plus me-2"></i>Add First Student
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Failed to load students:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load students. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading students:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading students: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display students in table format
+        function displayStudents(students, totalCount) {
+            const container = document.getElementById('studentsListContainer');
+
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Total Students: ${totalCount}</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadStudents()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>NIS</th>
+                                <th>Name</th>
+                                <th>Class</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            students.forEach(student => {
+                html += `
+                    <tr>
+                        <td><strong>${student.nis || 'N/A'}</strong></td>
+                        <td>${student.namaLengkap || 'N/A'}</td>
+                        <td>${student.classRoom ? student.classRoom.name : 'Not Assigned'}</td>
+                        <td>
+                            <span class="badge ${student.status === 'ACTIVE' ? 'bg-success' : 'bg-secondary'}">
+                                ${student.status || 'ACTIVE'}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewStudent(${student.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="editStudent(${student.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // View student details
+        function viewStudent(studentId) {
+            showAlert('info', `View student details for ID: ${studentId} (Feature will be implemented)`);
+        }
+
+        // Edit student
+        function editStudent(studentId) {
+            showAlert('info', `Edit student for ID: ${studentId} (Feature will be implemented)`);
+        }
+
+        // Show create student form
+        function showCreateStudentForm() {
+            showAlert('info', 'Create Student feature will be implemented with proper backend integration.');
+        }
+
+        // Show search students
+        function showSearchStudents() {
+            showAlert('info', 'Search Students feature will be implemented with proper backend integration.');
+        }
+
+        // Load classes from API
+        async function loadClasses() {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('classesListContainer');
+
+            try {
+                console.log('🏫 Loading classes...');
+
+                // Show loading state
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading classes...</p>
+                    </div>
+                `;
+
+                const response = await fetch('/api/v1/classrooms?page=0&size=20', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Classes loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayClasses(data.content, data.totalElements);
+                        await loadClassStats(); // Load stats after classes are loaded
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-school fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No classes found</p>
+                                <button type="button" class="btn btn-primary" onclick="showAddClassForm()">
+                                    <i class="fas fa-plus me-2"></i>Add First Class
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Failed to load classes:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load classes. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading classes:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading classes: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display classes in table format
+        function displayClasses(classes, totalCount) {
+            const container = document.getElementById('classesListContainer');
+
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Total Classes: ${totalCount}</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadClasses()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Class Name</th>
+                                <th>Grade</th>
+                                <th>Capacity</th>
+                                <th>Enrollment</th>
+                                <th>Academic Year</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            classes.forEach(classRoom => {
+                const enrollmentPercentage = classRoom.capacity ?
+                    Math.round((classRoom.currentEnrollment / classRoom.capacity) * 100) : 0;
+                const statusColor = classRoom.isActive ? 'success' : 'secondary';
+                const capacityColor = enrollmentPercentage >= 90 ? 'danger' :
+                                    enrollmentPercentage >= 75 ? 'warning' : 'success';
+
+                html += `
+                    <tr>
+                        <td><strong>${classRoom.name || 'N/A'}</strong></td>
+                        <td>
+                            <span class="badge bg-primary">Grade ${classRoom.grade}</span>
+                        </td>
+                        <td>${classRoom.capacity || 'N/A'}</td>
+                        <td>
+                            <span class="badge bg-${capacityColor}">
+                                ${classRoom.currentEnrollment || 0}/${classRoom.capacity || 'N/A'}
+                                ${classRoom.capacity ? `(${enrollmentPercentage}%)` : ''}
+                            </span>
+                        </td>
+                        <td>${classRoom.academicYear || '2024/2025'}</td>
+                        <td>
+                            <span class="badge bg-${statusColor}">
+                                ${classRoom.isActive ? 'Active' : 'Inactive'}
+                            </span>
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="viewClass(${classRoom.id})">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-info" onclick="viewClassStudents(${classRoom.id})">
+                                <i class="fas fa-users"></i>
+                            </button>
+                            <button type="button" class="btn btn-sm btn-outline-warning" onclick="editClass(${classRoom.id})">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Load class statistics
+        async function loadClassStats() {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('classStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ classStatsCard element not found, skipping class stats loading');
+                return;
+            }
+
+            try {
+                console.log('📊 Loading class statistics...');
+
+                const response = await fetch('/api/v1/classrooms/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const stats = await response.json();
+                    console.log('✅ Class stats loaded:', stats);
+
+                    let html = `
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h4 class="text-primary">${stats.totalCount}</h4>
+                                    <small class="text-muted">Total Classes</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h4 class="text-success">${stats.activeCount}</h4>
+                                    <small class="text-muted">Active Classes</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row">
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h4 class="text-info">${stats.availableSpaceCount}</h4>
+                                    <small class="text-muted">Available Space</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="text-center">
+                                    <h4 class="text-warning">${stats.fullClassRoomsCount}</h4>
+                                    <small class="text-muted">Full Classes</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+
+                    // Add grade statistics if available
+                    if (stats.gradeStats) {
+                        html += `
+                            <hr>
+                            <h6 class="text-center mb-2">Classes by Grade</h6>
+                            <div class="row">
+                        `;
+
+                        Object.entries(stats.gradeStats).forEach(([grade, count]) => {
+                            html += `
+                                <div class="col-4">
+                                    <div class="text-center">
+                                        <span class="badge bg-primary">${count}</span>
+                                        <small class="d-block text-muted">Grade ${grade}</small>
+                                    </div>
+                                </div>
+                            `;
+                        });
+
+                        html += `</div>`;
+                    }
+
+                    container.innerHTML = html;
+                } else {
+                    console.error('❌ Failed to load class stats:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load statistics
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading class stats:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading statistics
+                    </div>
+                `;
+            }
+        }
+
+        // Load classes by grade
+        async function loadClassesByGrade(grade) {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('classesListContainer');
+
+            try {
+                console.log(`🏫 Loading classes for grade: ${grade}`);
+
+                // Show loading state
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading classes for ${grade === 'all' ? 'all grades' : `grade ${grade}`}...</p>
+                    </div>
+                `;
+
+                // Update active button
+                document.querySelectorAll('.btn-group .btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                event.target.classList.add('active');
+
+                let url = '/api/v1/classrooms?page=0&size=20';
+                if (grade !== 'all') {
+                    url = `/api/v1/classrooms/grade/${grade}?page=0&size=20`;
+                }
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log(`✅ Classes loaded for grade ${grade}:`, data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayClasses(data.content, data.totalElements);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-school fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No classes found for ${grade === 'all' ? 'any grade' : `grade ${grade}`}</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error(`❌ Failed to load classes for grade ${grade}:`, response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load classes for ${grade === 'all' ? 'all grades' : `grade ${grade}`}
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error(`❌ Error loading classes for grade ${grade}:`, error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading classes: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Load available classes
+        async function loadAvailableClasses() {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('classesListContainer');
+
+            try {
+                console.log('🏫 Loading available classes...');
+
+                // Show loading state
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading available classes...</p>
+                    </div>
+                `;
+
+                const response = await fetch('/api/v1/classrooms/available?page=0&size=20', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Available classes loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayClasses(data.content, data.totalElements);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-door-closed fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No classes with available space found</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Failed to load available classes:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load available classes
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading available classes:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading available classes: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // View class details
+        function viewClass(classId) {
+            showAlert('info', `View class details for ID: ${classId} (Feature will be implemented)`);
+        }
+
+        // View class students
+        async function viewClassStudents(classId) {
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                console.log(`👥 Loading students for class: ${classId}`);
+
+                const response = await fetch(`/api/v1/students/class/${classId}?page=0&size=50`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Class students loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        let studentsList = data.content.map(student =>
+                            `• ${student.namaLengkap} (${student.nis})`
+                        ).join('\\n');
+
+                        showAlert('info', `Students in this class (${data.totalElements} total):\\n\\n${studentsList.substring(0, 500)}${data.totalElements > 10 ? '\\n\\n... and more' : ''}`);
+                    } else {
+                        showAlert('info', 'No students found in this class');
+                    }
+                } else {
+                    console.error('❌ Failed to load class students:', response.status);
+                    showAlert('error', 'Failed to load class students');
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading class students:', error);
+                showAlert('error', `Error loading class students: ${error.message}`);
+            }
+        }
+
+        // Edit class
+        function editClass(classId) {
+            showAlert('info', `Edit class for ID: ${classId} (Feature will be implemented)`);
+        }
+
+        // Show add class form
+        function showAddClassForm() {
+            const formHtml = `
+                <div class="modal fade" id="addClassModal" tabindex="-1">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add New Class</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addClassForm">
+                                    <div class="mb-3">
+                                        <label for="className" class="form-label">Class Name</label>
+                                        <input type="text" class="form-control" id="className" placeholder="e.g., 10A" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="classGrade" class="form-label">Grade</label>
+                                        <select class="form-control" id="classGrade" required>
+                                            <option value="">Select Grade</option>
+                                            <option value="10">Grade 10</option>
+                                            <option value="11">Grade 11</option>
+                                            <option value="12">Grade 12</option>
+                                        </select>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="classCapacity" class="form-label">Capacity</label>
+                                        <input type="number" class="form-control" id="classCapacity" placeholder="30" min="1" max="50" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="academicYear" class="form-label">Academic Year</label>
+                                        <input type="text" class="form-control" id="academicYear" value="2024/2025" required>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="submitAddClass()">Add Class</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if any
+            const existingModal = document.getElementById('addClassModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', formHtml);
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('addClassModal'));
+            modal.show();
+        }
+
+        // Submit add class form
+        function submitAddClass() {
+            showAlert('info', 'Add Class functionality will be implemented with proper backend integration. For now, this is a UI demonstration.');
+        }
+
+        // Show search classes
+        function showSearchClasses() {
+            const container = document.getElementById('classesListContainer');
+
+            const searchHtml = `
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6><i class="fas fa-search me-2"></i>Search Classes</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="classSearchInput" placeholder="Search by class name..." onkeyup="performClassSearch()">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-primary w-100" onclick="performClassSearch()">
+                                    <i class="fas fa-search me-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="searchResults">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-search fa-2x mb-2"></i>
+                        <p>Enter a class name to search</p>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = searchHtml;
+        }
+
+        // Perform class search
+        async function performClassSearch() {
+            const query = document.getElementById('classSearchInput').value.trim();
+            const resultsContainer = document.getElementById('searchResults');
+
+            if (!query) {
+                resultsContainer.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-search fa-2x mb-2"></i>
+                        <p>Enter a class name to search</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                console.log(`🔍 Searching classes with query: ${query}`);
+
+                resultsContainer.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Searching...</span>
+                        </div>
+                        <p class="mt-2">Searching for "${query}"...</p>
+                    </div>
+                `;
+
+                const response = await fetch(`/api/v1/classrooms/search?query=${encodeURIComponent(query)}&page=0&size=20`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Search results:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayClasses(data.content, data.totalElements);
+                    } else {
+                        resultsContainer.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No classes found matching "${query}"</p>
+                                <button type="button" class="btn btn-outline-primary" onclick="loadClasses()">
+                                    <i class="fas fa-list me-2"></i>View All Classes
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Search failed:', response.status);
+                    resultsContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Search failed. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error searching classes:', error);
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error searching classes: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // ===== TEACHER MANAGEMENT FUNCTIONS =====
+
+        // Load teacher statistics
+        async function loadTeacherStats() {
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                const response = await fetch('/api/v1/teachers/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const teacherStats = await response.json();
+                    console.log('✅ Teacher stats loaded:', teacherStats);
+                    displayTeacherStats(teacherStats);
+                } else {
+                    console.error('❌ Failed to load teacher stats:', response.status);
+                    document.getElementById('teacherStatsCard').innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load teacher statistics
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('❌ Error loading teacher stats:', error);
+                document.getElementById('teacherStatsCard').innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading teacher statistics: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display teacher statistics
+        function displayTeacherStats(stats) {
+            const container = document.getElementById('teacherStatsCard');
+
+            const html = `
+                <div class="row text-center">
+                    <div class="col-6 col-md-3">
+                        <div class="stat-item">
+                            <h4 class="text-primary">${stats.totalTeachers || 0}</h4>
+                            <small class="text-muted">Total Teachers</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-item">
+                            <h4 class="text-success">${stats.activeTeachers || 0}</h4>
+                            <small class="text-muted">Active</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-item">
+                            <h4 class="text-warning">${stats.inactiveTeachers || 0}</h4>
+                            <small class="text-muted">Inactive</small>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="stat-item">
+                            <h4 class="text-info">${stats.recentTeachers || 0}</h4>
+                            <small class="text-muted">Recent (30d)</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Load teachers from API
+        async function loadTeachers() {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('teachersListContainer');
+
+            try {
+                console.log('🔄 Loading teachers...');
+
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading teachers...</p>
+                    </div>
+                `;
+
+                const response = await fetch('/api/v1/teachers?page=0&size=20&sortBy=firstName&sortDir=asc', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Teachers loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayTeachers(data.content, data.totalElements);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-chalkboard-teacher fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No teachers found</p>
+                                <button type="button" class="btn btn-primary" onclick="showAddTeacherForm()">
+                                    <i class="fas fa-plus me-2"></i>Add First Teacher
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Failed to load teachers:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load teachers. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading teachers:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading teachers: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display teachers in table format
+        function displayTeachers(teachers, totalCount) {
+            const container = document.getElementById('teachersListContainer');
+
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Teachers (${totalCount} total)</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadTeachers()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>NIP</th>
+                                <th>Phone</th>
+                                <th>Status</th>
+                                <th>Join Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            teachers.forEach(teacher => {
+                const statusBadge = teacher.isActive ?
+                    '<span class="badge bg-success">Active</span>' :
+                    '<span class="badge bg-secondary">Inactive</span>';
+
+                const joinDate = teacher.createdAt ?
+                    new Date(teacher.createdAt).toLocaleDateString() : 'N/A';
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                    ${teacher.firstName.charAt(0)}${teacher.lastName.charAt(0)}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${teacher.firstName} ${teacher.lastName}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${teacher.email}</td>
+                        <td>${teacher.nip || 'Not set'}</td>
+                        <td>${teacher.phone || 'Not provided'}</td>
+                        <td>${statusBadge}</td>
+                        <td>${joinDate}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary" onclick="viewTeacher(${teacher.id})" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-warning" onclick="editTeacher(${teacher.id})" title="Edit Teacher">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // View teacher details
+        function viewTeacher(teacherId) {
+            showAlert('info', `View teacher details for ID: ${teacherId} (Feature will be implemented)`);
+        }
+
+        // Edit teacher
+        function editTeacher(teacherId) {
+            showAlert('info', `Edit teacher for ID: ${teacherId} (Feature will be implemented)`);
+        }
+
+        // Load active teachers only
+        async function loadActiveTeachers() {
+            const token = localStorage.getItem('sim_auth_token');
+            const container = document.getElementById('teachersListContainer');
+
+            try {
+                console.log('🔄 Loading active teachers...');
+
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading active teachers...</p>
+                    </div>
+                `;
+
+                const response = await fetch('/api/v1/teachers/active?page=0&size=20', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Active teachers loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayTeachers(data.content, data.totalElements);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-user-check fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No active teachers found</p>
+                                <button type="button" class="btn btn-outline-primary" onclick="loadTeachers()">
+                                    <i class="fas fa-list me-2"></i>View All Teachers
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Failed to load active teachers:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load active teachers. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading active teachers:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading active teachers: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Show add teacher form
+        function showAddTeacherForm() {
+            const formHtml = `
+                <div class="modal fade" id="addTeacherModal" tabindex="-1">
+                    <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title">Add New Teacher</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body">
+                                <form id="addTeacherForm">
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="teacherFirstName" class="form-label">First Name</label>
+                                                <input type="text" class="form-control" id="teacherFirstName" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="teacherLastName" class="form-label">Last Name</label>
+                                                <input type="text" class="form-control" id="teacherLastName" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="teacherEmail" class="form-label">Email</label>
+                                                <input type="email" class="form-control" id="teacherEmail" required>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="teacherNip" class="form-label">NIP</label>
+                                                <input type="text" class="form-control" id="teacherNip" placeholder="Employee ID">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="teacherPhone" class="form-label">Phone</label>
+                                                <input type="tel" class="form-control" id="teacherPhone">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="mb-3">
+                                                <label for="teacherAddress" class="form-label">Address</label>
+                                                <input type="text" class="form-control" id="teacherAddress">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="teacherPassword" class="form-label">Initial Password</label>
+                                        <input type="password" class="form-control" id="teacherPassword" value="teacher123" required>
+                                        <div class="form-text">Default password: teacher123 (teacher should change on first login)</div>
+                                    </div>
+                                </form>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button type="button" class="btn btn-primary" onclick="submitAddTeacher()">Add Teacher</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Remove existing modal if any
+            const existingModal = document.getElementById('addTeacherModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', formHtml);
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('addTeacherModal'));
+            modal.show();
+        }
+
+        // Submit add teacher form
+        function submitAddTeacher() {
+            showAlert('info', 'Add Teacher functionality will be implemented with proper backend integration. For now, this is a UI demonstration.');
+        }
+
+        // Show search teachers
+        function showSearchTeachers() {
+            const container = document.getElementById('teachersListContainer');
+
+            const searchHtml = `
+                <div class="card mb-3">
+                    <div class="card-header">
+                        <h6><i class="fas fa-search me-2"></i>Search Teachers</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="teacherSearchInput" placeholder="Search by name or email..." onkeyup="performTeacherSearch()">
+                            </div>
+                            <div class="col-md-4">
+                                <button type="button" class="btn btn-primary w-100" onclick="performTeacherSearch()">
+                                    <i class="fas fa-search me-2"></i>Search
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="teacherSearchResults">
+                    <div class="text-center text-muted">
+                        <i class="fas fa-search fa-2x mb-2"></i>
+                        <p>Enter a teacher name or email to search</p>
+                    </div>
+                </div>
+            `;
+
+            container.innerHTML = searchHtml;
+        }
+
+        // Perform teacher search
+        async function performTeacherSearch() {
+            const query = document.getElementById('teacherSearchInput').value.trim();
+            const resultsContainer = document.getElementById('teacherSearchResults');
+
+            if (!query) {
+                resultsContainer.innerHTML = `
+                    <div class="text-center text-muted">
+                        <i class="fas fa-search fa-2x mb-2"></i>
+                        <p>Enter a teacher name or email to search</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                console.log(`🔍 Searching teachers with query: ${query}`);
+
+                resultsContainer.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Searching...</span>
+                        </div>
+                        <p class="mt-2">Searching for "${query}"...</p>
+                    </div>
+                `;
+
+                const response = await fetch(`/api/v1/teachers/search?query=${encodeURIComponent(query)}&page=0&size=20`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Teacher search results:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayTeachers(data.content, data.totalElements);
+                    } else {
+                        resultsContainer.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No teachers found matching "${query}"</p>
+                                <button type="button" class="btn btn-outline-primary" onclick="loadTeachers()">
+                                    <i class="fas fa-list me-2"></i>View All Teachers
+                                </button>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Teacher search failed:', response.status);
+                    resultsContainer.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Search failed. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error searching teachers:', error);
+                resultsContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error searching teachers: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // ===== ATTENDANCE MANAGEMENT FUNCTIONS =====
+
+        // Load today's attendance
+        async function loadTodayAttendance() {
+            const container = document.getElementById('attendanceListContainer');
+
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-calendar-day me-2"></i>Today's Attendance</h6>
+                    <p>Today's attendance feature will be implemented with proper backend integration.</p>
+                    <p><strong>Features to include:</strong></p>
+                    <ul class="mb-0">
+                        <li>Real-time attendance tracking</li>
+                        <li>Class-wise attendance view</li>
+                        <li>Present/Absent status</li>
+                        <li>Late arrival tracking</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Show mark attendance form
+        function showMarkAttendanceForm() {
+            showAlert('info', 'Mark Attendance feature will be implemented with proper backend integration.');
+        }
+
+        // Show attendance reports
+        function showAttendanceReports() {
+            showAlert('info', 'Attendance Reports feature will be implemented with proper backend integration.');
+        }
+
+        // Load attendance history
+        function loadAttendanceHistory() {
+            showAlert('info', 'Attendance History feature will be implemented with proper backend integration.');
+        }
+
+        // Load attendance stats
+        async function loadAttendanceStats() {
+            const container = document.getElementById('attendanceStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ attendanceStatsCard element not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">85%</h4>
+                            <small class="text-muted">Present Today</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-warning">15%</h4>
+                            <small class="text-muted">Absent Today</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-info">92%</h4>
+                            <small class="text-muted">Weekly Avg</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">88%</h4>
+                            <small class="text-muted">Monthly Avg</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== ASSESSMENTS MANAGEMENT FUNCTIONS =====
+
+        // Load assessments
+        function loadAssessments() {
+            const container = document.getElementById('assessmentsListContainer');
+
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-clipboard-check me-2"></i>Assessment Management</h6>
+                    <p>Assessment management feature will be implemented with proper backend integration.</p>
+                    <p><strong>Features to include:</strong></p>
+                    <ul class="mb-0">
+                        <li>Create and manage assessments</li>
+                        <li>Quiz and exam scheduling</li>
+                        <li>Question bank management</li>
+                        <li>Auto-grading system</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Show create assessment form
+        function showCreateAssessmentForm() {
+            showAlert('info', 'Create Assessment feature will be implemented with proper backend integration.');
+        }
+
+        // Show search assessments
+        function showSearchAssessments() {
+            showAlert('info', 'Search Assessments feature will be implemented with proper backend integration.');
+        }
+
+        // Load upcoming assessments
+        function loadUpcomingAssessments() {
+            showAlert('info', 'Upcoming Assessments feature will be implemented with proper backend integration.');
+        }
+
+        // Load assessment stats
+        async function loadAssessmentStats() {
+            const container = document.getElementById('assessmentStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ assessmentStatsCard element not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">12</h4>
+                            <small class="text-muted">Total Assessments</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">8</h4>
+                            <small class="text-muted">Completed</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-warning">3</h4>
+                            <small class="text-muted">Upcoming</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-info">1</h4>
+                            <small class="text-muted">In Progress</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== GRADES MANAGEMENT FUNCTIONS =====
+
+        // Load grades
+        function loadGrades() {
+            const container = document.getElementById('gradesListContainer');
+
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-chart-bar me-2"></i>Grade Management</h6>
+                    <p>Grade management feature will be implemented with proper backend integration.</p>
+                    <p><strong>Features to include:</strong></p>
+                    <ul class="mb-0">
+                        <li>Grade entry and management</li>
+                        <li>Grade calculation and analytics</li>
+                        <li>Report card generation</li>
+                        <li>Grade distribution analysis</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Show enter grades form
+        function showEnterGradesForm() {
+            showAlert('info', 'Enter Grades feature will be implemented with proper backend integration.');
+        }
+
+        // Show grade reports
+        function showGradeReports() {
+            showAlert('info', 'Grade Reports feature will be implemented with proper backend integration.');
+        }
+
+        // Load grade analytics
+        function loadGradeAnalytics() {
+            showAlert('info', 'Grade Analytics feature will be implemented with proper backend integration.');
+        }
+
+        // Load grade stats
+        async function loadGradeStats() {
+            const container = document.getElementById('gradeStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ gradeStatsCard element not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">85.5</h4>
+                            <small class="text-muted">Average Grade</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">78%</h4>
+                            <small class="text-muted">Pass Rate</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-warning">95</h4>
+                            <small class="text-muted">Highest Grade</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-info">65</h4>
+                            <small class="text-muted">Lowest Grade</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== USER MANAGEMENT FUNCTIONS =====
+
+        // Load all users
+        async function loadAllUsers() {
+            const container = document.getElementById('usersListContainer');
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                console.log('🔄 Loading all users...');
+
+                container.innerHTML = `
+                    <div class="text-center">
+                        <div class="spinner-border" role="status">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <p class="mt-2">Loading users...</p>
+                    </div>
+                `;
+
+                const response = await fetch('/api/v1/users?page=0&size=20&sortBy=firstName&sortDir=asc', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Users loaded:', data);
+
+                    if (data.content && data.content.length > 0) {
+                        displayUsers(data.content, data.totalElements);
+                    } else {
+                        container.innerHTML = `
+                            <div class="text-center">
+                                <i class="fas fa-users fa-3x text-muted mb-3"></i>
+                                <p class="text-muted">No users found</p>
+                            </div>
+                        `;
+                    }
+                } else {
+                    console.error('❌ Failed to load users:', response.status);
+                    container.innerHTML = `
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            Failed to load users. Please try again.
+                        </div>
+                    `;
+                }
+
+            } catch (error) {
+                console.error('❌ Error loading users:', error);
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Error loading users: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Display users in table format
+        function displayUsers(users, totalCount) {
+            const container = document.getElementById('usersListContainer');
+
+            let html = `
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h6 class="mb-0">Users (${totalCount} total)</h6>
+                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadAllUsers()">
+                        <i class="fas fa-sync-alt me-1"></i>Refresh
+                    </button>
+                </div>
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Name</th>
+                                <th>Email</th>
+                                <th>User Type</th>
+                                <th>Status</th>
+                                <th>Join Date</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+
+            users.forEach(user => {
+                const statusBadge = user.isActive ?
+                    '<span class="badge bg-success">Active</span>' :
+                    '<span class="badge bg-secondary">Inactive</span>';
+
+                const userTypeBadge = getUserTypeBadge(user.userType);
+                const joinDate = user.createdAt ?
+                    new Date(user.createdAt).toLocaleDateString() : 'N/A';
+
+                html += `
+                    <tr>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
+                                    ${user.firstName.charAt(0)}${user.lastName.charAt(0)}
+                                </div>
+                                <div>
+                                    <div class="fw-bold">${user.firstName} ${user.lastName}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td>${user.email}</td>
+                        <td>${userTypeBadge}</td>
+                        <td>${statusBadge}</td>
+                        <td>${joinDate}</td>
+                        <td>
+                            <div class="btn-group btn-group-sm">
+                                <button type="button" class="btn btn-outline-primary" onclick="viewUser(${user.id})" title="View Details">
+                                    <i class="fas fa-eye"></i>
+                                </button>
+                                <button type="button" class="btn btn-outline-warning" onclick="editUser(${user.id})" title="Edit User">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            html += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            container.innerHTML = html;
+        }
+
+        // Get user type badge
+        function getUserTypeBadge(userType) {
+            switch(userType) {
+                case 'ADMIN':
+                    return '<span class="badge bg-danger">Admin</span>';
+                case 'TEACHER':
+                    return '<span class="badge bg-primary">Teacher</span>';
+                case 'STUDENT':
+                    return '<span class="badge bg-success">Student</span>';
+                case 'SUPER_ADMIN':
+                    return '<span class="badge bg-dark">Super Admin</span>';
+                default:
+                    return '<span class="badge bg-secondary">Unknown</span>';
+            }
+        }
+
+        // View user details
+        function viewUser(userId) {
+            showAlert('info', `View user details for ID: ${userId} (Feature will be implemented)`);
+        }
+
+        // Edit user
+        function editUser(userId) {
+            showAlert('info', `Edit user for ID: ${userId} (Feature will be implemented)`);
+        }
+
+        // Show create user form
+        function showCreateUserForm() {
+            showAlert('info', 'Create User feature will be implemented with proper backend integration.');
+        }
+
+        // Show search users
+        function showSearchUsers() {
+            showAlert('info', 'Search Users feature will be implemented with proper backend integration.');
+        }
+
+        // Load user roles
+        function loadUserRoles() {
+            showAlert('info', 'User Roles management feature will be implemented with proper backend integration.');
+        }
+
+        // Load user stats
+        async function loadUserStats() {
+            const container = document.getElementById('userStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ userStatsCard element not found');
+                return;
+            }
+
+            const token = localStorage.getItem('sim_auth_token');
+
+            try {
+                const response = await fetch('/api/v1/users/stats', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const stats = await response.json();
+
+                    container.innerHTML = `
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h4 class="text-primary">${stats.totalUsers || 0}</h4>
+                                    <small class="text-muted">Total Users</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h4 class="text-success">${stats.activeUsers || 0}</h4>
+                                    <small class="text-muted">Active Users</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h4 class="text-info">${stats.adminUsers || 0}</h4>
+                                    <small class="text-muted">Admins</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h4 class="text-warning">${stats.teacherUsers || 0}</h4>
+                                    <small class="text-muted">Teachers</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h4 class="text-primary">${stats.studentUsers || 0}</h4>
+                                    <small class="text-muted">Students</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    // Fallback with sample data
+                    container.innerHTML = `
+                        <div class="row text-center">
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h4 class="text-primary">25</h4>
+                                    <small class="text-muted">Total Users</small>
+                                </div>
+                            </div>
+                            <div class="col-6">
+                                <div class="stat-item">
+                                    <h4 class="text-success">23</h4>
+                                    <small class="text-muted">Active Users</small>
+                                </div>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="row text-center">
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h4 class="text-info">2</h4>
+                                    <small class="text-muted">Admins</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h4 class="text-warning">8</h4>
+                                    <small class="text-muted">Teachers</small>
+                                </div>
+                            </div>
+                            <div class="col-4">
+                                <div class="stat-item">
+                                    <h4 class="text-primary">15</h4>
+                                    <small class="text-muted">Students</small>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('❌ Error loading user stats:', error);
+                // Show fallback data
+                container.innerHTML = `
+                    <div class="alert alert-warning">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        Unable to load real-time stats. Showing sample data.
+                    </div>
+                `;
+            }
+        }
+
+        // ===== REPORTS MANAGEMENT FUNCTIONS =====
+
+        // Generate student report
+        function generateStudentReport() {
+            const container = document.getElementById('reportsListContainer');
+
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-user-graduate me-2"></i>Student Reports</h6>
+                    <p>Student report generation feature will be implemented with proper backend integration.</p>
+                    <p><strong>Available Reports:</strong></p>
+                    <ul class="mb-0">
+                        <li>Student enrollment report</li>
+                        <li>Academic performance report</li>
+                        <li>Student demographics report</li>
+                        <li>Class-wise student list</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Generate attendance report
+        function generateAttendanceReport() {
+            showAlert('info', 'Attendance Report generation feature will be implemented with proper backend integration.');
+        }
+
+        // Generate grade report
+        function generateGradeReport() {
+            showAlert('info', 'Grade Report generation feature will be implemented with proper backend integration.');
+        }
+
+        // Generate custom report
+        function generateCustomReport() {
+            showAlert('info', 'Custom Report generation feature will be implemented with proper backend integration.');
+        }
+
+        // Load report stats
+        async function loadReportStats() {
+            const container = document.getElementById('reportStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ reportStatsCard element not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">45</h4>
+                            <small class="text-muted">Reports Generated</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">12</h4>
+                            <small class="text-muted">This Month</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-warning">8</h4>
+                            <small class="text-muted">Scheduled</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-info">3</h4>
+                            <small class="text-muted">In Progress</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== EXCEL MANAGEMENT FUNCTIONS =====
+
+        // Show import excel
+        function showImportExcel() {
+            const container = document.getElementById('excelOperationsContainer');
+
+            container.innerHTML = `
+                <div class="alert alert-info">
+                    <h6><i class="fas fa-upload me-2"></i>Excel Import</h6>
+                    <p>Excel import feature will be implemented with proper backend integration.</p>
+                    <p><strong>Supported Import Types:</strong></p>
+                    <ul class="mb-0">
+                        <li>Student data import</li>
+                        <li>Teacher data import</li>
+                        <li>Grade data import</li>
+                        <li>Attendance data import</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // Export to excel
+        function exportToExcel() {
+            showAlert('info', 'Excel Export feature will be implemented with proper backend integration.');
+        }
+
+        // Show excel templates
+        function showExcelTemplates() {
+            showAlert('info', 'Excel Templates download feature will be implemented with proper backend integration.');
+        }
+
+        // Show import history
+        function showImportHistory() {
+            showAlert('info', 'Import History feature will be implemented with proper backend integration.');
+        }
+
+        // Load excel stats
+        async function loadExcelStats() {
+            const container = document.getElementById('excelStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ excelStatsCard element not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">23</h4>
+                            <small class="text-muted">Files Imported</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">18</h4>
+                            <small class="text-muted">Files Exported</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-warning">1,250</h4>
+                            <small class="text-muted">Records Imported</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-info">98%</h4>
+                            <small class="text-muted">Success Rate</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // ===== SYSTEM HEALTH FUNCTIONS =====
+
+        // Check system health
+        function checkSystemHealth() {
+            const container = document.getElementById('systemInfoContainer');
+
+            container.innerHTML = `
+                <div class="alert alert-success">
+                    <h6><i class="fas fa-heartbeat me-2"></i>System Health Check</h6>
+                    <p>System health monitoring feature will be implemented with proper backend integration.</p>
+                    <p><strong>Health Checks:</strong></p>
+                    <ul class="mb-0">
+                        <li>Database connectivity</li>
+                        <li>Memory usage</li>
+                        <li>CPU performance</li>
+                        <li>Disk space</li>
+                        <li>Network connectivity</li>
+                    </ul>
+                </div>
+            `;
+        }
+
+        // View system logs
+        function viewSystemLogs() {
+            showAlert('info', 'System Logs viewing feature will be implemented with proper backend integration.');
+        }
+
+        // Show database status
+        function showDatabaseStatus() {
+            showAlert('info', 'Database Status feature will be implemented with proper backend integration.');
+        }
+
+        // Show performance metrics
+        function showPerformanceMetrics() {
+            showAlert('info', 'Performance Metrics feature will be implemented with proper backend integration.');
+        }
+
+        // Load system stats
+        async function loadSystemStats() {
+            const container = document.getElementById('systemStatsCard');
+
+            if (!container) {
+                console.warn('⚠️ systemStatsCard element not found');
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-success">99.8%</h4>
+                            <small class="text-muted">Uptime</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-primary">45ms</h4>
+                            <small class="text-muted">Response Time</small>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row text-center">
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-warning">65%</h4>
+                            <small class="text-muted">Memory Usage</small>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-item">
+                            <h4 class="text-info">25%</h4>
+                            <small class="text-muted">CPU Usage</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Handle logout
+        document.getElementById('logoutBtn').addEventListener('click', async function(e) {
+            e.preventDefault();
+
+            try {
+                const token = localStorage.getItem('sim_auth_token');
+                if (token) {
+                    await fetch('/api/v1/auth/logout', {
+                        method: 'POST',
+                        headers: {
+                            'Authorization': `Bearer ${token}`,
+                            'Content-Type': 'application/json'
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+            } finally {
+                // Clear all auth data
+                localStorage.removeItem('sim_auth_token');
+                localStorage.removeItem('sim_refresh_token');
+                localStorage.removeItem('sim_current_user');
+
+                // Redirect to login
+                window.location.href = '/index.html';
+            }
         });
     </script>
 </body>

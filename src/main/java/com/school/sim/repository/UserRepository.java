@@ -231,4 +231,25 @@ public interface UserRepository extends JpaRepository<User, Long> {
      */
     @Query("SELECT u FROM User u WHERE u.emailVerifiedAt IS NULL AND u.createdAt < :cutoffTime")
     List<User> findUsersNeedingEmailVerification(@Param("cutoffTime") LocalDateTime cutoffTime);
+
+    /**
+     * Search users by type and query (name or email)
+     */
+    @Query("SELECT u FROM User u WHERE u.userType = :userType AND " +
+           "(LOWER(u.firstName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(u.lastName) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
+           "LOWER(u.email) LIKE LOWER(CONCAT('%', :query, '%')))")
+    Page<User> findByUserTypeAndQuery(@Param("userType") UserType userType,
+                                     @Param("query") String query,
+                                     Pageable pageable);
+
+    /**
+     * Count users by type and active status
+     */
+    long countByUserTypeAndIsActive(UserType userType, Boolean isActive);
+
+    /**
+     * Count users by type created after date
+     */
+    long countByUserTypeAndCreatedAtAfter(UserType userType, LocalDateTime date);
 }

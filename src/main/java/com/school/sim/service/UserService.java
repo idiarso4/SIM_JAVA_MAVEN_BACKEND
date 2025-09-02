@@ -4,6 +4,7 @@ import com.school.sim.dto.request.CreateUserRequest;
 import com.school.sim.dto.request.UpdateUserRequest;
 import com.school.sim.dto.response.UserResponse;
 import com.school.sim.entity.Role;
+import com.school.sim.entity.UserType;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -130,4 +131,24 @@ public interface UserService {
      * Bulk deactivate users
      */
     void bulkDeactivateUsers(List<Long> userIds);
+
+    /**
+     * Get users by type with pagination
+     */
+    Page<UserResponse> getUsersByType(UserType userType, Pageable pageable);
+
+    /**
+     * Get active users by type with pagination
+     */
+    Page<UserResponse> getActiveUsersByType(UserType userType, Pageable pageable);
+
+    /**
+     * Search users by type and query with pagination
+     */
+    Page<UserResponse> searchUsersByTypeAndQuery(UserType userType, String query, Pageable pageable);
+
+    /**
+     * Check if current user is the same as the given user ID
+     */
+    boolean isCurrentUser(Long userId);
 }
