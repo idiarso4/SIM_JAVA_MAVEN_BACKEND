@@ -24,7 +24,7 @@ const Students = {
     },
 
     showImportExcel() {
-        Utils.showAlert('info', 'Import Students from Excel will be implemented');
+        Excel.showImportStudentsExcel();
     },
 
     viewStudent(id) {

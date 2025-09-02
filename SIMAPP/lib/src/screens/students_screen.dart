@@ -1,8 +1,6 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
-import '../api/api_client.dart';
-import '../auth/token_store.dart';
-import '../models/student.dart';
+import '../models/student_model.dart';
+import '../services/student_service.dart';
 
 class StudentsScreen extends StatefulWidget {
   const StudentsScreen({super.key});
@@ -12,67 +10,163 @@ class StudentsScreen extends StatefulWidget {
 }
 
 class _StudentsScreenState extends State<StudentsScreen> {
-  late final ApiClient _client;
-  bool _loading = true;
-  String? _error;
-  List<Student> _students = const [];
+  final StudentService _studentService = StudentService();
+  List<Student> _students = [];
+  bool _isLoading = true;
+  String _errorMessage = '';
 
   @override
   void initState() {
     super.initState();
-    _client = ApiClient(TokenStore());
-    _load();
+    _loadStudents();
   }
 
-  Future<void> _load() async {
+  Future<void> _loadStudents() async {
     setState(() {
-      _loading = true;
-      _error = null;
+      _isLoading = true;
+      _errorMessage = '';
     });
+
     try {
-      final res = await _client.get('/students?size=100&sortBy=namaLengkap');
-      if (res.statusCode == 200) {
-        final body = jsonDecode(res.body) as Map<String, dynamic>;
-        final list = (body['content'] as List?) ?? [];
-        _students = list.map((e) => Student.fromBackend(e as Map<String, dynamic>)).toList();
-      } else {
-        _error = 'Failed (${res.statusCode})';
-      }
+      final students = await _studentService.getStudents();
+      setState(() {
+        _students = students;
+      });
     } catch (e) {
-      _error = e.toString();
+      setState(() {
+        _errorMessage = 'Failed to load students: $e';
+      });
     } finally {
-      if (mounted) setState(() => _loading = false);
+      setState(() {
+        _isLoading = false;
+      });
+    }
+  }
+
+  Future<void> _refreshStudents() async {
+    await _loadStudents();
+  }
+
+  void _navigateToAddStudent() {
+    Navigator.of(context).pushNamed('/students/add').then((value) {
+      if (value == true) {
+        _loadStudents(); // Refresh the list if a student was added
+      }
+    });
+  }
+
+  void _navigateToEditStudent(Student student) {
+    Navigator.of(context).pushNamed('/students/edit', arguments: student).then((value) {
+      if (value == true) {
+        _loadStudents(); // Refresh the list if a student was updated
+      }
+    });
+  }
+
+  void _deleteStudent(Student student) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('Delete Student'),
+        content: Text('Are you sure you want to delete ${student.name}?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(false),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(true),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
+
+    if (confirmed == true) {
+      try {
+        await _studentService.deleteStudent(student.id);
+        _loadStudents(); // Refresh the list after deletion
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Student deleted successfully')),
+          );
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text('Failed to delete student: $e')),
+          );
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Students')),
-      body: _loading
+      appBar: AppBar(
+        title: const Text('Students'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        foregroundColor: Colors.white,
+        actions: [
+          IconButton(
+            onPressed: _refreshStudents,
+            icon: const Icon(Icons.refresh),
+          ),
+        ],
+      ),
+      body: _isLoading
           ? const Center(child: CircularProgressIndicator())
-          : _error != null
-              ? Center(child: Text(_error!))
+          : _errorMessage.isNotEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(_errorMessage),
+                      const SizedBox(height: 16),
+                      ElevatedButton(
+                        onPressed: _loadStudents,
+                        child: const Text('Retry'),
+                      ),
+                    ],
+                  ),
+                )
               : RefreshIndicator(
-                  onRefresh: _load,
-                  child: ListView.separated(
+                  onRefresh: _refreshStudents,
+                  child: ListView.builder(
                     itemCount: _students.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (_, i) {
-                      final s = _students[i];
-                      return ListTile(
-                        title: Text(s.name),
-                        subtitle: Text([
-                          if (s.className != null) 'Class: ${s.className}',
-                          if (s.status != null) 'Status: ${s.status}',
-                        ].join(' • ')),
-                        trailing: Text(s.id),
+                    itemBuilder: (context, index) {
+                      final student = _students[index];
+                      return Card(
+                        margin: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                        child: ListTile(
+                          title: Text(student.name),
+                          subtitle: Text('${student.nim} - ${student.major}'),
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () => _navigateToEditStudent(student),
+                                icon: const Icon(Icons.edit),
+                              ),
+                              IconButton(
+                                onPressed: () => _deleteStudent(student),
+                                icon: const Icon(Icons.delete),
+                              ),
+                            ],
+                          ),
+                        ),
                       );
                     },
                   ),
                 ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: _navigateToAddStudent,
+        child: const Icon(Icons.add),
+      ),
     );
   }
 }
-
-

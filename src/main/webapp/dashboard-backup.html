@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM - Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .sidebar {
+            background: white;
+            min-height: calc(100vh - 76px);
+            box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+        }
+        .main-content {
+            padding: 2rem;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .stat-card .card-body {
+            padding: 2rem;
+        }
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+        }
+        .nav-link {
+            color: #6c757d;
+            padding: 1rem 1.5rem;
+            border-radius: 10px;
+            margin: 0.25rem 0;
+            transition: all 0.3s ease;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .welcome-card {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+        }
+        .success-message {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 2rem;
+            animation: fadeIn 0.8s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">
+                <i class="fas fa-graduation-cap me-2"></i>SIM Dashboard
+            </a>
+            <div class="navbar-nav ms-auto">
+                <div class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                        <i class="fas fa-user me-1"></i>
+                        <span id="userName">Administrator</span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-user-cog me-2"></i>Profile</a></li>
+                        <li><a class="dropdown-item" href="#"><i class="fas fa-cog me-2"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="logoutBtn"><i class="fas fa-sign-out-alt me-2"></i>Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <div class="col-md-3 col-lg-2 sidebar">
+                <div class="p-3">
+                    <nav class="nav flex-column">
+                        <a class="nav-link active" href="#" data-section="overview">
+                            <i class="fas fa-tachometer-alt me-2"></i>Overview
+                        </a>
+                        <a class="nav-link" href="#" data-section="students">
+                            <i class="fas fa-user-graduate me-2"></i>Students
+                        </a>
+                        <a class="nav-link" href="#" data-section="teachers">
+                            <i class="fas fa-chalkboard-teacher me-2"></i>Teachers
+                        </a>
+                        <a class="nav-link" href="#" data-section="classes">
+                            <i class="fas fa-school me-2"></i>Classes
+                        </a>
+                        <a class="nav-link" href="#" data-section="attendance">
+                            <i class="fas fa-calendar-check me-2"></i>Attendance
+                        </a>
+                        <a class="nav-link" href="#" data-section="assessments">
+                            <i class="fas fa-clipboard-check me-2"></i>Assessments
+                        </a>
+                        <a class="nav-link" href="#" data-section="grades">
+                            <i class="fas fa-chart-bar me-2"></i>Grades
+                        </a>
+                        <a class="nav-link" href="#" data-section="users">
+                            <i class="fas fa-users-cog me-2"></i>User Management
+                        </a>
+                        <a class="nav-link" href="#" data-section="reports">
+                            <i class="fas fa-file-alt me-2"></i>Reports
+                        </a>
+                        <a class="nav-link" href="#" data-section="excel">
+                            <i class="fas fa-file-excel me-2"></i>Excel Import/Export
+                        </a>
+                        <a class="nav-link" href="#" data-section="system">
+                            <i class="fas fa-cogs me-2"></i>System Health
+                        </a>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <div class="col-md-9 col-lg-10 main-content">
+                <!-- Welcome Section -->
+                <div class="row mb-4">
+                    <div class="col-12">
+                        <div class="card welcome-card">
+                            <div class="card-body">
+                                <h2><i class="fas fa-home me-2"></i>Welcome to SIM Dashboard</h2>
+                                <p class="mb-0">School Information Management System</p>
+                                <small id="loginTime"></small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="row mb-4" id="statsCards">
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-user-graduate fa-2x mb-3 text-primary"></i>
+                                <div class="stat-number" id="totalStudents">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Total Students</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-users fa-2x mb-3 text-success"></i>
+                                <div class="stat-number" id="totalUsers">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Total Users</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-school fa-2x mb-3 text-warning"></i>
+                                <div class="stat-number" id="activeClasses">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Active Classes</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3 mb-3">
+                        <div class="card stat-card">
+                            <div class="card-body text-center">
+                                <i class="fas fa-clipboard-check fa-2x mb-3 text-info"></i>
+                                <div class="stat-number" id="totalAssessments">
+                                    <div class="spinner-border spinner-border-sm" role="status"></div>
+                                </div>
+                                <div>Assessments</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Sections -->
+                <div id="content-sections">
+                    <!-- Overview Section -->
+                    <div id="overview-section" class="content-section">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-line me-2"></i>System Status</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="alert alert-success">
+                                            <h6><i class="fas fa-check-circle me-2"></i>Login System: WORKING ✅</h6>
+                                            <ul class="mb-0">
+                                                <li>✅ Backend Spring Boot running on port 8080</li>
+                                                <li>✅ Frontend accessible via browser</li>
+                                                <li>✅ JWT authentication implemented</li>
+                                                <li>✅ User creation and login working</li>
+                                                <li>✅ Session management functional</li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div class="alert alert-info">
+                                            <h6><i class="fas fa-info-circle me-2"></i>Next Steps:</h6>
+                                            <ul class="mb-0">
+                                                <li>🔨 Build student management features</li>
+                                                <li>🔨 Add teacher administration</li>
+                                                <li>🔨 Implement attendance tracking</li>
+                                                <li>🔨 Create grade management</li>
+                                                <li>🔨 Generate reports</li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-cog me-2"></i>Quick Actions</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button class="btn btn-primary" onclick="showCreateStudentForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Add Student
+                                            </button>
+                                            <button class="btn btn-success" onclick="showMarkAttendanceForm()">
+                                                <i class="fas fa-calendar-plus me-2"></i>Mark Attendance
+                                            </button>
+                                            <button class="btn btn-warning" onclick="generateStudentReport()">
+                                                <i class="fas fa-file-export me-2"></i>Generate Report
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="card mt-3">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-user me-2"></i>Current User</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <p><strong>Name:</strong> System Administrator</p>
+                                        <p><strong>Email:</strong> admin@sim.edu</p>
+                                        <p><strong>Role:</strong> Admin</p>
+                                        <p><strong>Login Time:</strong> <span id="currentTime"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Classes Section -->
+                    <div id="classes-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-school me-2"></i>Class Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadClasses()">
+                                                <i class="fas fa-list me-2"></i>View All Classes
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showAddClassForm()">
+                                                <i class="fas fa-plus me-2"></i>Add New Class
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchClasses()">
+                                                <i class="fas fa-search me-2"></i>Search Classes
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadAvailableClasses()">
+                                                <i class="fas fa-door-open me-2"></i>Available Classes
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-bar me-2"></i>Class Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="classStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grade Filter -->
+                        <div class="row mb-3">
+                            <div class="col-md-12">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-filter me-2"></i>Filter by Grade</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="btn-group" role="group">
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade('all')">All Grades</button>
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade(10)">Grade 10</button>
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade(11)">Grade 11</button>
+                                            <button type="button" class="btn btn-outline-primary" onclick="loadClassesByGrade(12)">Grade 12</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Classes List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Classes List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="classesListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Classes" to load class data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Other sections (hidden by default) -->
+                    <div id="students-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-user-graduate me-2"></i>Student Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadStudents()">
+                                                <i class="fas fa-list me-2"></i>View All Students
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showCreateStudentForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Add New Student
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="showImportStudentsExcel()">
+                                                <i class="fas fa-file-excel me-2"></i>Import from Excel
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchStudents()">
+                                                <i class="fas fa-search me-2"></i>Search Students
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Student Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="studentStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Students List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Recent Students</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="studentsListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Students" to load student data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="teachers-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadTeachers()">
+                                                <i class="fas fa-list me-2"></i>View All Teachers
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showAddTeacherForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Add New Teacher
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="showImportTeachersExcel()">
+                                                <i class="fas fa-file-excel me-2"></i>Import from Excel
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchTeachers()">
+                                                <i class="fas fa-search me-2"></i>Search Teachers
+                                            </button>
+                                            <button type="button" class="btn btn-secondary" onclick="loadActiveTeachers()">
+                                                <i class="fas fa-user-check me-2"></i>Active Teachers
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Teacher Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="teacherStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Teachers List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Teachers List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="teachersListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Teachers" to load teacher data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Attendance Section -->
+                    <div id="attendance-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-calendar-check me-2"></i>Attendance Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadTodayAttendance()">
+                                                <i class="fas fa-calendar-day me-2"></i>Today's Attendance
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showMarkAttendanceForm()">
+                                                <i class="fas fa-check me-2"></i>Mark Attendance
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showAttendanceReports()">
+                                                <i class="fas fa-chart-line me-2"></i>Attendance Reports
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadAttendanceHistory()">
+                                                <i class="fas fa-history me-2"></i>Attendance History
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Attendance Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="attendanceStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Attendance List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Attendance Records</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="attendanceListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Today's Attendance" to load attendance data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assessments Section -->
+                    <div id="assessments-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-clipboard-check me-2"></i>Assessment Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadAssessments()">
+                                                <i class="fas fa-list me-2"></i>View All Assessments
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showCreateAssessmentForm()">
+                                                <i class="fas fa-plus me-2"></i>Create Assessment
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchAssessments()">
+                                                <i class="fas fa-search me-2"></i>Search Assessments
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadUpcomingAssessments()">
+                                                <i class="fas fa-clock me-2"></i>Upcoming Assessments
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Assessment Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="assessmentStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Assessments List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Assessments List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="assessmentsListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Assessments" to load assessment data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Grades Section -->
+                    <div id="grades-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-bar me-2"></i>Grade Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadGrades()">
+                                                <i class="fas fa-list me-2"></i>View All Grades
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showEnterGradesForm()">
+                                                <i class="fas fa-edit me-2"></i>Enter Grades
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showGradeReports()">
+                                                <i class="fas fa-chart-line me-2"></i>Grade Reports
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadGradeAnalytics()">
+                                                <i class="fas fa-analytics me-2"></i>Grade Analytics
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Grade Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="gradeStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Grades List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Grades List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="gradesListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Grades" to load grade data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Users Section -->
+                    <div id="users-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-users-cog me-2"></i>User Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="loadAllUsers()">
+                                                <i class="fas fa-list me-2"></i>View All Users
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="showCreateUserForm()">
+                                                <i class="fas fa-user-plus me-2"></i>Create User
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showSearchUsers()">
+                                                <i class="fas fa-search me-2"></i>Search Users
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="loadUserRoles()">
+                                                <i class="fas fa-user-shield me-2"></i>Manage Roles
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>User Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="userStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Users List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Users List</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="usersListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "View All Users" to load user data</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Reports Section -->
+                    <div id="reports-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-alt me-2"></i>Report Management</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="generateStudentReport()">
+                                                <i class="fas fa-user-graduate me-2"></i>Student Reports
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="generateAttendanceReport()">
+                                                <i class="fas fa-calendar-check me-2"></i>Attendance Reports
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="generateGradeReport()">
+                                                <i class="fas fa-chart-bar me-2"></i>Grade Reports
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="generateCustomReport()">
+                                                <i class="fas fa-cog me-2"></i>Custom Reports
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Report Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="reportStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Reports List -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Generated Reports</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="reportsListContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Student Reports" to generate reports</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Excel Section -->
+                    <div id="excel-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-file-excel me-2"></i>Excel Import/Export</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="showImportExcel()">
+                                                <i class="fas fa-upload me-2"></i>Import from Excel
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="exportToExcel()">
+                                                <i class="fas fa-download me-2"></i>Export to Excel
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showExcelTemplates()">
+                                                <i class="fas fa-file-download me-2"></i>Download Templates
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="showImportHistory()">
+                                                <i class="fas fa-history me-2"></i>Import History
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>Import/Export Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="excelStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Excel Operations -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-list me-2"></i>Excel Operations</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="excelOperationsContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Import from Excel" to start Excel operations</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- System Health Section -->
+                    <div id="system-section" class="content-section d-none">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-cogs me-2"></i>System Health</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="d-grid gap-2">
+                                            <button type="button" class="btn btn-primary" onclick="checkSystemHealth()">
+                                                <i class="fas fa-heartbeat me-2"></i>Check System Health
+                                            </button>
+                                            <button type="button" class="btn btn-success" onclick="viewSystemLogs()">
+                                                <i class="fas fa-file-alt me-2"></i>View System Logs
+                                            </button>
+                                            <button type="button" class="btn btn-warning" onclick="showDatabaseStatus()">
+                                                <i class="fas fa-database me-2"></i>Database Status
+                                            </button>
+                                            <button type="button" class="btn btn-info" onclick="showPerformanceMetrics()">
+                                                <i class="fas fa-tachometer-alt me-2"></i>Performance Metrics
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5><i class="fas fa-chart-pie me-2"></i>System Statistics</h5>
+                                    </div>
+                                    <div class="card-body" id="systemStatsCard">
+                                        <div class="text-center">
+                                            <div class="spinner-border" role="status">
+                                                <span class="visually-hidden">Loading...</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- System Information -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5><i class="fas fa-info-circle me-2"></i>System Information</h5>
+                            </div>
+                            <div class="card-body">
+                                <div id="systemInfoContainer">
+                                    <div class="text-center">
+                                        <p class="text-muted">Click "Check System Health" to load system information</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add more sections as needed -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Alert Container -->
+    <div id="alertContainer"></div>
+
+    <!-- Include CSS -->
+    <link href="css/dashboard.css" rel="stylesheet">
+    
+    <!-- Include Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- Include Modular Components -->
+    <script src="js/modules/utils.js"></script>
+    <script src="js/modules/navigation.js"></script>
+    <script src="js/modules/dashboard.js"></script>
+    <script src="js/modules/auth.js"></script>
+    <script src="js/modules/students.js"></script>
+    <script src="js/modules/teachers.js"></script>
+    <script src="js/modules/classes.js"></script>
+    <script src="js/app.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        , 500);
+                }
+                progressBar.style.width = progress + '%';
+                progressText.textContent = 'Processing... ' + progress + '%';
+            }, 200);
+        }
+
+        // Show student import results
+        function showStudentImportResults() {
+            const progressContainer = document.getElementById('studentImportProgress');
+            const resultsContainer = document.getElementById('studentImportResults');
+            const resultAlert = document.getElementById('studentImportResultAlert');
+            const importBtn = document.getElementById('studentImportBtn');
+            
+            // Hide progress
+            progressContainer.classList.add('d-none');
+            
+            // Show results
+            resultsContainer.classList.remove('d-none');
+            resultAlert.classList.add('alert-success');
+            resultAlert.innerHTML = '<h6><i class="fas fa-check-circle me-2"></i>Import Completed Successfully</h6>' +
+                '<ul class="mb-0">' +
+                '<li>120 students processed</li>' +
+                '<li>118 students imported successfully</li>' +
+                '<li>2 duplicate records skipped</li>' +
+                '<li>Processing time: 3.1 seconds</li>' +
+                '</ul>';
+            
+            importBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Import Students';
+            importBtn.disabled = false;
+            
+            // Show success alert
+            showAlert('success', 'Student data imported successfully! 118 new students added to the system.');
+        }
+    </script>
+</body>
+</html>
+
+

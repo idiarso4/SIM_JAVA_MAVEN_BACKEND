@@ -14,7 +14,18 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadStudents() { Students.loadStudents(); }
 function showCreateStudentForm() { Students.showCreateForm(); }
 function showSearchStudents() { Students.showSearchForm(); }
-function showImportStudentsExcel() { Students.showImportExcel(); }
+function showImportStudentsExcel() { Excel.showImportStudentsExcel(); }
+function downloadStudentTemplate() { Excel.downloadStudentTemplate(); }
+function handleStudentFileSelect(event) { Excel.handleStudentFileSelect(event); }
+function processStudentExcelImport() { Excel.processStudentExcelImport(); }
+
+// Advanced functions
+function displayClasses(classes, totalCount) { Advanced.displayClasses(classes, totalCount); }
+function viewClass(classId) { Advanced.viewClass(classId); }
+function editClass(classId) { Advanced.editClass(classId); }
+function displayTeachers(teachers, totalCount) { Advanced.displayTeachers(teachers, totalCount); }
+function viewTeacher(teacherId) { Advanced.viewTeacher(teacherId); }
+function editTeacher(teacherId) { Advanced.editTeacher(teacherId); }
 
 function loadTeachers() { Teachers.loadTeachers(); }
 function showAddTeacherForm() { Teachers.showAddForm(); }

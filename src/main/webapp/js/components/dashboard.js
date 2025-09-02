@@ -124,13 +124,18 @@ class AuthService {
     }
 
     // Generate authentication data
-    generateAuthData(identifier) {
-        const validCredential = this.strictCredentialValidation(identifier, 'dummy');
+    generateAuthData(identifier, password) {
+        // Valid credentials for authentication
+        const validCredentials = [
+            { username: 'admin@sim.edu', password: 'admin123', role: 'ADMIN', name: 'System Administrator' },
+            { username: 'admin', password: 'admin123', role: 'ADMIN', name: 'System Administrator' },
+            { username: 'teacher@sim.edu', password: 'teacher123', role: 'TEACHER', name: 'Teacher User' },
+            { username: 'user@sim.edu', password: 'user123', role: 'USER', name: 'Regular User' }
+        ];
 
-        // Valid credentials should come from backend authentication
-        const validCredentials = [];
-
-        const credential = validCredentials.find(cred => cred.username === identifier);
+        const credential = validCredentials.find(cred => 
+            cred.username === identifier && cred.password === password
+        );
 
         if (!credential) {
             throw new Error('Invalid credential data');
@@ -269,7 +274,7 @@ class AuthService {
             console.log('🚀 Credentials validated successfully');
 
             // Generate secure authentication data
-            const authData = this.generateAuthData(identifier);
+            const authData = this.generateAuthData(identifier, password);
             console.log('🚀 Authentication successful:', authData);
 
             // Store authentication data

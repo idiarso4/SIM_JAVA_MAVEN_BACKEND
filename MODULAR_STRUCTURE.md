@@ -54,7 +54,17 @@ src/main/webapp/
 - `showAddForm()` - Show add form
 - `showSearchForm()` - Show search form
 
-### 8. **app.js** - Main Coordinator
+### 8. **excel.js** - Excel Import/Export
+- `showImportStudentsExcel()` - Show import modal
+- `downloadStudentTemplate()` - Download template
+- `processStudentExcelImport()` - Process import
+
+### 9. **advanced.js** - Advanced Features
+- `displayClasses()` - Display class table
+- `displayTeachers()` - Display teacher table
+- `loadClassStats()` - Load class statistics
+
+### 10. **app.js** - Main Coordinator
 - Initialize all modules
 - Provide global functions for HTML onclick events
 - Coordinate module interactions
