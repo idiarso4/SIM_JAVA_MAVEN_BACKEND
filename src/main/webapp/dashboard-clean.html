@@ -192,11 +192,82 @@
                     <!-- Students Section -->
                     <div id="students-section" class="content-section d-none">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-user-graduate me-2"></i>Student Management</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="showAddStudentModal()">
+                                        <i class="fas fa-plus me-1"></i>Add Student
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="exportStudentsToExcel()">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="printStudentList()">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Student management features will be available here.</p>
+                                <!-- Search and Filter -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="studentSearchInput" placeholder="Search by name or NIS...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="studentStatusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="ACTIVE">Active</option>
+                                            <option value="INACTIVE">Inactive</option>
+                                            <option value="GRADUATED">Graduated</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="studentClassFilter">
+                                            <option value="">All Classes</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-primary" onclick="searchStudents()">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary" onclick="clearStudentFilters()">
+                                            <i class="fas fa-times me-1"></i>Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Students Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="studentsTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllStudents"></th>
+                                                <th>NIS</th>
+                                                <th>Full Name</th>
+                                                <th>Class</th>
+                                                <th>Status</th>
+                                                <th>Phone</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="studentsTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Students pagination">
+                                    <ul class="pagination justify-content-center" id="studentsPagination">
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -204,11 +275,82 @@
                     <!-- Teachers Section -->
                     <div id="teachers-section" class="content-section d-none">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Management</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="showAddTeacherModal()">
+                                        <i class="fas fa-plus me-1"></i>Add Teacher
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="exportTeachersToExcel()">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="printTeacherList()">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Teacher management features will be available here.</p>
+                                <!-- Search and Filter -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="teacherSearchInput" placeholder="Search by name or email...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="teacherStatusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="true">Active</option>
+                                            <option value="false">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="teacherDepartmentFilter">
+                                            <option value="">All Departments</option>
+                                            <option value="General">General</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-primary" onclick="searchTeachers()">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary" onclick="clearTeacherFilters()">
+                                            <i class="fas fa-times me-1"></i>Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Teachers Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="teachersTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllTeachers"></th>
+                                                <th>Name</th>
+                                                <th>Email</th>
+                                                <th>Phone</th>
+                                                <th>Status</th>
+                                                <th>Created</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="teachersTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Teachers pagination">
+                                    <ul class="pagination justify-content-center" id="teachersPagination">
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -216,11 +358,81 @@
                     <!-- Classes Section -->
                     <div id="classes-section" class="content-section d-none">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-school me-2"></i>Class Management</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="showAddClassModal()">
+                                        <i class="fas fa-plus me-1"></i>Add Class
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="exportClassesToExcel()">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="printClassList()">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Class management features will be available here.</p>
+                                <!-- Search and Filter -->
+                                <div class="row mb-3">
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" id="classSearchInput" placeholder="Search by class name...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="classMajorFilter">
+                                            <option value="">All Majors</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="classStatusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="true">Active</option>
+                                            <option value="false">Inactive</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-primary" onclick="searchClasses()">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary" onclick="clearClassFilters()">
+                                            <i class="fas fa-times me-1"></i>Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Classes Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="classesTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllClasses"></th>
+                                                <th>Class Name</th>
+                                                <th>Major</th>
+                                                <th>Grade Level</th>
+                                                <th>Students</th>
+                                                <th>Status</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="classesTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Classes pagination">
+                                    <ul class="pagination justify-content-center" id="classesPagination">
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -228,11 +440,84 @@
                     <!-- Attendance Section -->
                     <div id="attendance-section" class="content-section d-none">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-calendar-check me-2"></i>Attendance Management</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="showRecordAttendanceModal()">
+                                        <i class="fas fa-plus me-1"></i>Record Attendance
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="showBulkAttendanceModal()">
+                                        <i class="fas fa-users me-1"></i>Bulk Record
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="exportAttendanceToExcel()">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="printAttendanceList()">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Attendance management features will be available here.</p>
+                                <!-- Search and Filter -->
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" id="attendanceSearchInput" placeholder="Search by student name...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <input type="date" class="form-control" id="attendanceDateFilter">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="attendanceStatusFilter">
+                                            <option value="">All Status</option>
+                                            <option value="PRESENT">Present</option>
+                                            <option value="ABSENT">Absent</option>
+                                            <option value="LATE">Late</option>
+                                            <option value="EXCUSED">Excused</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-primary" onclick="searchAttendance()">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary" onclick="clearAttendanceFilters()">
+                                            <i class="fas fa-times me-1"></i>Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Attendance Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="attendanceTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllAttendance"></th>
+                                                <th>Date</th>
+                                                <th>Student</th>
+                                                <th>Subject</th>
+                                                <th>Status</th>
+                                                <th>Notes</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="attendanceTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Attendance pagination">
+                                    <ul class="pagination justify-content-center" id="attendancePagination">
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -240,11 +525,86 @@
                     <!-- Assessments Section -->
                     <div id="assessments-section" class="content-section d-none">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-clipboard-check me-2"></i>Assessment Management</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="showAddAssessmentModal()">
+                                        <i class="fas fa-plus me-1"></i>Create Assessment
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="showGradeAssessmentModal()">
+                                        <i class="fas fa-star me-1"></i>Grade Assessment
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="exportAssessmentsToExcel()">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="printAssessmentList()">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Assessment management features will be available here.</p>
+                                <!-- Search and Filter -->
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <input type="text" class="form-control" id="assessmentSearchInput" placeholder="Search by title...">
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="assessmentTypeFilter">
+                                            <option value="">All Types</option>
+                                            <option value="QUIZ">Quiz</option>
+                                            <option value="EXAM">Exam</option>
+                                            <option value="ASSIGNMENT">Assignment</option>
+                                            <option value="PROJECT">Project</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="assessmentSubjectFilter">
+                                            <option value="">All Subjects</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-primary" onclick="searchAssessments()">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary" onclick="clearAssessmentFilters()">
+                                            <i class="fas fa-times me-1"></i>Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Assessments Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="assessmentsTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllAssessments"></th>
+                                                <th>Title</th>
+                                                <th>Type</th>
+                                                <th>Subject</th>
+                                                <th>Max Score</th>
+                                                <th>Date</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="assessmentsTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Assessments pagination">
+                                    <ul class="pagination justify-content-center" id="assessmentsPagination">
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -252,11 +612,86 @@
                     <!-- Grades Section -->
                     <div id="grades-section" class="content-section d-none">
                         <div class="card">
-                            <div class="card-header">
+                            <div class="card-header d-flex justify-content-between align-items-center">
                                 <h5><i class="fas fa-chart-bar me-2"></i>Grade Management</h5>
+                                <div class="btn-group">
+                                    <button class="btn btn-primary btn-sm" onclick="showGradeStudentModal()">
+                                        <i class="fas fa-plus me-1"></i>Grade Student
+                                    </button>
+                                    <button class="btn btn-warning btn-sm" onclick="showTranscriptModal()">
+                                        <i class="fas fa-file-alt me-1"></i>Generate Transcript
+                                    </button>
+                                    <button class="btn btn-success btn-sm" onclick="exportGradesToExcel()">
+                                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                                    </button>
+                                    <button class="btn btn-info btn-sm" onclick="printGradeList()">
+                                        <i class="fas fa-print me-1"></i>Print
+                                    </button>
+                                </div>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Grade management features will be available here.</p>
+                                <!-- Search and Filter -->
+                                <div class="row mb-3">
+                                    <div class="col-md-3">
+                                        <select class="form-select" id="gradeStudentFilter">
+                                            <option value="">All Students</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="gradeSubjectFilter">
+                                            <option value="">All Subjects</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <select class="form-select" id="gradeAssessmentFilter">
+                                            <option value="">All Assessments</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-primary" onclick="searchGrades()">
+                                            <i class="fas fa-search me-1"></i>Search
+                                        </button>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-outline-secondary" onclick="clearGradeFilters()">
+                                            <i class="fas fa-times me-1"></i>Clear
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Grades Table -->
+                                <div class="table-responsive">
+                                    <table class="table table-striped table-hover" id="gradesTable">
+                                        <thead class="table-dark">
+                                            <tr>
+                                                <th><input type="checkbox" id="selectAllGrades"></th>
+                                                <th>Student</th>
+                                                <th>Assessment</th>
+                                                <th>Subject</th>
+                                                <th>Score</th>
+                                                <th>Max Score</th>
+                                                <th>Percentage</th>
+                                                <th>Grade</th>
+                                                <th>Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="gradesTableBody">
+                                            <tr>
+                                                <td colspan="9" class="text-center">
+                                                    <div class="spinner-border" role="status">
+                                                        <span class="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+
+                                <!-- Pagination -->
+                                <nav aria-label="Grades pagination">
+                                    <ul class="pagination justify-content-center" id="gradesPagination">
+                                    </ul>
+                                </nav>
                             </div>
                         </div>
                     </div>
@@ -280,7 +715,121 @@
                                 <h5><i class="fas fa-file-alt me-2"></i>Reports</h5>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Report generation features will be available here.</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h6><i class="fas fa-calendar-check me-2"></i>Attendance Reports</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Date Range</label>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <input type="date" class="form-control" id="attendanceReportStartDate">
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <input type="date" class="form-control" id="attendanceReportEndDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Class</label>
+                                                    <select class="form-select" id="attendanceReportClass">
+                                                        <option value="">All Classes</option>
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-primary" onclick="generateAttendanceReport()">
+                                                    <i class="fas fa-chart-line me-1"></i>Generate Report
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h6><i class="fas fa-star me-2"></i>Academic Reports</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Academic Year</label>
+                                                    <select class="form-select" id="academicReportYear">
+                                                        <option value="2024/2025">2024/2025</option>
+                                                        <option value="2023/2024">2023/2024</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Semester</label>
+                                                    <select class="form-select" id="academicReportSemester">
+                                                        <option value="">All Semesters</option>
+                                                        <option value="1">Semester 1</option>
+                                                        <option value="2">Semester 2</option>
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-success" onclick="generateAcademicReport()">
+                                                    <i class="fas fa-graduation-cap me-1"></i>Generate Report
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h6><i class="fas fa-users me-2"></i>Student Reports</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Report Type</label>
+                                                    <select class="form-select" id="studentReportType">
+                                                        <option value="summary">Student Summary</option>
+                                                        <option value="detailed">Detailed Report</option>
+                                                        <option value="transcript">Transcript</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Student</label>
+                                                    <select class="form-select" id="studentReportStudent">
+                                                        <option value="">All Students</option>
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-info" onclick="generateStudentReport()">
+                                                    <i class="fas fa-user-graduate me-1"></i>Generate Report
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header">
+                                                <h6><i class="fas fa-chart-bar me-2"></i>Statistical Reports</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Report Type</label>
+                                                    <select class="form-select" id="statisticalReportType">
+                                                        <option value="enrollment">Enrollment Statistics</option>
+                                                        <option value="performance">Performance Analysis</option>
+                                                        <option value="attendance">Attendance Statistics</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Period</label>
+                                                    <select class="form-select" id="statisticalReportPeriod">
+                                                        <option value="monthly">Monthly</option>
+                                                        <option value="quarterly">Quarterly</option>
+                                                        <option value="yearly">Yearly</option>
+                                                    </select>
+                                                </div>
+                                                <button class="btn btn-warning" onclick="generateStatisticalReport()">
+                                                    <i class="fas fa-chart-pie me-1"></i>Generate Report
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -292,7 +841,108 @@
                                 <h5><i class="fas fa-file-excel me-2"></i>Excel Import/Export</h5>
                             </div>
                             <div class="card-body">
-                                <p class="text-muted">Excel import/export features will be available here.</p>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-success text-white">
+                                                <h6><i class="fas fa-upload me-2"></i>Import Data</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Import Type</label>
+                                                    <select class="form-select" id="importType">
+                                                        <option value="students">Students</option>
+                                                        <option value="teachers">Teachers</option>
+                                                        <option value="classes">Classes</option>
+                                                        <option value="subjects">Subjects</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Excel File</label>
+                                                    <input type="file" class="form-control" id="importFile" accept=".xlsx,.xls">
+                                                </div>
+                                                <div class="mb-3">
+                                                    <button class="btn btn-outline-info btn-sm" onclick="downloadTemplate()">
+                                                        <i class="fas fa-download me-1"></i>Download Template
+                                                    </button>
+                                                </div>
+                                                <button class="btn btn-success" onclick="importExcelData()">
+                                                    <i class="fas fa-upload me-1"></i>Import Data
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="card mb-3">
+                                            <div class="card-header bg-primary text-white">
+                                                <h6><i class="fas fa-download me-2"></i>Export Data</h6>
+                                            </div>
+                                            <div class="card-body">
+                                                <div class="mb-3">
+                                                    <label class="form-label">Export Type</label>
+                                                    <select class="form-select" id="exportType">
+                                                        <option value="students">Students</option>
+                                                        <option value="teachers">Teachers</option>
+                                                        <option value="classes">Classes</option>
+                                                        <option value="attendance">Attendance</option>
+                                                        <option value="grades">Grades</option>
+                                                        <option value="assessments">Assessments</option>
+                                                    </select>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <label class="form-label">Date Range (Optional)</label>
+                                                    <div class="row">
+                                                        <div class="col-6">
+                                                            <input type="date" class="form-control" id="exportStartDate">
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <input type="date" class="form-control" id="exportEndDate">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="mb-3">
+                                                    <div class="form-check">
+                                                        <input class="form-check-input" type="checkbox" id="includeInactive">
+                                                        <label class="form-check-label" for="includeInactive">
+                                                            Include Inactive Records
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                                <button class="btn btn-primary" onclick="exportExcelData()">
+                                                    <i class="fas fa-download me-1"></i>Export Data
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <!-- Import/Export History -->
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h6><i class="fas fa-history me-2"></i>Import/Export History</h6>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table table-sm">
+                                                <thead>
+                                                    <tr>
+                                                        <th>Date</th>
+                                                        <th>Type</th>
+                                                        <th>Operation</th>
+                                                        <th>Records</th>
+                                                        <th>Status</th>
+                                                        <th>Actions</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody id="importExportHistory">
+                                                    <tr>
+                                                        <td colspan="6" class="text-center text-muted">No history available</td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -316,6 +966,270 @@
     <!-- Alert Container -->
     <div id="alertContainer"></div>
 
+    <!-- Student Modal -->
+    <div class="modal fade" id="studentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="studentModalTitle">Add Student</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="studentForm">
+                        <input type="hidden" id="studentId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentNis" class="form-label">NIS *</label>
+                                    <input type="text" class="form-control" id="studentNis" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentFullName" class="form-label">Full Name *</label>
+                                    <input type="text" class="form-control" id="studentFullName" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentEmail" class="form-label">Email</label>
+                                    <input type="email" class="form-control" id="studentEmail">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentPhone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control" id="studentPhone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentGender" class="form-label">Gender</label>
+                                    <select class="form-select" id="studentGender">
+                                        <option value="MALE">Male</option>
+                                        <option value="FEMALE">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="studentStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="studentStatus">
+                                        <option value="ACTIVE">Active</option>
+                                        <option value="INACTIVE">Inactive</option>
+                                        <option value="GRADUATED">Graduated</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="studentAddress" class="form-label">Address</label>
+                            <textarea class="form-control" id="studentAddress" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveStudent()">Save Student</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Teacher Modal -->
+    <div class="modal fade" id="teacherModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="teacherModalTitle">Add Teacher</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="teacherForm">
+                        <input type="hidden" id="teacherId">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherFirstName" class="form-label">First Name *</label>
+                                    <input type="text" class="form-control" id="teacherFirstName" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherLastName" class="form-label">Last Name *</label>
+                                    <input type="text" class="form-control" id="teacherLastName" required>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherEmail" class="form-label">Email *</label>
+                                    <input type="email" class="form-control" id="teacherEmail" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherPhone" class="form-label">Phone</label>
+                                    <input type="text" class="form-control" id="teacherPhone">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherPassword" class="form-label">Password *</label>
+                                    <input type="password" class="form-control" id="teacherPassword" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="teacherStatus" class="form-label">Status</label>
+                                    <select class="form-select" id="teacherStatus">
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveTeacher()">Save Teacher</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attendance Modal -->
+    <div class="modal fade" id="attendanceModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="attendanceModalTitle">Record Attendance</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="attendanceForm">
+                        <input type="hidden" id="attendanceId">
+                        <div class="mb-3">
+                            <label for="attendanceStudent" class="form-label">Student *</label>
+                            <select class="form-select" id="attendanceStudent" required>
+                                <option value="">Select Student</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendanceTeachingActivity" class="form-label">Teaching Activity *</label>
+                            <select class="form-select" id="attendanceTeachingActivity" required>
+                                <option value="">Select Teaching Activity</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendanceDate" class="form-label">Date *</label>
+                            <input type="date" class="form-control" id="attendanceDate" required>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendanceStatus" class="form-label">Status *</label>
+                            <select class="form-select" id="attendanceStatus" required>
+                                <option value="PRESENT">Present</option>
+                                <option value="ABSENT">Absent</option>
+                                <option value="LATE">Late</option>
+                                <option value="EXCUSED">Excused</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="attendanceNotes" class="form-label">Notes</label>
+                            <textarea class="form-control" id="attendanceNotes" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAttendance()">Save Attendance</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Assessment Modal -->
+    <div class="modal fade" id="assessmentModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="assessmentModalTitle">Create Assessment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="assessmentForm">
+                        <input type="hidden" id="assessmentId">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="assessmentTitle" class="form-label">Title *</label>
+                                    <input type="text" class="form-control" id="assessmentTitle" required>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label for="assessmentType" class="form-label">Type *</label>
+                                    <select class="form-select" id="assessmentType" required>
+                                        <option value="QUIZ">Quiz</option>
+                                        <option value="EXAM">Exam</option>
+                                        <option value="ASSIGNMENT">Assignment</option>
+                                        <option value="PROJECT">Project</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assessmentSubject" class="form-label">Subject *</label>
+                                    <select class="form-select" id="assessmentSubject" required>
+                                        <option value="">Select Subject</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assessmentMaxScore" class="form-label">Max Score *</label>
+                                    <input type="number" class="form-control" id="assessmentMaxScore" required min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assessmentDate" class="form-label">Assessment Date</label>
+                                    <input type="date" class="form-control" id="assessmentDate">
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="assessmentDuration" class="form-label">Duration (minutes)</label>
+                                    <input type="number" class="form-control" id="assessmentDuration" min="1">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="assessmentDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="assessmentDescription" rows="3"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="saveAssessment()">Save Assessment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Include Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
@@ -326,7 +1240,11 @@
     <script src="js/modules/auth.js"></script>
     <script src="js/modules/students.js"></script>
     <script src="js/modules/teachers.js"></script>
+    <script src="js/modules/attendance.js"></script>
+    <script src="js/modules/assessments.js"></script>
     <script src="js/modules/classes.js"></script>
+    <script src="js/modules/excel.js"></script>
+    <script src="js/modules/global-functions.js"></script>
     <script src="js/app.js"></script>
 </body>
 </html>

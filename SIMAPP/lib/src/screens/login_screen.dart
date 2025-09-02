@@ -37,7 +37,6 @@ class _LoginScreenState extends State<LoginScreen> {
           password: _passwordController.text,
         );
 
-        // Selalu gunakan mock login untuk sekarang
         final response = await _authService.login(request);
 
         if (response.success) {
@@ -53,9 +52,7 @@ class _LoginScreenState extends State<LoginScreen> {
             });
           }
         }
-      } catch (e, stackTrace) {
-        print('Login error: $e');
-        print('Stack trace: $stackTrace');
+      } catch (e) {
         if (mounted) {
           setState(() {
             _errorMessage = 'An error occurred: $e';
@@ -95,19 +92,20 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 20),
               const Text(
-                'Mock Login Mode',
+                'School Information Management',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green,
+                  color: Colors.blue,
                 ),
               ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 30),
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -126,10 +124,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Password',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.lock),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter your password';
+                  }
+                  if (value.length < 6) {
+                    return 'Password must be at least 6 characters';
                   }
                   return null;
                 },
@@ -168,7 +170,7 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
               const SizedBox(height: 16),
               const Text(
-                'Enter any email and password to proceed. This is a mock login for demonstration purposes.',
+                'Enter your credentials to access the system',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontStyle: FontStyle.italic,

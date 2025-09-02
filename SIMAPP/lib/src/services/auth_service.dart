@@ -8,36 +8,40 @@ class AuthService {
   final http.Client _client = http.Client();
   final FlutterSecureStorage _storage = const FlutterSecureStorage();
 
-  // Mock login - always returns success for demonstration
   Future<LoginResponse> login(LoginRequest request) async {
     try {
-      // Simulasi delay jaringan
-      await Future.delayed(const Duration(seconds: 1));
-      
-      // Validasi sederhana
-      if (request.email.isEmpty || request.password.isEmpty) {
+      final response = await _client.post(
+        Uri.parse('${ApiConfig.baseUrl}${ApiConfig.loginEndpoint}'),
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode({
+          'identifier': request.email,
+          'password': request.password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final jsonResponse = jsonDecode(response.body);
+        return LoginResponse(
+          token: jsonResponse['token'] ?? '',
+          message: 'Login successful',
+          success: true,
+        );
+      } else {
+        final jsonResponse = jsonDecode(response.body);
         return LoginResponse(
           token: '',
-          message: 'Email and password are required',
+          message: jsonResponse['message'] ?? 'Login failed',
           success: false,
         );
       }
-      
-      // Untuk demonstrasi, kita terima semua login dengan credential yang tidak kosong
-      // Token ini adalah JWT mock
-      final mockToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6Ik1vY2sgVXNlciIsImlhdCI6MTUxNjIzOTAyMn0.6k-4Mow6J9YBxG6dUpdTr4kD2NPOuNg5lU0vR8nLn8I';
-      
-      return LoginResponse(
-        token: mockToken,
-        message: 'Login successful',
-        success: true,
-      );
-    } catch (e, stackTrace) {
-      print('Login error: $e');
-      print('Stack trace: $stackTrace');
+    } catch (e) {
+      // Log error for debugging
+      // In production, you might want to use a proper logging framework
       return LoginResponse(
         token: '',
-        message: 'Login failed: $e',
+        message: 'Network error: $e',
         success: false,
       );
     }
@@ -45,17 +49,28 @@ class AuthService {
 
   Future<void> saveToken(String token) async {
     await _storage.write(key: 'auth_token', value: token);
-    print('Token saved: $token');
   }
 
   Future<String?> getToken() async {
-    final token = await _storage.read(key: 'auth_token');
-    print('Token retrieved: $token');
-    return token;
+    return await _storage.read(key: 'auth_token');
   }
 
   Future<void> logout() async {
-    await _storage.delete(key: 'auth_token');
-    print('Token deleted');
+    try {
+      final token = await getToken();
+      if (token != null) {
+        await _client.post(
+          Uri.parse('${ApiConfig.baseUrl}/auth/logout'),
+          headers: {
+            'Authorization': 'Bearer $token',
+          },
+        );
+      }
+    } catch (e) {
+      // Log error for debugging
+      // In production, you might want to use a proper logging framework
+    } finally {
+      await _storage.delete(key: 'auth_token');
+    }
   }
 }

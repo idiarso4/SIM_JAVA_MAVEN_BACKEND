@@ -86,7 +86,7 @@ class StudentService {
         },
       );
 
-      if (response.statusCode != 200) {
+      if (response.statusCode != 200 && response.statusCode != 204) {
         throw Exception('Failed to delete student: ${response.statusCode}');
       }
     } catch (e) {

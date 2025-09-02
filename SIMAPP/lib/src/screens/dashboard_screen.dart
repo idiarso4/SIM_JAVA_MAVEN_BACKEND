@@ -110,6 +110,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       );
                     },
                   ),
+                  _buildFeatureCard(
+                    context,
+                    icon: Icons.fact_check,
+                    title: 'Attendance',
+                    onTap: () {
+                      // Tampilkan snackbar sebagai placeholder
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Attendance feature coming soon')),
+                      );
+                    },
+                  ),
+                  _buildFeatureCard(
+                    context,
+                    icon: Icons.bar_chart,
+                    title: 'Reports',
+                    onTap: () {
+                      // Tampilkan snackbar sebagai placeholder
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text('Reports feature coming soon')),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),

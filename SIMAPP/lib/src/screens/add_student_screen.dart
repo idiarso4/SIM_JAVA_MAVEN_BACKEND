@@ -16,6 +16,9 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
   final _nimController = TextEditingController();
   final _majorController = TextEditingController();
   final _facultyController = TextEditingController();
+  final _phoneController = TextEditingController();
+  final _addressController = TextEditingController();
+  final _classRoomController = TextEditingController();
   final StudentService _studentService = StudentService();
   bool _isLoading = false;
   String _errorMessage = '';
@@ -27,6 +30,9 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
     _nimController.dispose();
     _majorController.dispose();
     _facultyController.dispose();
+    _phoneController.dispose();
+    _addressController.dispose();
+    _classRoomController.dispose();
     super.dispose();
   }
 
@@ -45,6 +51,10 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
           nim: _nimController.text,
           major: _majorController.text,
           faculty: _facultyController.text,
+          phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
+          address: _addressController.text.isNotEmpty ? _addressController.text : null,
+          classRoom: _classRoomController.text.isNotEmpty ? _classRoomController.text : null,
+          status: 'ACTIVE',
         );
 
         await _studentService.createStudent(student);
@@ -76,13 +86,14 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
         padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
-          child: Column(
+          child: ListView(
             children: [
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
                   labelText: 'Name',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.person),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -97,6 +108,7 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Email',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.email),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -114,6 +126,7 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                 decoration: const InputDecoration(
                   labelText: 'NIM',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.badge),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -128,6 +141,7 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Major',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.school),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -142,6 +156,7 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                 decoration: const InputDecoration(
                   labelText: 'Faculty',
                   border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.account_balance),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
@@ -150,11 +165,48 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _phoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone (Optional)',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.phone),
+                ),
+                keyboardType: TextInputType.phone,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  labelText: 'Address (Optional)',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.location_on),
+                ),
+                maxLines: 3,
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _classRoomController,
+                decoration: const InputDecoration(
+                  labelText: 'Class Room (Optional)',
+                  border: OutlineInputBorder(),
+                  prefixIcon: Icon(Icons.class_),
+                ),
+              ),
               const SizedBox(height: 24),
               if (_errorMessage.isNotEmpty)
-                Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.red[50],
+                    border: Border.all(color: Colors.red),
+                    borderRadius: BorderRadius.circular(4),
+                  ),
+                  child: Text(
+                    _errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  ),
                 ),
               const SizedBox(height: 24),
               SizedBox(

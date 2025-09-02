@@ -143,8 +143,20 @@ class _StudentsScreenState extends State<StudentsScreen> {
                           vertical: 8,
                         ),
                         child: ListTile(
+                          leading: CircleAvatar(
+                            child: Text(student.name.substring(0, 1)),
+                          ),
                           title: Text(student.name),
-                          subtitle: Text('${student.nim} - ${student.major}'),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text('${student.nim} - ${student.major}'),
+                              if (student.classRoom != null)
+                                Text('Class: ${student.classRoom}'),
+                              if (student.status != null)
+                                Text('Status: ${student.status}'),
+                            ],
+                          ),
                           trailing: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [

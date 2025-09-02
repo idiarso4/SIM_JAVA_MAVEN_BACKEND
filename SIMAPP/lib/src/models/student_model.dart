@@ -5,6 +5,10 @@ class Student {
   final String nim;
   final String major;
   final String faculty;
+  final String? phone;
+  final String? address;
+  final String? classRoom;
+  final String? status;
 
   Student({
     required this.id,
@@ -13,6 +17,10 @@ class Student {
     required this.nim,
     required this.major,
     required this.faculty,
+    this.phone,
+    this.address,
+    this.classRoom,
+    this.status,
   });
 
   factory Student.fromJson(Map<String, dynamic> json) {
@@ -23,6 +31,10 @@ class Student {
       nim: json['nim'] ?? '',
       major: json['major'] ?? '',
       faculty: json['faculty'] ?? '',
+      phone: json['phone'],
+      address: json['address'],
+      classRoom: json['classRoom'],
+      status: json['status'],
     );
   }
 
@@ -34,6 +46,10 @@ class Student {
       'nim': nim,
       'major': major,
       'faculty': faculty,
+      'phone': phone,
+      'address': address,
+      'classRoom': classRoom,
+      'status': status,
     };
   }
 }

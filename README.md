@@ -536,3 +536,7 @@ For issues or questions:
 4. Verify you're using the correct URLs (port 8080, not 3000)
 
 **Remember: The dashboard is at `http://localhost:8080/dashboard.html`, NOT `localhost:3000`!**
+
+===========================
+
+ C:\Users\sija_003\Desktop\SIM_JAVA\SIM_JAVA_MAVEN_BACKEND\maven-portable\apache-maven-3.8.8\bin\mvn.cmd spring-boot:run

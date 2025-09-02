@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'src/screens/login_screen.dart';
-import 'src/screens/dashboard_screen.dart';
-import 'src/screens/students_screen.dart';
+import 'src/screens/home_shell.dart';
 import 'src/screens/add_student_screen.dart';
 import 'src/screens/edit_student_screen.dart';
-import 'src/services/auth_service.dart';
 import 'src/models/student_model.dart';
 
 void main() {
@@ -26,8 +24,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/login',
       routes: {
         '/login': (context) => const LoginScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/students': (context) => const StudentsScreen(),
+        '/dashboard': (context) => const HomeShell(),
         '/students/add': (context) => const AddStudentScreen(),
         '/students/edit': (context) => EditStudentScreen(
               student: ModalRoute.of(context)!.settings.arguments as Student,
