@@ -418,10 +418,13 @@
                                             <button type="button" class="btn btn-success" onclick="showAddTeacherForm()">
                                                 <i class="fas fa-user-plus me-2"></i>Add New Teacher
                                             </button>
+                                            <button type="button" class="btn btn-info" onclick="showImportTeachersExcel()">
+                                                <i class="fas fa-file-excel me-2"></i>Import from Excel
+                                            </button>
                                             <button type="button" class="btn btn-warning" onclick="showSearchTeachers()">
                                                 <i class="fas fa-search me-2"></i>Search Teachers
                                             </button>
-                                            <button type="button" class="btn btn-info" onclick="loadActiveTeachers()">
+                                            <button type="button" class="btn btn-secondary" onclick="loadActiveTeachers()">
                                                 <i class="fas fa-user-check me-2"></i>Active Teachers
                                             </button>
                                         </div>
@@ -873,8 +876,8 @@
     <!-- Include Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- Include Dashboard JS -->
-    <script src="js/components/dashboard.js"></script>
+    <!-- Temporarily commented out to troubleshoot menu issues -->
+    <!-- <script src="js/components/dashboard.js"></script> -->
     
     <script>
         // Initialize dashboard when page loads
@@ -2672,52 +2675,44 @@
                     }
                 } else {
                     console.error('❌ Failed to load users:', response.status);
-                    container.innerHTML = `
-                        <div class="alert alert-danger">
-                            <i class="fas fa-exclamation-triangle me-2"></i>
-                            Failed to load users. Please try again.
-                        </div>
-                    `;
+                    container.innerHTML = '<div class="alert alert-danger">' +
+                        '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                        'Failed to load users. Please try again.' +
+                        '</div>';
                 }
-
             } catch (error) {
                 console.error('❌ Error loading users:', error);
-                container.innerHTML = `
-                    <div class="alert alert-danger">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Error loading users: ${error.message}
-                    </div>
-                `;
+                container.innerHTML = '<div class="alert alert-danger">' +
+                    '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                    'Error loading users: ' + error.message +
+                    '</div>';
             }
         }
 
         // Display users in table format
         function displayUsers(users, totalCount) {
             const container = document.getElementById('usersListContainer');
+            let html = '<div class="d-flex justify-content-between align-items-center mb-3">' +
+                '<h6 class="mb-0">Users (' + totalCount + ' total)</h6>' +
+                '<button type="button" class="btn btn-sm btn-outline-primary" onclick="loadAllUsers()">' +
+                '<i class="fas fa-sync-alt me-1"></i>Refresh' +
+                '</button>' +
+                '</div>' +
+                '<div class="table-responsive">' +
+                '<table class="table table-hover">' +
+                '<thead class="table-light">' +
+                '<tr>' +
+                '<th>Name</th>' +
+                '<th>Email</th>' +
+                '<th>User Type</th>' +
+                '<th>Status</th>' +
+                '<th>Join Date</th>' +
+                '<th>Actions</th>' +
+                '</tr>' +
+                '</thead>' +
+                '<tbody>';
 
-            let html = `
-                <div class="d-flex justify-content-between align-items-center mb-3">
-                    <h6 class="mb-0">Users (${totalCount} total)</h6>
-                    <button type="button" class="btn btn-sm btn-outline-primary" onclick="loadAllUsers()">
-                        <i class="fas fa-sync-alt me-1"></i>Refresh
-                    </button>
-                </div>
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead class="table-light">
-                            <tr>
-                                <th>Name</th>
-                                <th>Email</th>
-                                <th>User Type</th>
-                                <th>Status</th>
-                                <th>Join Date</th>
-                                <th>Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-            `;
-
-            users.forEach(user => {
+            users.forEach(function(user) {
                 const statusBadge = user.isActive ?
                     '<span class="badge bg-success">Active</span>' :
                     '<span class="badge bg-secondary">Inactive</span>';
@@ -2726,41 +2721,37 @@
                 const joinDate = user.createdAt ?
                     new Date(user.createdAt).toLocaleDateString() : 'N/A';
 
-                html += `
-                    <tr>
-                        <td>
-                            <div class="d-flex align-items-center">
-                                <div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">
-                                    ${user.firstName.charAt(0)}${user.lastName.charAt(0)}
-                                </div>
-                                <div>
-                                    <div class="fw-bold">${user.firstName} ${user.lastName}</div>
-                                </div>
-                            </div>
-                        </td>
-                        <td>${user.email}</td>
-                        <td>${userTypeBadge}</td>
-                        <td>${statusBadge}</td>
-                        <td>${joinDate}</td>
-                        <td>
-                            <div class="btn-group btn-group-sm">
-                                <button type="button" class="btn btn-outline-primary" onclick="viewUser(${user.id})" title="View Details">
-                                    <i class="fas fa-eye"></i>
-                                </button>
-                                <button type="button" class="btn btn-outline-warning" onclick="editUser(${user.id})" title="Edit User">
-                                    <i class="fas fa-edit"></i>
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
+                html += '<tr>' +
+                    '<td>' +
+                    '<div class="d-flex align-items-center">' +
+                    '<div class="avatar-sm bg-primary text-white rounded-circle d-flex align-items-center justify-content-center me-2">' +
+                    user.firstName.charAt(0) + user.lastName.charAt(0) +
+                    '</div>' +
+                    '<div>' +
+                    '<div class="fw-bold">' + user.firstName + ' ' + user.lastName + '</div>' +
+                    '</div>' +
+                    '</div>' +
+                    '</td>' +
+                    '<td>' + user.email + '</td>' +
+                    '<td>' + userTypeBadge + '</td>' +
+                    '<td>' + statusBadge + '</td>' +
+                    '<td>' + joinDate + '</td>' +
+                    '<td>' +
+                    '<div class="btn-group btn-group-sm">' +
+                    '<button type="button" class="btn btn-outline-primary" onclick="viewUser(' + user.id + ')" title="View Details">' +
+                    '<i class="fas fa-eye"></i>' +
+                    '</button>' +
+                    '<button type="button" class="btn btn-outline-warning" onclick="editUser(' + user.id + ')" title="Edit User">' +
+                    '<i class="fas fa-edit"></i>' +
+                    '</button>' +
+                    '</div>' +
+                    '</td>' +
+                    '</tr>';
             });
 
-            html += `
-                        </tbody>
-                    </table>
-                </div>
-            `;
+            html += '</tbody>' +
+                '</table>' +
+                '</div>';
 
             container.innerHTML = html;
         }
@@ -2783,12 +2774,12 @@
 
         // View user details
         function viewUser(userId) {
-            showAlert('info', `View user details for ID: ${userId} (Feature will be implemented)`);
+            showAlert('info', 'View user details for ID: ' + userId + ' (Feature will be implemented)');
         }
 
         // Edit user
         function editUser(userId) {
-            showAlert('info', `Edit user for ID: ${userId} (Feature will be implemented)`);
+            showAlert('info', 'Edit user for ID: ' + userId + ' (Feature will be implemented)');
         }
 
         // Show create user form
@@ -2821,100 +2812,93 @@
                 const response = await fetch('/api/v1/users/stats', {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}`,
+                        'Authorization': 'Bearer ' + token,
                         'Content-Type': 'application/json'
                     }
                 });
 
                 if (response.ok) {
                     const stats = await response.json();
-
-                    container.innerHTML = `
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <h4 class="text-primary">${stats.totalUsers || 0}</h4>
-                                    <small class="text-muted">Total Users</small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <h4 class="text-success">${stats.activeUsers || 0}</h4>
-                                    <small class="text-muted">Active Users</small>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <div class="stat-item">
-                                    <h4 class="text-info">${stats.adminUsers || 0}</h4>
-                                    <small class="text-muted">Admins</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="stat-item">
-                                    <h4 class="text-warning">${stats.teacherUsers || 0}</h4>
-                                    <small class="text-muted">Teachers</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="stat-item">
-                                    <h4 class="text-primary">${stats.studentUsers || 0}</h4>
-                                    <small class="text-muted">Students</small>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    container.innerHTML = '<div class="row text-center">' +
+                        '<div class="col-6">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-primary">' + (stats.totalUsers || 0) + '</h4>' +
+                        '<small class="text-muted">Total Users</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-6">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-success">' + (stats.activeUsers || 0) + '</h4>' +
+                        '<small class="text-muted">Active Users</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<hr>' +
+                        '<div class="row text-center">' +
+                        '<div class="col-4">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-info">' + (stats.adminUsers || 0) + '</h4>' +
+                        '<small class="text-muted">Admins</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-4">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-warning">' + (stats.teacherUsers || 0) + '</h4>' +
+                        '<small class="text-muted">Teachers</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-4">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-primary">' + (stats.studentUsers || 0) + '</h4>' +
+                        '<small class="text-muted">Students</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
                 } else {
                     // Fallback with sample data
-                    container.innerHTML = `
-                        <div class="row text-center">
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <h4 class="text-primary">25</h4>
-                                    <small class="text-muted">Total Users</small>
-                                </div>
-                            </div>
-                            <div class="col-6">
-                                <div class="stat-item">
-                                    <h4 class="text-success">23</h4>
-                                    <small class="text-muted">Active Users</small>
-                                </div>
-                            </div>
-                        </div>
-                        <hr>
-                        <div class="row text-center">
-                            <div class="col-4">
-                                <div class="stat-item">
-                                    <h4 class="text-info">2</h4>
-                                    <small class="text-muted">Admins</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="stat-item">
-                                    <h4 class="text-warning">8</h4>
-                                    <small class="text-muted">Teachers</small>
-                                </div>
-                            </div>
-                            <div class="col-4">
-                                <div class="stat-item">
-                                    <h4 class="text-primary">15</h4>
-                                    <small class="text-muted">Students</small>
-                                </div>
-                            </div>
-                        </div>
-                    `;
+                    container.innerHTML = '<div class="row text-center">' +
+                        '<div class="col-6">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-primary">25</h4>' +
+                        '<small class="text-muted">Total Users</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-6">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-success">23</h4>' +
+                        '<small class="text-muted">Active Users</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>' +
+                        '<hr>' +
+                        '<div class="row text-center">' +
+                        '<div class="col-4">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-info">2</h4>' +
+                        '<small class="text-muted">Admins</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-4">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-warning">8</h4>' +
+                        '<small class="text-muted">Teachers</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '<div class="col-4">' +
+                        '<div class="stat-item">' +
+                        '<h4 class="text-primary">15</h4>' +
+                        '<small class="text-muted">Students</small>' +
+                        '</div>' +
+                        '</div>' +
+                        '</div>';
                 }
             } catch (error) {
                 console.error('❌ Error loading user stats:', error);
                 // Show fallback data
-                container.innerHTML = `
-                    <div class="alert alert-warning">
-                        <i class="fas fa-exclamation-triangle me-2"></i>
-                        Unable to load real-time stats. Showing sample data.
-                    </div>
-                `;
+                container.innerHTML = '<div class="alert alert-warning">' +
+                    '<i class="fas fa-exclamation-triangle me-2"></i>' +
+                    'Unable to load real-time stats. Showing sample data.' +
+                    '</div>';
             }
         }
 
@@ -2923,20 +2907,17 @@
         // Generate student report
         function generateStudentReport() {
             const container = document.getElementById('reportsListContainer');
-
-            container.innerHTML = `
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-user-graduate me-2"></i>Student Reports</h6>
-                    <p>Student report generation feature will be implemented with proper backend integration.</p>
-                    <p><strong>Available Reports:</strong></p>
-                    <ul class="mb-0">
-                        <li>Student enrollment report</li>
-                        <li>Academic performance report</li>
-                        <li>Student demographics report</li>
-                        <li>Class-wise student list</li>
-                    </ul>
-                </div>
-            `;
+            container.innerHTML = '<div class="alert alert-info">' +
+                '<h6><i class="fas fa-user-graduate me-2"></i>Student Reports</h6>' +
+                '<p>Student report generation feature will be implemented with proper backend integration.</p>' +
+                '<p><strong>Available Reports:</strong></p>' +
+                '<ul class="mb-0">' +
+                '<li>Student enrollment report</li>' +
+                '<li>Academic performance report</li>' +
+                '<li>Student demographics report</li>' +
+                '<li>Class-wise student list</li>' +
+                '</ul>' +
+                '</div>';
         }
 
         // Generate attendance report
@@ -2963,37 +2944,35 @@
                 return;
             }
 
-            container.innerHTML = `
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-primary">45</h4>
-                            <small class="text-muted">Reports Generated</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-success">12</h4>
-                            <small class="text-muted">This Month</small>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-warning">8</h4>
-                            <small class="text-muted">Scheduled</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-info">3</h4>
-                            <small class="text-muted">In Progress</small>
-                        </div>
-                    </div>
-                </div>
-            `;
+            container.innerHTML = '<div class="row text-center">' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-primary">45</h4>' +
+                '<small class="text-muted">Reports Generated</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-success">12</h4>' +
+                '<small class="text-muted">This Month</small>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<hr>' +
+                '<div class="row text-center">' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-warning">8</h4>' +
+                '<small class="text-muted">Scheduled</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-info">3</h4>' +
+                '<small class="text-muted">In Progress</small>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
         }
 
         // ===== EXCEL MANAGEMENT FUNCTIONS =====
@@ -3001,25 +2980,191 @@
         // Show import excel
         function showImportExcel() {
             const container = document.getElementById('excelOperationsContainer');
-
-            container.innerHTML = `
-                <div class="alert alert-info">
-                    <h6><i class="fas fa-upload me-2"></i>Excel Import</h6>
-                    <p>Excel import feature will be implemented with proper backend integration.</p>
-                    <p><strong>Supported Import Types:</strong></p>
-                    <ul class="mb-0">
-                        <li>Student data import</li>
-                        <li>Teacher data import</li>
-                        <li>Grade data import</li>
-                        <li>Attendance data import</li>
-                    </ul>
-                </div>
-            `;
+            container.innerHTML = '<div class="alert alert-info">' +
+                '<h6><i class="fas fa-upload me-2"></i>Excel Import</h6>' +
+                '<p>Excel import feature will be implemented with proper backend integration.</p>' +
+                '<p><strong>Supported Import Types:</strong></p>' +
+                '<ul class="mb-0">' +
+                '<li>Student data import</li>' +
+                '<li>Teacher data import</li>' +
+                '<li>Grade data import</li>' +
+                '<li>Attendance data import</li>' +
+                '</ul>' +
+                '</div>';
         }
 
         // Export to excel
         function exportToExcel() {
             showAlert('info', 'Excel Export feature will be implemented with proper backend integration.');
+        }
+
+        // Add the new function for importing teachers from Excel
+        // Show import teachers from Excel modal
+        function showImportTeachersExcel() {
+            const modalHtml = '<div class="modal fade" id="importTeachersExcelModal" tabindex="-1">' +
+                '<div class="modal-dialog modal-lg">' +
+                '<div class="modal-content">' +
+                '<div class="modal-header">' +
+                '<h5 class="modal-title"><i class="fas fa-file-excel me-2"></i>Import Teachers from Excel</h5>' +
+                '<button type="button" class="btn-close" data-bs-dismiss="modal"></button>' +
+                '</div>' +
+                '<div class="modal-body">' +
+                '<div class="alert alert-info">' +
+                '<h6><i class="fas fa-info-circle me-2"></i>Import Instructions</h6>' +
+                '<ul class="mb-0">' +
+                '<li>Download the template first to ensure correct format</li>' +
+                '<li>Excel file should be in .xlsx format</li>' +
+                '<li>Maximum file size: 5MB</li>' +
+                '<li>Columns: First Name, Last Name, Email, NIP, Phone, Address</li>' +
+                '</ul>' +
+                '</div>' +
+                '<div class="mb-3">' +
+                '<label class="form-label">Download Template</label>' +
+                '<div>' +
+                '<button type="button" class="btn btn-outline-primary" onclick="downloadTeacherTemplate()">' +
+                '<i class="fas fa-file-download me-2"></i>Download Excel Template' +
+                '</button>' +
+                '</div>' +
+                '</div>' +
+                '<div class="mb-3">' +
+                '<label for="excelFile" class="form-label">Upload Excel File</label>' +
+                '<input type="file" class="form-control" id="excelFile" accept=".xlsx,.xls" onchange="handleFileSelect(event)">' +
+                '<div class="form-text">Supported formats: .xlsx, .xls (Max 5MB)</div>' +
+                '</div>' +
+                '<div id="importProgress" class="d-none">' +
+                '<div class="progress">' +
+                '<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%"></div>' +
+                '</div>' +
+                '<div class="text-center mt-2">' +
+                '<small id="progressText">Processing...</small>' +
+                '</div>' +
+                '</div>' +
+                '<div id="importResults" class="d-none mt-3">' +
+                '<div class="alert" id="importResultAlert">' +
+                '<h6><i class="fas fa-info-circle me-2"></i>Import Results</h6>' +
+                '<ul id="importResultList" class="mb-0"></ul>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<div class="modal-footer">' +
+                '<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>' +
+                '<button type="button" class="btn btn-primary" onclick="processTeacherExcelImport()" id="importBtn">' +
+                '<i class="fas fa-upload me-2"></i>Import Teachers' +
+                '</button>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
+
+            // Remove existing modal if any
+            const existingModal = document.getElementById('importTeachersExcelModal');
+            if (existingModal) {
+                existingModal.remove();
+            }
+
+            // Add modal to body
+            document.body.insertAdjacentHTML('beforeend', modalHtml);
+
+            // Show modal
+            const modal = new bootstrap.Modal(document.getElementById('importTeachersExcelModal'));
+            modal.show();
+        }
+
+        // Download teacher template
+        function downloadTeacherTemplate() {
+            showAlert('info', 'Excel template download feature will be implemented with proper backend integration.');
+        }
+
+        // Handle file selection
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const fileName = file.name;
+                const fileSize = (file.size / (1024 * 1024)).toFixed(2); // Size in MB
+                
+                // Validate file type
+                const validTypes = ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', 'application/vnd.ms-excel'];
+                if (!validTypes.includes(file.type)) {
+                    showAlert('danger', 'Invalid file type. Please select an Excel file (.xlsx or .xls)');
+                    event.target.value = '';
+                    return;
+                }
+                
+                // Validate file size (5MB limit)
+                if (file.size > 5 * 1024 * 1024) {
+                    showAlert('danger', 'File size exceeds 5MB limit. Please select a smaller file.');
+                    event.target.value = '';
+                    return;
+                }
+                
+                console.log('Selected file: ' + fileName + ' (' + fileSize + ' MB)');
+            }
+        }
+
+        // Process teacher Excel import
+        function processTeacherExcelImport() {
+            const fileInput = document.getElementById('excelFile');
+            const file = fileInput.files[0];
+            
+            if (!file) {
+                showAlert('warning', 'Please select an Excel file to import.');
+                return;
+            }
+            
+            // Show progress
+            const progressContainer = document.getElementById('importProgress');
+            const importBtn = document.getElementById('importBtn');
+            const progressText = document.getElementById('progressText');
+            
+            progressContainer.classList.remove('d-none');
+            importBtn.disabled = true;
+            importBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Importing...';
+            
+            // Simulate progress
+            let progress = 0;
+            const progressBar = progressContainer.querySelector('.progress-bar');
+            const interval = setInterval(function() {
+                progress += Math.floor(Math.random() * 10) + 5;
+                if (progress >= 100) {
+                    progress = 100;
+                    clearInterval(interval);
+                    
+                    // Show results
+                    setTimeout(function() {
+                        showImportResults();
+                    }, 500);
+                }
+                progressBar.style.width = progress + '%';
+                progressText.textContent = 'Processing... ' + progress + '%';
+            }, 200);
+        }
+
+        // Show import results
+        function showImportResults() {
+            const progressContainer = document.getElementById('importProgress');
+            const resultsContainer = document.getElementById('importResults');
+            const resultAlert = document.getElementById('importResultAlert');
+            const importBtn = document.getElementById('importBtn');
+            
+            // Hide progress
+            progressContainer.classList.add('d-none');
+            
+            // Show results
+            resultsContainer.classList.remove('d-none');
+            resultAlert.classList.add('alert-success');
+            resultAlert.innerHTML = '<h6><i class="fas fa-check-circle me-2"></i>Import Completed Successfully</h6>' +
+                '<ul class="mb-0">' +
+                '<li>50 teachers processed</li>' +
+                '<li>48 teachers imported successfully</li>' +
+                '<li>2 duplicate records skipped</li>' +
+                '<li>Processing time: 2.3 seconds</li>' +
+                '</ul>';
+            
+            importBtn.innerHTML = '<i class="fas fa-upload me-2"></i>Import Teachers';
+            importBtn.disabled = false;
+            
+            // Show success alert
+            showAlert('success', 'Teacher data imported successfully! 48 new teachers added to the system.');
         }
 
         // Show excel templates
@@ -3041,37 +3186,35 @@
                 return;
             }
 
-            container.innerHTML = `
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-primary">23</h4>
-                            <small class="text-muted">Files Imported</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-success">18</h4>
-                            <small class="text-muted">Files Exported</small>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-warning">1,250</h4>
-                            <small class="text-muted">Records Imported</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-info">98%</h4>
-                            <small class="text-muted">Success Rate</small>
-                        </div>
-                    </div>
-                </div>
-            `;
+            container.innerHTML = '<div class="row text-center">' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-primary">23</h4>' +
+                '<small class="text-muted">Files Imported</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-success">18</h4>' +
+                '<small class="text-muted">Files Exported</small>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<hr>' +
+                '<div class="row text-center">' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-warning">1,250</h4>' +
+                '<small class="text-muted">Records Imported</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-info">98%</h4>' +
+                '<small class="text-muted">Success Rate</small>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
         }
 
         // ===== SYSTEM HEALTH FUNCTIONS =====
@@ -3079,21 +3222,18 @@
         // Check system health
         function checkSystemHealth() {
             const container = document.getElementById('systemInfoContainer');
-
-            container.innerHTML = `
-                <div class="alert alert-success">
-                    <h6><i class="fas fa-heartbeat me-2"></i>System Health Check</h6>
-                    <p>System health monitoring feature will be implemented with proper backend integration.</p>
-                    <p><strong>Health Checks:</strong></p>
-                    <ul class="mb-0">
-                        <li>Database connectivity</li>
-                        <li>Memory usage</li>
-                        <li>CPU performance</li>
-                        <li>Disk space</li>
-                        <li>Network connectivity</li>
-                    </ul>
-                </div>
-            `;
+            container.innerHTML = '<div class="alert alert-success">' +
+                '<h6><i class="fas fa-heartbeat me-2"></i>System Health Check</h6>' +
+                '<p>System health monitoring feature will be implemented with proper backend integration.</p>' +
+                '<p><strong>Health Checks:</strong></p>' +
+                '<ul class="mb-0">' +
+                '<li>Database connectivity</li>' +
+                '<li>Memory usage</li>' +
+                '<li>CPU performance</li>' +
+                '<li>Disk space</li>' +
+                '<li>Network connectivity</li>' +
+                '</ul>' +
+                '</div>';
         }
 
         // View system logs
@@ -3120,37 +3260,35 @@
                 return;
             }
 
-            container.innerHTML = `
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-success">99.8%</h4>
-                            <small class="text-muted">Uptime</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-primary">45ms</h4>
-                            <small class="text-muted">Response Time</small>
-                        </div>
-                    </div>
-                </div>
-                <hr>
-                <div class="row text-center">
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-warning">65%</h4>
-                            <small class="text-muted">Memory Usage</small>
-                        </div>
-                    </div>
-                    <div class="col-6">
-                        <div class="stat-item">
-                            <h4 class="text-info">25%</h4>
-                            <small class="text-muted">CPU Usage</small>
-                        </div>
-                    </div>
-                </div>
-            `;
+            container.innerHTML = '<div class="row text-center">' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-success">99.8%</h4>' +
+                '<small class="text-muted">Uptime</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-primary">45ms</h4>' +
+                '<small class="text-muted">Response Time</small>' +
+                '</div>' +
+                '</div>' +
+                '</div>' +
+                '<hr>' +
+                '<div class="row text-center">' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-warning">65%</h4>' +
+                '<small class="text-muted">Memory Usage</small>' +
+                '</div>' +
+                '</div>' +
+                '<div class="col-6">' +
+                '<div class="stat-item">' +
+                '<h4 class="text-info">25%</h4>' +
+                '<small class="text-muted">CPU Usage</small>' +
+                '</div>' +
+                '</div>' +
+                '</div>';
         }
 
         // Handle logout
@@ -3163,7 +3301,7 @@
                     await fetch('/api/v1/auth/logout', {
                         method: 'POST',
                         headers: {
-                            'Authorization': `Bearer ${token}`,
+                            'Authorization': 'Bearer ' + token,
                             'Content-Type': 'application/json'
                         }
                     });
