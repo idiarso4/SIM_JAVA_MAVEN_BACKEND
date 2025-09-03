@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import '../config/app_theme.dart';
 import '../screens/dashboard_screen.dart';
 import '../screens/students_screen.dart';
 import '../screens/attendance_detail_screen.dart';
 import '../screens/face_recognition_screen.dart';
 import '../screens/map_screen.dart';
-import '../services/auth_service.dart';
 
 class HomeShell extends StatefulWidget {
   const HomeShell({super.key});
@@ -23,59 +23,113 @@ class _HomeShellState extends State<HomeShell> {
     MapScreen(),
   ];
 
-  Future<void> _handleLogout() async {
-    final authService = AuthService();
-    await authService.logout();
-    if (mounted) {
-      // Navigasi kembali ke login screen
-      Navigator.of(context).pushNamedAndRemoveUntil('/login', (route) => false);
-    }
-  }
+  final _titles = [
+    'Dashboard',
+    'Data Siswa',
+    'Absensi',
+    'Face Recognition',
+    'Peta Sekolah',
+  ];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('SIM - School Information Management'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.logout),
-            onPressed: _handleLogout,
-            tooltip: 'Logout',
-          )
-        ],
-      ),
       body: _pages[_index],
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _index,
-        onDestinationSelected: (i) => setState(() => _index = i),
-        destinations: const [
-          NavigationDestination(
-            icon: Icon(Icons.home_outlined),
-            selectedIcon: Icon(Icons.home),
-            label: 'Home',
+      bottomNavigationBar: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: [
+                _buildNavItem(
+                  index: 0,
+                  icon: Icons.home_outlined,
+                  selectedIcon: Icons.home,
+                  label: 'Beranda',
+                ),
+                _buildNavItem(
+                  index: 1,
+                  icon: Icons.school_outlined,
+                  selectedIcon: Icons.school,
+                  label: 'Siswa',
+                ),
+                _buildNavItem(
+                  index: 2,
+                  icon: Icons.fact_check_outlined,
+                  selectedIcon: Icons.fact_check,
+                  label: 'Absensi',
+                ),
+                _buildNavItem(
+                  index: 3,
+                  icon: Icons.face_outlined,
+                  selectedIcon: Icons.face,
+                  label: 'Face ID',
+                ),
+                _buildNavItem(
+                  index: 4,
+                  icon: Icons.map_outlined,
+                  selectedIcon: Icons.map,
+                  label: 'Peta',
+                ),
+              ],
+            ),
           ),
-          NavigationDestination(
-            icon: Icon(Icons.school_outlined),
-            selectedIcon: Icon(Icons.school),
-            label: 'Students',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.fact_check_outlined),
-            selectedIcon: Icon(Icons.fact_check),
-            label: 'Attendance',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.face_retouching_natural_outlined),
-            selectedIcon: Icon(Icons.face),
-            label: 'Face Recognition',
-          ),
-          NavigationDestination(
-            icon: Icon(Icons.map_outlined),
-            selectedIcon: Icon(Icons.map),
-            label: 'Map',
-          ),
-        ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildNavItem({
+    required int index,
+    required IconData icon,
+    required IconData selectedIcon,
+    required String label,
+  }) {
+    final isSelected = _index == index;
+    
+    return GestureDetector(
+      onTap: () => setState(() => _index = index),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+        decoration: BoxDecoration(
+          color: isSelected ? AppTheme.primaryYellow.withOpacity(0.1) : Colors.transparent,
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            AnimatedSwitcher(
+              duration: const Duration(milliseconds: 200),
+              child: Icon(
+                isSelected ? selectedIcon : icon,
+                key: ValueKey(isSelected),
+                color: isSelected ? AppTheme.primaryYellow : AppTheme.darkGrey,
+                size: 24,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              label,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
+                color: isSelected ? AppTheme.primaryYellow : AppTheme.darkGrey,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

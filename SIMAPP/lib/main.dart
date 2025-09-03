@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'src/config/app_theme.dart';
 import 'src/screens/login_screen.dart';
 import 'src/screens/home_shell.dart';
 import 'src/screens/add_student_screen.dart';
@@ -15,11 +16,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'SIM App',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-        useMaterial3: true,
-      ),
+      title: 'SIM Vokasi',
+      theme: AppTheme.lightTheme,
       debugShowCheckedModeBanner: false,
       initialRoute: '/login',
       routes: {
