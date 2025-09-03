@@ -12,10 +12,7 @@ class AddStudentScreen extends StatefulWidget {
 class _AddStudentScreenState extends State<AddStudentScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  final _emailController = TextEditingController();
   final _nimController = TextEditingController();
-  final _majorController = TextEditingController();
-  final _facultyController = TextEditingController();
   final _phoneController = TextEditingController();
   final _addressController = TextEditingController();
   final _classRoomController = TextEditingController();
@@ -26,10 +23,7 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _nimController.dispose();
-    _majorController.dispose();
-    _facultyController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
     _classRoomController.dispose();
@@ -47,10 +41,10 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
         final student = Student(
           id: 0, // Will be assigned by the backend
           name: _nameController.text,
-          email: _emailController.text,
+          email: '', // Will be handled by backend
           nim: _nimController.text,
-          major: _majorController.text,
-          faculty: _facultyController.text,
+          major: '', // Will be handled by backend
+          faculty: '', // Will be handled by backend
           phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
           address: _addressController.text.isNotEmpty ? _addressController.text : null,
           classRoom: _classRoomController.text.isNotEmpty ? _classRoomController.text : null,
@@ -104,63 +98,15 @@ class _AddStudentScreenState extends State<AddStudentScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter email';
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
                 controller: _nimController,
                 decoration: const InputDecoration(
-                  labelText: 'NIM',
+                  labelText: 'NIS (Student ID)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.badge),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter NIM';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _majorController,
-                decoration: const InputDecoration(
-                  labelText: 'Major',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.school),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter major';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _facultyController,
-                decoration: const InputDecoration(
-                  labelText: 'Faculty',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.account_balance),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter faculty';
+                    return 'Please enter NIS';
                   }
                   return null;
                 },

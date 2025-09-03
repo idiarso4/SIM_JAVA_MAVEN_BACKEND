@@ -26,29 +26,25 @@ class Student {
   factory Student.fromJson(Map<String, dynamic> json) {
     return Student(
       id: json['id'] ?? 0,
-      name: json['name'] ?? '',
-      email: json['email'] ?? '',
-      nim: json['nim'] ?? '',
-      major: json['major'] ?? '',
-      faculty: json['faculty'] ?? '',
-      phone: json['phone'],
-      address: json['address'],
-      classRoom: json['classRoom'],
-      status: json['status'],
+      name: json['namaLengkap'] ?? json['name'] ?? '',
+      email: json['user']?['email'] ?? json['email'] ?? '',
+      nim: json['nis'] ?? json['nim'] ?? '',
+      major: json['classRoom']?['major']?['name'] ?? json['major'] ?? '',
+      faculty: json['classRoom']?['major']?['department']?['name'] ?? json['faculty'] ?? '',
+      phone: json['noHpOrtu'] ?? json['phone'],
+      address: json['alamat'] ?? json['address'],
+      classRoom: json['classRoom']?['name'] ?? json['classRoom'],
+      status: json['status']?.toString() ?? 'ACTIVE',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'name': name,
-      'email': email,
-      'nim': nim,
-      'major': major,
-      'faculty': faculty,
-      'phone': phone,
-      'address': address,
-      'classRoom': classRoom,
+      'namaLengkap': name,
+      'nis': nim,
+      'alamat': address,
+      'noHpOrtu': phone,
       'status': status,
     };
   }

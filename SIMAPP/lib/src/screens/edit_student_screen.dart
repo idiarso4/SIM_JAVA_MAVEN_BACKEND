@@ -14,10 +14,7 @@ class EditStudentScreen extends StatefulWidget {
 class _EditStudentScreenState extends State<EditStudentScreen> {
   final _formKey = GlobalKey<FormState>();
   late final TextEditingController _nameController;
-  late final TextEditingController _emailController;
   late final TextEditingController _nimController;
-  late final TextEditingController _majorController;
-  late final TextEditingController _facultyController;
   late final TextEditingController _phoneController;
   late final TextEditingController _addressController;
   late final TextEditingController _classRoomController;
@@ -29,10 +26,7 @@ class _EditStudentScreenState extends State<EditStudentScreen> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.student.name);
-    _emailController = TextEditingController(text: widget.student.email);
     _nimController = TextEditingController(text: widget.student.nim);
-    _majorController = TextEditingController(text: widget.student.major);
-    _facultyController = TextEditingController(text: widget.student.faculty);
     _phoneController = TextEditingController(text: widget.student.phone ?? '');
     _addressController = TextEditingController(text: widget.student.address ?? '');
     _classRoomController = TextEditingController(text: widget.student.classRoom ?? '');
@@ -41,10 +35,7 @@ class _EditStudentScreenState extends State<EditStudentScreen> {
   @override
   void dispose() {
     _nameController.dispose();
-    _emailController.dispose();
     _nimController.dispose();
-    _majorController.dispose();
-    _facultyController.dispose();
     _phoneController.dispose();
     _addressController.dispose();
     _classRoomController.dispose();
@@ -62,10 +53,10 @@ class _EditStudentScreenState extends State<EditStudentScreen> {
         final student = Student(
           id: widget.student.id,
           name: _nameController.text,
-          email: _emailController.text,
+          email: widget.student.email,
           nim: _nimController.text,
-          major: _majorController.text,
-          faculty: _facultyController.text,
+          major: widget.student.major,
+          faculty: widget.student.faculty,
           phone: _phoneController.text.isNotEmpty ? _phoneController.text : null,
           address: _addressController.text.isNotEmpty ? _addressController.text : null,
           classRoom: _classRoomController.text.isNotEmpty ? _classRoomController.text : null,
@@ -119,63 +110,15 @@ class _EditStudentScreenState extends State<EditStudentScreen> {
               ),
               const SizedBox(height: 16),
               TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.email),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter email';
-                  }
-                  if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
-                    return 'Please enter a valid email';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
                 controller: _nimController,
                 decoration: const InputDecoration(
-                  labelText: 'NIM',
+                  labelText: 'NIS (Student ID)',
                   border: OutlineInputBorder(),
                   prefixIcon: Icon(Icons.badge),
                 ),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
-                    return 'Please enter NIM';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _majorController,
-                decoration: const InputDecoration(
-                  labelText: 'Major',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.school),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter major';
-                  }
-                  return null;
-                },
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _facultyController,
-                decoration: const InputDecoration(
-                  labelText: 'Faculty',
-                  border: OutlineInputBorder(),
-                  prefixIcon: Icon(Icons.account_balance),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter faculty';
+                    return 'Please enter NIS';
                   }
                   return null;
                 },
