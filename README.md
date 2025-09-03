@@ -540,3 +540,5 @@ For issues or questions:
 ===========================
 
  C:\Users\sija_003\Desktop\SIM_JAVA\SIM_JAVA_MAVEN_BACKEND\maven-portable\apache-maven-3.8.8\bin\mvn.cmd spring-boot:run
+
+ curl -s -o nul -w "%{http_code}" http://localhost:8080/dashboard-clean.html

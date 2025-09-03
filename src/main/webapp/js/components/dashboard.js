@@ -178,22 +178,32 @@ class AuthService {
     // Check backend availability
     async checkBackendStatus() {
         try {
+            console.log('🚀 Checking backend status...');
+            
             // Try multiple endpoints to check backend
             const endpoints = [
+                '/api/test/system/status',
                 '/api/test/dashboard-data',
-                '/actuator/health',
-                '/api/test/system/status'
+                '/actuator/health'
             ];
 
             for (const endpoint of endpoints) {
                 try {
-                    const response = await fetch(endpoint);
-                    if (response.status === 200 || response.status === 503) {
-                        console.log(`🚀 Backend available via ${endpoint}`);
+                    console.log(`🚀 Trying endpoint: ${endpoint}`);
+                    const response = await fetch(`${SIM_CONFIG.BACKEND_URL}${endpoint}`, {
+                        method: 'GET',
+                        headers: {
+                            'Accept': 'application/json'
+                        },
+                        timeout: 5000
+                    });
+                    
+                    if (response.status === 200) {
+                        console.log(`🚀 Backend available via ${endpoint} (status: ${response.status})`);
                         return true;
                     }
                 } catch (e) {
-                    console.log(`🚀 Endpoint ${endpoint} not available`);
+                    console.log(`🚀 Endpoint ${endpoint} failed:`, e.message);
                 }
             }
 
@@ -232,10 +242,10 @@ class AuthService {
         }
     }
 
-    // Login function - STRICT AUTHENTICATION ONLY
+    // Login function - REAL API AUTHENTICATION
     async login(identifier, password, rememberMe = false) {
         try {
-            console.log('🚀 STRICT LOGIN ATTEMPT:', {
+            console.log('🚀 REAL API LOGIN ATTEMPT:', {
                 identifier,
                 passwordLength: password ? password.length : 0,
                 rememberMe
@@ -244,67 +254,127 @@ class AuthService {
             // Clear any existing lockout data
             this.clearAllLockoutData();
 
-            // FIRST VALIDATION - Basic check
-            console.log('🚀 Step 1: Basic credential validation...');
-            if (!this.validateCredentials(identifier, password)) {
-                console.log('🚀 STEP 1 FAILED - Basic validation failed');
-                throw new Error('Invalid username or password');
-            }
-            console.log('🚀 Step 1: PASSED - Basic validation successful');
-
-            // Check backend first
-            console.log('🚀 Step 2: Backend availability check...');
-            const backendAvailable = await this.checkBackendStatus();
-            if (!backendAvailable) {
-                console.log('🚀 STEP 2 WARNING - Backend not available, continuing with strict validation');
-            } else {
-                console.log('🚀 Step 2: PASSED - Backend available');
+            // Basic validation
+            if (!identifier || !password) {
+                throw new Error('Username and password are required');
             }
 
-            // STRICT AUTHENTICATION - NO BYPASS ALLOWED
-            console.log('🚀 Step 3: STRICT credential validation...');
+            // Try real backend authentication first
+            console.log('🚀 Step 1: Attempting real backend authentication...');
+            try {
+                const authData = await this.authenticateWithBackend(identifier, password);
+                console.log('🚀 Backend authentication successful:', authData);
+                
+                // Store authentication data
+                if (authData.token) {
+                    localStorage.setItem(SIM_CONFIG.TOKEN_KEY, authData.token);
+                    this.token = authData.token;
+                }
 
-            // Double-check credentials with strict validation
-            const validCredential = this.strictCredentialValidation(identifier, password);
-            if (!validCredential) {
-                console.log('🚀 AUTHENTICATION FAILED - Invalid credentials');
-                throw new Error('Authentication failed. Invalid username or password.');
+                if (authData.user) {
+                    localStorage.setItem(SIM_CONFIG.USER_KEY, JSON.stringify(authData.user));
+                    this.user = authData.user;
+                }
+
+                // Clear any lockout data on successful login
+                this.clearAllLockoutData();
+
+                return {
+                    success: true,
+                    user: authData.user,
+                    token: authData.token,
+                    message: 'Login successful'
+                };
+
+            } catch (backendError) {
+                console.log('🚀 Backend authentication failed, trying fallback:', backendError.message);
+                
+                // Fallback to local validation only if backend is completely unavailable
+                const backendAvailable = await this.checkBackendStatus();
+                if (!backendAvailable) {
+                    console.log('🚀 Step 2: Backend unavailable, using fallback authentication...');
+                    
+                    // Local validation as fallback
+                    if (!this.validateCredentials(identifier, password)) {
+                        throw new Error('Invalid username or password');
+                    }
+
+                    // Generate local auth data
+                    const authData = this.generateAuthData(identifier, password);
+                    
+                    // Store authentication data
+                    if (authData.accessToken) {
+                        localStorage.setItem(SIM_CONFIG.TOKEN_KEY, authData.accessToken);
+                        this.token = authData.accessToken;
+                    }
+
+                    if (authData.user) {
+                        localStorage.setItem(SIM_CONFIG.USER_KEY, JSON.stringify(authData.user));
+                        this.user = authData.user;
+                    }
+
+                    return {
+                        success: true,
+                        user: authData.user,
+                        token: authData.accessToken,
+                        message: 'Login successful (offline mode)'
+                    };
+                } else {
+                    // Backend is available but authentication failed
+                    throw backendError;
+                }
             }
-
-            console.log('🚀 Credentials validated successfully');
-
-            // Generate secure authentication data
-            const authData = this.generateAuthData(identifier, password);
-            console.log('🚀 Authentication successful:', authData);
-
-            // Store authentication data
-            const token = authData.accessToken;
-            if (token) {
-                localStorage.setItem(SIM_CONFIG.TOKEN_KEY, token);
-                this.token = token;
-            }
-
-            if (authData.refreshToken) {
-                localStorage.setItem(SIM_CONFIG.REFRESH_TOKEN_KEY, authData.refreshToken);
-            }
-
-            if (authData.user) {
-                localStorage.setItem(SIM_CONFIG.USER_KEY, JSON.stringify(authData.user));
-                this.user = authData.user;
-            }
-
-            // Clear any lockout data on successful login
-            this.clearAllLockoutData();
-
-            return {
-                success: true,
-                user: authData.user,
-                token: token,
-                message: 'Login successful'
-            };
 
         } catch (error) {
             console.error('🚀 Login failed:', error);
+            throw error;
+        }
+    }
+
+    // Real backend authentication
+    async authenticateWithBackend(identifier, password) {
+        try {
+            console.log('🚀 Calling real backend authentication API...');
+            
+            const response = await fetch(`${SIM_CONFIG.BACKEND_URL}/api/auth/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: identifier,
+                    password: password
+                })
+            });
+
+            if (!response.ok) {
+                if (response.status === 401) {
+                    throw new Error('Invalid username or password');
+                } else if (response.status === 403) {
+                    throw new Error('Account is locked or disabled');
+                } else {
+                    throw new Error(`Authentication failed: ${response.status}`);
+                }
+            }
+
+            const data = await response.json();
+            console.log('🚀 Backend authentication response:', data);
+
+            return {
+                success: true,
+                token: data.token || data.accessToken,
+                user: data.user || {
+                    id: data.userId || 1,
+                    username: identifier,
+                    name: data.name || 'User',
+                    role: data.role || 'USER',
+                    email: identifier.includes('@') ? identifier : `${identifier}@sim.edu`
+                }
+            };
+
+        } catch (error) {
+            console.error('🚀 Backend authentication error:', error);
             throw error;
         }
     }
