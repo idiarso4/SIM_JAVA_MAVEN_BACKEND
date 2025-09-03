@@ -70,8 +70,8 @@ const Navigation = {
                 }
                 break;
             case 'users':
-                if (typeof UserModule !== 'undefined') {
-                    UserModule.init();
+                if (typeof UserManagement !== 'undefined') {
+                    UserManagement.init();
                 }
                 break;
             case 'reports':
